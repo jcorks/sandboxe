@@ -9,6 +9,7 @@ var sandboxe = {
         
     },
     
+    
     script : {
         include : __script_include
     },
@@ -16,6 +17,7 @@ var sandboxe = {
     console : {
         // exact mappings
         isVisible :   __console_is_visible,
+        
         show :        __console_show,
         isLocked :    __console_is_locked,
         lock :        __console_lock,
@@ -32,7 +34,7 @@ var sandboxe = {
         info    : __console_stream_info,
         error   : __console_stream_error,
         warning : __console_stream_warning,
-
+        
 
         // enums
         messageMode : {

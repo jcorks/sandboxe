@@ -1,5 +1,5 @@
 #include <sandboxe/script/shell.h>
-#include <sandboxe/script/context.h>
+#include <sandboxe/script/runtime.h>
 #include <Dynacoe/Library.h>
 
 class sandboxe_interpreter_command : public Dynacoe::Interpreter::Command {
@@ -9,7 +9,7 @@ class sandboxe_interpreter_command : public Dynacoe::Interpreter::Command {
           for(uint32_t i = 1; i < argvec.size(); ++i) {
               code += argvec[i] + " ";
           }
-          return Sandboxe::Script::Context::Execute(code);
+          return Sandboxe::Script::Runtime::Execute(code);
       }
       
       std::string Help() const {}
