@@ -24,7 +24,6 @@ class Primitive {
         UInt32T,
         UInt64T,
         StringT,
-        EntityIDT,
         ObjectReferenceT,
     };
     Primitive(); // undefined
@@ -36,7 +35,6 @@ class Primitive {
     Primitive(uint32_t);    
     Primitive(uint64_t);    
     Primitive(const std::string &);    
-    Primitive(const Dynacoe::Entity::ID &);   
     Primitive(Sandboxe::Script::Runtime::Object *);
 
     void Modify(const Primitive & other) {*this = other;}
@@ -51,7 +49,6 @@ class Primitive {
     operator uint32_t() const;
     operator uint64_t() const;
     operator std::string() const;
-    operator Dynacoe::Entity::ID() const;
     operator Sandboxe::Script::Runtime::Object *() const;
     
   private:
@@ -61,7 +58,7 @@ class Primitive {
 
 
 class Context {
-  public:    
+  public: Context() : isArray(false){}
       
     // generates an error from the calling script context.
     // Behavior is implementation dependent
@@ -71,20 +68,21 @@ class Context {
     
     // sets the return value for the native function.
     // If the primitive
-    void SetReturnValue(const Primitive & v) {value = v;}
+    void SetReturnValue(const Primitive & v) {value = v; isArray = false;}
         
     // Sets an array of primitives to be returned by the function rather 
     // than the simple primitive
-    void SetReturnArray(const std::vector<Primitive> & arr) { returnArray = arr; } 
+    void SetReturnArray(const std::vector<Primitive> & arr) { returnArray = arr; isArray = true;} 
         
     const Primitive & GetReturnValue() const {return value;}
     const std::vector<Primitive> & GetReturnArray() const {return returnArray;}
-    
+    bool ReturnsArray() const {return isArray;}
     
     
   private:
     Primitive value;
     std::vector<Primitive> returnArray;
+    int isArray;
 };
 
 // Represents a native function. Native functions usually 

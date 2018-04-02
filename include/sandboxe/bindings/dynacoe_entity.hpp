@@ -84,7 +84,19 @@ SANDBOXE_NATIVE_DEF(__entity_contains) {
     context.SetReturnValue(e->Contains(other));
 }
 
+SANDBOXE_NATIVE_DEF(__entity_get_children) {
+    Dynacoe::Entity::ID id((uint64_t)source->GetNativeAddress(Index_EntityID));
+    Dynacoe::Entity * e = id.Identify();    
+    if (!e) return;
 
+    auto list = e->GetChildren();
+    std::vector<Sandboxe::Script::Runtime::Primitive> out;
+    for(uint32_t i = 0; i < list.size(); ++i) {
+        out.push_back(list[i].IdentifyAs<Sandboxe::Entity>()->GetObjectSource());
+    }
+    
+    context.SetReturnArray(out);
+}
 
 
 
@@ -155,7 +167,8 @@ void dynacoe_entity(std::vector<std::pair<std::string, Sandboxe::Script::Runtime
             {"attach", __entity_attach},
             {"detach", __entity_detach},
             {"getNumChildren", __entity_get_num_children},
-            {"contains", __entity_contains}
+            {"contains", __entity_contains},
+            {"getChildren", __entity_get_children}
         },
         // properties
         {

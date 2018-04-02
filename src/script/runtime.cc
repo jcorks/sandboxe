@@ -53,11 +53,7 @@ Primitive::Primitive(const std::string & str) {
     hint = TypeHint::StringT;
 }
 
-Primitive::Primitive(const Dynacoe::Entity::ID & in) {
-    defined = true;
-    data = in.String();
-    hint = TypeHint::EntityIDT;
-}
+
 
 Primitive::Primitive(Sandboxe::Script::Runtime::Object * in) {
     defined = true;
@@ -97,9 +93,6 @@ Primitive::operator std::string() const {
     return data;
 }
 
-Primitive::operator Dynacoe::Entity::ID() const {
-    return Dynacoe::Entity::ID(data);
-}
 
 Primitive::operator Sandboxe::Script::Runtime::Object * () const {
     return (Sandboxe::Script::Runtime::Object*)(Chain() << data).AsUInt64();

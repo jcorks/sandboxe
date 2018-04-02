@@ -7,6 +7,9 @@ class Entity : public Dynacoe::Entity {
     void SetObjectSource(Sandboxe::Script::Runtime::Object * obj) {
         object = obj;
     }
+    Sandboxe::Script::Runtime::Object * GetObjectSource() const {
+        return object;
+    }
     
     
     void OnEnter() {

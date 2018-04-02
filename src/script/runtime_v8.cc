@@ -87,6 +87,7 @@ static v8::Handle<v8::Value> sandboxe_primitive_to_v8_value(const Primitive & p)
       case Primitive::TypeHint::DoubleT:  return v8::Number::New(p);
       case Primitive::TypeHint::UInt32T:  return v8::Uint32::New(p);
       case Primitive::TypeHint::UInt64T:  return v8::Number::New(p);
+      case Primitive::TypeHint::ObjectReferenceT:  return ((Object*)p)->GetNative()->reference;
     }
     return v8::String::New(std::string(p).c_str());
 }
@@ -119,7 +120,7 @@ static std::vector<Primitive> v8_arguments_to_sandboxe_primitive_array(const v8:
 
 static v8::Handle<v8::Value> sandboxe_context_get_return_value(const Context & context) {
     // if the native call wants to return a new scripting object, do so
-    if (context.GetReturnArray().size()) {
+    if (context.ReturnsArray()) {
         auto outputArray = context.GetReturnArray();
         /// ARRAY PLS
         v8::Handle<v8::Array> array = v8::Array::New(outputArray.size());
