@@ -5,8 +5,8 @@
 var sandboxe = {
     
     entity : {
-        create : __entity_create_default
-        
+        create : __entity_create_default,
+        getAll : __entity_get_all
     },
     
     
