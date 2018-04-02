@@ -15,6 +15,17 @@ struct NativeRef;
 // Used for all IO when working with the runtime
 class Primitive {
   public:
+      
+    enum class TypeHint {
+        IntegerT,
+        BooleanT,
+        FloatT,
+        DoubleT,
+        UInt32T,
+        UInt64T,
+        StringT,
+        EntityIDT
+    };
     Primitive(); // undefined
 
     Primitive(bool);
@@ -28,7 +39,8 @@ class Primitive {
 
     void Modify(const Primitive & other) {*this = other;}
     const std::string & Data() {return data;}
-    bool IsDefined() {return defined;}
+    bool IsDefined() const {return defined;}
+    TypeHint hint;
 
     operator int() const;
     operator bool() const;
@@ -121,6 +133,8 @@ class Object {
     // Retrieves the indexed data set with
     // SetNativeAddress()
     void * GetNativeAddress(uint32_t index = 0);
+    
+    Primitive CallMethod(const std::string & name, const std::vector<Primitive> & args = {});
     
     NativeRef * GetNative() {return data;}
   private:

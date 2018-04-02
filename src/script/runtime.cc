@@ -5,48 +5,58 @@ using Dynacoe::Chain;
 
 Primitive::Primitive() {
     defined = false;
+    hint = TypeHint::StringT;
 }
 
 Primitive::Primitive(bool in) {
     defined = true;
     data = in ? "1" : "0";
+    hint = TypeHint::BooleanT;
 }
 
 
 Primitive::Primitive(int in) {
     defined = true;
     data = (Chain() << in);
+    hint = TypeHint::IntegerT;
+
 }
 
 
 Primitive::Primitive(float in) {
     defined = true;
     data = (Chain() << in);
+    hint = TypeHint::FloatT;
 }
 
 Primitive::Primitive(double in) {
     defined = true;
     data = (Chain() << in);
+    hint = TypeHint::DoubleT;
 }
 
 Primitive::Primitive(uint32_t in) {
     defined = true;
     data = (Chain() << in);
+    hint = TypeHint::UInt32T;
 }
 
 Primitive::Primitive(uint64_t in) {
     defined = true;
     data = (Chain() << in);
+    hint = TypeHint::UInt64T;
 }
 
 Primitive::Primitive(const std::string & str) {
     defined = true;
     data = str;
+    hint = TypeHint::StringT;
 }
 
 Primitive::Primitive(const Dynacoe::Entity::ID & in) {
     defined = true;
     data = in.String();
+    hint = TypeHint::EntityIDT;
 }
 
 

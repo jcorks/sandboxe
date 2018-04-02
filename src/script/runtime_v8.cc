@@ -44,10 +44,10 @@ struct Type {
 // Native reference to a Runtime::Object
 struct NativeRef {
     // v8 handle representing this object.
-    v8::Handle<v8::Object> reference;
+    v8::Persistent<v8::Object> reference;
     
     // Pointer to the type of this object
-    Type * typeinfo;
+    Type * typeData;
     
     // Object reference that owns this NativeRef
     Object * parent;
@@ -76,7 +76,18 @@ std::map<std::string, Type *> types;
 
 
 
-
+static v8::Handle<v8::Value> sandboxe_primitive_to_v8_value(const Primitive & p) {
+    if (!p.IsDefined()) return v8::Undefined();
+    switch(p.hint) {
+      case Primitive::TypeHint::BooleanT: return v8::Boolean::New(p);
+      case Primitive::TypeHint::IntegerT: return v8::Integer::New(p);
+      case Primitive::TypeHint::FloatT:   
+      case Primitive::TypeHint::DoubleT:  return v8::Number::New(p);
+      case Primitive::TypeHint::UInt32T:  return v8::Uint32::New(p);
+      case Primitive::TypeHint::UInt64T:  return v8::Number::New(p);
+    }
+    return v8::String::New(std::string(p).c_str());
+}
 
 
 ////////////////////////////////////////////////////////
@@ -89,16 +100,12 @@ static v8::Handle<v8::Value> sandboxe_v8_native__accessor_get(v8::Local<v8::Stri
     SANDBOXE_SCOPE;
     NativeRef * ref = (NativeRef*) info.This()->GetPointerFromInternalField(0);
     Context context;
-    Primitive out = ref->typeinfo->natives[*v8::String::Utf8Value(name)].first(
+    Primitive out = ref->typeData->natives[*v8::String::Utf8Value(name)].first(
         ref->parent,
         {},
         context
     );
-    if (out.IsDefined()) {
-        return v8::String::New(std::string(out).c_str());
-    } else {
-        return v8::Undefined();
-    }
+    return sandboxe_primitive_to_v8_value(out);
 }
 
 static void sandboxe_v8_native__accessor_set(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo & info) {
@@ -107,7 +114,8 @@ static void sandboxe_v8_native__accessor_set(v8::Local<v8::String> name, v8::Loc
     std::vector<Primitive> arguments;
     Context context;
     arguments.push_back(*v8::String::Utf8Value(value) ? Primitive(std::string(*v8::String::Utf8Value(value))) : Primitive());
-    ref->typeinfo->natives[*v8::String::Utf8Value(name)].second(
+    std::string into = *v8::String::Utf8Value(name);
+    ref->typeData->natives[into].second(
         ref->parent,
         arguments,
         context
@@ -116,7 +124,22 @@ static void sandboxe_v8_native__accessor_set(v8::Local<v8::String> name, v8::Loc
 
 static v8::Handle<v8::Value> sandboxe_v8_native__invocation(const v8::Arguments & args) {
     // arguments should have reference to original object;
+    SANDBOXE_SCOPE;
+    NativeRef * ref = (NativeRef*) args.Holder()->GetPointerFromInternalField(0);
+    std::vector<Primitive> arguments;
+    Context context;
+    for(uint32_t i = 0; i < args.Length(); ++i) 
+        arguments.push_back(*v8::String::Utf8Value(args[i]) ? Primitive(std::string(*v8::String::Utf8Value(args[i]))) : Primitive());
+        
+    std::string into = *v8::String::Utf8Value(args.Callee()->GetName());
+    Primitive out = ref->typeData->functions[into](
+        ref->parent,
+        arguments,
+        context
+    );
     
+    return sandboxe_primitive_to_v8_value(out);
+
 }
 
 // globals functions defined at initialization
@@ -137,10 +160,8 @@ static v8::Handle<v8::Value> sandboxe_v8_native__global_incovation(const v8::Arg
     if (context.GetReturnObject()) {
         return v8_handleScope.Close(context.GetReturnObject()->GetNative()->reference);
     }
-    return out.IsDefined() ? v8::String::New(
-        std::string(out).c_str()
-    ) :
-        v8::Undefined();
+    return sandboxe_primitive_to_v8_value(out);
+
 }
 
 
@@ -396,19 +417,20 @@ void Sandboxe::Script::Runtime::AddType(const std::string & name,
 Object::Object(const std::string & t) {
     SANDBOXE_SCOPE;
     data = new NativeRef;
-    data->typeinfo = types[t];
-    if (data->typeinfo == nullptr) {
+    data->typeData = types[t];
+    if (data->typeData == nullptr) {
         v8::ThrowException(v8::String::New("sandboxe script object: Type does not exist"));
         objects.Insert(data);
         return;
     }
     data->parent = this;
-    v8::Handle<v8::Object> obj = data->typeinfo->self->NewInstance();
+    v8::Handle<v8::Object> obj = data->typeData->self->NewInstance();
     // set a ref to the type info
     obj->SetPointerInInternalField(0, data);
 
     objects.Insert(data);
-    data->reference = v8_handleScope.Close(obj);
+    data->reference = v8::Persistent<v8::Object>::New(obj);
+    data->reference.MakeWeak(nullptr, nullptr);
 }
 
 Object::~Object() {
@@ -417,29 +439,29 @@ Object::~Object() {
 
 Primitive Object::Get(const std::string & name) {
     SANDBOXE_SCOPE;
-    if (!data->reference.IsEmpty()) {
+    if (data->reference.IsEmpty()) {
         v8::ThrowException(v8::String::New("sandboxe script object: Get() failed; reference is dead"));
         return Primitive();
     }
     v8::String::Utf8Value value(data->reference->Get(v8::String::New(name.c_str())));
-    return (*value ? Primitive(*value) : Primitive());
+    return (*value ? Primitive(std::string(*value)) : Primitive());
 }
 
 void Object::Set(const std::string & name, const Primitive & d) {
     SANDBOXE_SCOPE;
-    if (!data->reference.IsEmpty()) {
+    if (data->reference.IsEmpty()) {
          v8::ThrowException(v8::String::New("sandboxe script object: Set() failed; reference is dead"));
     }
     data->reference->Set(
         v8::String::New(name.c_str()),
-        v8::String::New(std::string(d).c_str())
+        sandboxe_primitive_to_v8_value(d)
     );
 
 }
 
 
 const std::string & Object::GetType() const {
-    return data->typeinfo->name;
+    return data->typeData->name;
 }
 
 
@@ -453,6 +475,34 @@ void * Object::GetNativeAddress(uint32_t index) {
     return data->userData[index];
 }
 
+Primitive Object::CallMethod(const std::string & str, const std::vector<Primitive> & args) {
+    SANDBOXE_SCOPE;
+    v8::Handle<v8::Value> pre = data->reference->Get(v8::String::New(str.c_str()));
+    if (!(!pre.IsEmpty() && pre->IsObject())) {
+        // throw error?
+        return Primitive();
+    }
+    v8::Handle<v8::Object> fn = pre->ToObject();
+    if (!fn->IsCallable()) {
+        return Primitive();
+    }
+
+    v8::Handle<v8::Value> args_conv[args.size()];
+    for(uint32_t i = 0; i < args.size(); ++i) {
+        args_conv[i] = v8::String::New(std::string(args[i]).c_str());
+    }
+    v8::Handle<v8::Value> result = fn->CallAsFunction(
+        data->reference,
+        args.size(),
+        &args_conv[0]
+    );
+    if (!(!result.IsEmpty() && !result->IsUndefined())) return Primitive();
+    const char * out = *v8::String::Utf8Value(result);
+    if (out) {
+        return Primitive(std::string(out));
+    }
+    return Primitive();
+}
 
 void Context::ScriptError(const std::string & str) {
     v8::ThrowException(v8::String::New(str.c_str()));
