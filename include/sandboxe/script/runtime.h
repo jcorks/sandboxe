@@ -15,7 +15,7 @@ struct NativeRef;
 // Used for all IO when working with the runtime
 class Primitive {
   public:
-      
+    class Object;
     enum class TypeHint {
         IntegerT,
         BooleanT,
@@ -24,7 +24,8 @@ class Primitive {
         UInt32T,
         UInt64T,
         StringT,
-        EntityIDT
+        EntityIDT,
+        ObjectReferenceT,
     };
     Primitive(); // undefined
 
@@ -36,6 +37,7 @@ class Primitive {
     Primitive(uint64_t);    
     Primitive(const std::string &);    
     Primitive(const Dynacoe::Entity::ID &);   
+    Primitive(Sandboxe::Script::Runtime::Object *);
 
     void Modify(const Primitive & other) {*this = other;}
     const std::string & Data() {return data;}
@@ -50,6 +52,7 @@ class Primitive {
     operator uint64_t() const;
     operator std::string() const;
     operator Dynacoe::Entity::ID() const;
+    operator Sandboxe::Script::Runtime::Object *() const;
     
   private:
     std::string data;
@@ -64,19 +67,30 @@ class Context {
     // Behavior is implementation dependent
     void ScriptError(const std::string & str);
     
-    // Sets a new Object to use as the return value of the native function
-    // If set, the real return value from the native funciton is ignored and this is used instead.
-    void SetReturnObject(Object * o) {returnObject = o;}
+    
+    
+    // sets the return value for the native function.
+    // If the primitive
+    void SetReturnValue(const Primitive & v) {value = v;}
         
-    Object * GetReturnObject() {return returnObject;}
+    // Sets an array of primitives to be returned by the function rather 
+    // than the simple primitive
+    void SetReturnArray(const std::vector<Primitive> & arr) { returnArray = arr; } 
+        
+    const Primitive & GetReturnValue() const {return value;}
+    const std::vector<Primitive> & GetReturnArray() const {return returnArray;}
+    
+    
+    
   private:
-    Object * returnObject;
+    Primitive value;
+    std::vector<Primitive> returnArray;
 };
 
 // Represents a native function. Native functions usually 
 // represent native code to be run when a script runs a function
-typedef Primitive (*Function)(Object *, const std::vector<Primitive> & arguments, Context & context);
-#define SANDBOXE_NATIVE_DEF(__T__) Sandboxe::Script::Runtime::Primitive __T__(Sandboxe::Script::Runtime::Object * source, const std::vector<Sandboxe::Script::Runtime::Primitive> & arguments, Sandboxe::Script::Runtime::Context & context)
+typedef void (*Function)(Object *, const std::vector<Primitive> & arguments, Context & context);
+#define SANDBOXE_NATIVE_DEF(__T__) void __T__(Sandboxe::Script::Runtime::Object * source, const std::vector<Sandboxe::Script::Runtime::Primitive> & arguments, Sandboxe::Script::Runtime::Context & context)
 
 
 // initializes the scripting context

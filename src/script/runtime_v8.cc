@@ -74,7 +74,9 @@ std::map<std::string, Type *> types;
 
 
 
-
+//////////////////////////////////////
+/// Native helpers
+/////////////////////////////////
 
 static v8::Handle<v8::Value> sandboxe_primitive_to_v8_value(const Primitive & p) {
     if (!p.IsDefined()) return v8::Undefined();
@@ -90,6 +92,48 @@ static v8::Handle<v8::Value> sandboxe_primitive_to_v8_value(const Primitive & p)
 }
 
 
+static std::vector<Primitive> v8_arguments_to_sandboxe_primitive_array(const v8::Arguments & args) {
+    std::vector<Primitive> arguments;
+    for(uint32_t i = 0; i < args.Length(); ++i) {
+
+        // collect native objects 
+        if (args[i]->IsObject()) {
+            v8::Handle<v8::Object> object = args[i]->ToObject();
+            if (object->InternalFieldCount())
+                arguments.push_back(
+                    (
+                        (NativeRef*)object->GetPointerFromInternalField(0)
+                    )->parent
+                );            
+            else {
+                /// SOMETHING
+                arguments.push_back(*v8::String::Utf8Value(args[i]) ? Primitive(std::string(*v8::String::Utf8Value(args[i]))) : Primitive());
+            }
+        } else {
+            arguments.push_back(*v8::String::Utf8Value(args[i]) ? Primitive(std::string(*v8::String::Utf8Value(args[i]))) : Primitive());
+        }
+    }
+    return arguments;
+}
+
+
+static v8::Handle<v8::Value> sandboxe_context_get_return_value(const Context & context) {
+    // if the native call wants to return a new scripting object, do so
+    if (context.GetReturnArray().size()) {
+        auto outputArray = context.GetReturnArray();
+        /// ARRAY PLS
+        v8::Handle<v8::Array> array = v8::Array::New(outputArray.size());
+        for(uint32_t i = 0; i < outputArray.size(); ++i) {
+            array->Set(i, sandboxe_primitive_to_v8_value(outputArray[i]));
+        }
+        return array;
+    } else if (context.GetReturnValue().hint == Primitive::TypeHint::ObjectReferenceT) {
+        return ((Object*)context.GetReturnValue())->GetNative()->reference;
+    }
+    return sandboxe_primitive_to_v8_value(context.GetReturnValue());
+    
+}
+
 ////////////////////////////////////////////////////////
 /// native functions
 ///////////////////////////////////////////////////////
@@ -100,12 +144,12 @@ static v8::Handle<v8::Value> sandboxe_v8_native__accessor_get(v8::Local<v8::Stri
     SANDBOXE_SCOPE;
     NativeRef * ref = (NativeRef*) info.This()->GetPointerFromInternalField(0);
     Context context;
-    Primitive out = ref->typeData->natives[*v8::String::Utf8Value(name)].first(
+    ref->typeData->natives[*v8::String::Utf8Value(name)].first(
         ref->parent,
         {},
         context
     );
-    return sandboxe_primitive_to_v8_value(out);
+    return sandboxe_context_get_return_value(context);
 }
 
 static void sandboxe_v8_native__accessor_set(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo & info) {
@@ -126,19 +170,18 @@ static v8::Handle<v8::Value> sandboxe_v8_native__invocation(const v8::Arguments 
     // arguments should have reference to original object;
     SANDBOXE_SCOPE;
     NativeRef * ref = (NativeRef*) args.Holder()->GetPointerFromInternalField(0);
-    std::vector<Primitive> arguments;
     Context context;
-    for(uint32_t i = 0; i < args.Length(); ++i) 
-        arguments.push_back(*v8::String::Utf8Value(args[i]) ? Primitive(std::string(*v8::String::Utf8Value(args[i]))) : Primitive());
+    std::vector<Primitive> arguments = v8_arguments_to_sandboxe_primitive_array(args);
+
         
     std::string into = *v8::String::Utf8Value(args.Callee()->GetName());
-    Primitive out = ref->typeData->functions[into](
+    ref->typeData->functions[into](
         ref->parent,
         arguments,
         context
     );
     
-    return sandboxe_primitive_to_v8_value(out);
+    return sandboxe_context_get_return_value(context);
 
 }
 
@@ -146,21 +189,18 @@ static v8::Handle<v8::Value> sandboxe_v8_native__invocation(const v8::Arguments 
 static v8::Handle<v8::Value> sandboxe_v8_native__global_incovation(const v8::Arguments & args) {
     SANDBOXE_SCOPE;
     Function f = (Function)(Dynacoe::Chain() << *v8::String::Utf8Value(args.Data())).AsUInt64();
-    std::vector<Primitive> args_conv;
-    for(uint32_t i = 0; i < args.Length(); ++i) {
-        args_conv.push_back(Primitive(std::string(*v8::String::Utf8Value(args[i]))));
-    }
-    
+
     v8::TryCatch try_catch;
     Sandboxe::Script::Runtime::Context context;
+    std::vector<Primitive> arguments = v8_arguments_to_sandboxe_primitive_array(args);
     
-    Primitive out = f(nullptr, args_conv, context);
+    // gather native objects if applicable
+    f(nullptr, arguments, context);
 
-    // if the native call wants to return a new scripting object, do so
-    if (context.GetReturnObject()) {
-        return v8_handleScope.Close(context.GetReturnObject()->GetNative()->reference);
-    }
-    return sandboxe_primitive_to_v8_value(out);
+
+    return sandboxe_context_get_return_value(context);
+
+
 
 }
 

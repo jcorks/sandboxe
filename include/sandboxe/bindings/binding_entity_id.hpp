@@ -37,7 +37,7 @@ void dynacoe_entity_id(std::vector<std::pair<std::string, Sandboxe::Script::Runt
         
         // managed properties,
         {
-
+            
         }
     );
     

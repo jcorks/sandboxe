@@ -6,73 +6,65 @@ namespace Sandboxe {
 namespace Bindings {
 
 SANDBOXE_NATIVE_DEF(__console_is_visible) {
-    return Dynacoe::Console::IsVisible();
+    context.SetReturnValue(Dynacoe::Console::IsVisible());
 }
 
 SANDBOXE_NATIVE_DEF(__console_show) {
     SANDBOXE_ASSERT__ARG_COUNT(1);
     Dynacoe::Console::Show(arguments[0]);
-    SANDBOXE_NORETURN;
 }
 
 
 SANDBOXE_NATIVE_DEF(__console_is_locked) {
-    return Dynacoe::Console::IsLocked();
+    context.SetReturnValue(Dynacoe::Console::IsLocked());
 }
 
 SANDBOXE_NATIVE_DEF(__console_lock) {
     SANDBOXE_ASSERT__ARG_COUNT(1);
     Dynacoe::Console::Lock(arguments[0]);
-    SANDBOXE_NORETURN;
 }    
 
 SANDBOXE_NATIVE_DEF(__console_get_num_lines) {
-    return Dynacoe::Console::GetNumLines();
+    context.SetReturnValue(Dynacoe::Console::GetNumLines());
 }    
 
 SANDBOXE_NATIVE_DEF(__console_get_line) {
     SANDBOXE_ASSERT__ARG_COUNT(1);
-    return Dynacoe::Console::GetLine(arguments[0]);
+    context.SetReturnValue(Dynacoe::Console::GetLine(arguments[0]));
 }
 
 SANDBOXE_NATIVE_DEF(__console_clear) {
     Dynacoe::Console::Clear();
-    SANDBOXE_NORETURN;
 }
 
 SANDBOXE_NATIVE_DEF(__console_overlay_message_mode) {
     SANDBOXE_ASSERT__ARG_COUNT(1);
     Dynacoe::Console::OverlayMessageMode((Dynacoe::Console::MessageMode) (int)arguments[0]);
-    SANDBOXE_NORETURN;
 }
 
 SANDBOXE_NATIVE_DEF(__console_get_overlay_message_mode) {
-    return (int)Dynacoe::Console::GetOverlayMessageMode();
+    context.SetReturnValue((int)Dynacoe::Console::GetOverlayMessageMode());
 }
 
 SANDBOXE_NATIVE_DEF(__console_stream_system) {
     for(uint32_t i = 0; i < arguments.size(); ++i)
         Dynacoe::Console::System() << std::string(arguments[i]);
-    SANDBOXE_NORETURN;
 }
 
 
 SANDBOXE_NATIVE_DEF(__console_stream_info) {
     for(uint32_t i = 0; i < arguments.size(); ++i)
         Dynacoe::Console::Info() << std::string(arguments[i]);
-    SANDBOXE_NORETURN;
 }
 
 SANDBOXE_NATIVE_DEF(__console_stream_error) {
     for(uint32_t i = 0; i < arguments.size(); ++i)
         Dynacoe::Console::Error() << std::string(arguments[i]);
-    SANDBOXE_NORETURN;
 }
 
 SANDBOXE_NATIVE_DEF(__console_stream_warning) {
     for(uint32_t i = 0; i < arguments.size(); ++i)
         Dynacoe::Console::Warning() << std::string(arguments[i]);
-    SANDBOXE_NORETURN;
 }
 
 
