@@ -506,6 +506,9 @@ Object::Object(NativeRef & inData) {
 }
 
 Object::~Object() {
+    for(uint32_t i = 0; i < data->nonNatives.size(); ++i) {
+        temporary.push_back(data->nonNatives[i]);
+    }
     delete data;
 }
 
@@ -548,6 +551,28 @@ void Object::SetNativeAddress(void * d, uint32_t index) {
     while(data->userData.size() <= index) data->userData.push_back(nullptr);
     data->userData[index] = d;
 }
+
+void Object::SetNonNativeReference(Object * d, uint32_t index) {
+    if (d->IsNative()) return;
+    while(data->nonNatives.size() <= index) data->nonNatives.push_back(nullptr);
+    data->nonNatives[index] = d;
+
+    // remove the temporary from destruction
+    // they will be reposted to destruction on this objects destructor
+    for(uint32_t i = 0; i < temporary.size(); ++i) {
+        if (temporary[i] == d) {
+            temporary.erase(temporary.begin() + i);
+            return;
+        }
+    }
+}
+
+Object * Object::GetNonNativeReference(uint32_t index) {
+    while(data->nonNatives.size() <= index) data->nonNatives.push_back(nullptr);
+    return data->nonNatives[index];    
+}
+
+
 
 void * Object::GetNativeAddress(uint32_t index) {
     while(data->userData.size() <= index) data->userData.push_back(nullptr);
@@ -607,6 +632,7 @@ void Context::ScriptError(const std::string & str) {
 
 void PerformGarbageCollection() {
     for(uint32_t i = 0; i < temporary.size(); ++i) {
+        if (!temporary[i]) continue;
         delete temporary[i]->GetNative();
         delete temporary[i];
     }

@@ -153,11 +153,12 @@ class Object {
 
     // Sets data associated with the object only retrievable 
     // through GetNonNativeReference();
+    // If the given object is native, no action is taken
     void SetNonNativeReference(Object *, uint32_t index = 0);
 
     // Sets data associated with the object only retrievable 
     // through GetNonNativeReference();
-    Object * GetNonNativeReference(Object *, uint32_t index = 0);
+    Object * GetNonNativeReference(uint32_t index = 0);
 
     // Retrieves the indexed data set with
     // SetNativeAddress()
