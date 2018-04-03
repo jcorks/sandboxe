@@ -24,7 +24,7 @@ namespace Bindings {
 #define Index_EntityID 0
 
 // helpers 
-Sandboxe::Entity * __entity_new() {
+static Sandboxe::Entity * __entity_new() {
     Sandboxe::Script::Runtime::Object * object = new Sandboxe::Script::Runtime::Object("entity");
     Dynacoe::Entity::ID id = Dynacoe::Entity::Create<Sandboxe::Entity>(); // todo: replace with special draw/run/mapped
     Sandboxe::Entity * out = id.IdentifyAs<Sandboxe::Entity>();

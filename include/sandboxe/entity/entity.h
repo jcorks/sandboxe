@@ -4,6 +4,13 @@
 namespace Sandboxe {
 class Entity : public Dynacoe::Entity {
   public:
+    ~Entity() {
+        auto components = GetComponents();
+        for(uint32_t i = 0; i < components.size(); ++i) {
+            delete(components[i]);
+        }
+    }
+      
     void SetObjectSource(Sandboxe::Script::Runtime::Object * obj) {
         object = obj;
     }

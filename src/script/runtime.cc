@@ -58,7 +58,7 @@ Primitive::Primitive(const std::string & str) {
 Primitive::Primitive(Sandboxe::Script::Runtime::Object * in) {
     defined = true;
     data = (Chain() << (uint64_t)in);
-    hint = TypeHint::ObjectReferenceT;
+    hint = in->IsNative() ? TypeHint::ObjectReferenceT : TypeHint::ObjectReferenceNonNativeT;
 }
 
 

@@ -8,7 +8,10 @@ var sandboxe = {
         create : __entity_create_default,
         getAll : __entity_get_all
     },
-    
+
+    component : {
+        create : __component_create
+    },
     
     script : {
         include : __script_include

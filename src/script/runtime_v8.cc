@@ -54,6 +54,12 @@ struct NativeRef {
     
     // Indexed arbitrary native data.
     std::vector<void*> userData;
+    
+    // returns whether this instance is from a native instance
+    int isNative; 
+    
+    // nonNative objects set with SetNonNativeReference
+    std::vector<Object *> nonNatives;
 };
 
 
@@ -68,6 +74,7 @@ static SandboxeContextModel * global = nullptr;
 // Table of all objects. Since v8 doesnt seem to send events for object cleanup,
 // this has to be cleaned out every now and then
 Dynacoe::Table<NativeRef*> objects;
+std::vector<Object*> temporary;
 
 // Table of all types. 
 std::map<std::string, Type *> types;
@@ -88,10 +95,23 @@ static v8::Handle<v8::Value> sandboxe_primitive_to_v8_value(const Primitive & p)
       case Primitive::TypeHint::UInt32T:  return v8::Uint32::New(p);
       case Primitive::TypeHint::UInt64T:  return v8::Number::New(p);
       case Primitive::TypeHint::ObjectReferenceT:  return ((Object*)p)->GetNative()->reference;
+      case Primitive::TypeHint::ObjectReferenceNonNativeT:  return ((Object*)p)->GetNative()->reference;
     }
     return v8::String::New(std::string(p).c_str());
 }
 
+static Object * sandboxe_object_reference_temporary_from_v8_value(const v8::Handle<v8::Value> & val) {
+    NativeRef * ref = new NativeRef;
+    ref->isNative = false;
+    ref->typeData = nullptr;
+    ref->reference = v8::Persistent<v8::Object>::New(val->ToObject());
+    
+    Object * temp = new Object(*ref);
+
+    // gets cleaned up next cycle
+    temporary.push_back(temp);
+    return temp;
+}
 
 static std::vector<Primitive> v8_arguments_to_sandboxe_primitive_array(const v8::Arguments & args) {
     std::vector<Primitive> arguments;
@@ -100,14 +120,17 @@ static std::vector<Primitive> v8_arguments_to_sandboxe_primitive_array(const v8:
         // collect native objects 
         if (args[i]->IsObject()) {
             v8::Handle<v8::Object> object = args[i]->ToObject();
-            if (object->InternalFieldCount())
+            if (object->InternalFieldCount()) { //< - Native object
                 arguments.push_back(
                     (
                         (NativeRef*)object->GetPointerFromInternalField(0)
                     )->parent
                 );            
-            else {
-                /// SOMETHING
+            } else if (args[i]->IsFunction() || args[i]->IsArray()) { //<- non-native object
+
+                arguments.push_back(sandboxe_object_reference_temporary_from_v8_value(args[i]));
+                
+            } else {    
                 arguments.push_back(*v8::String::Utf8Value(args[i]) ? Primitive(std::string(*v8::String::Utf8Value(args[i]))) : Primitive());
             }
         } else {
@@ -181,7 +204,6 @@ static v8::Handle<v8::Value> sandboxe_v8_native__invocation(const v8::Arguments 
         arguments,
         context
     );
-    
     return sandboxe_context_get_return_value(context);
 
 }
@@ -197,7 +219,6 @@ static v8::Handle<v8::Value> sandboxe_v8_native__global_incovation(const v8::Arg
     
     // gather native objects if applicable
     f(nullptr, arguments, context);
-
 
     return sandboxe_context_get_return_value(context);
 
@@ -458,6 +479,7 @@ void Sandboxe::Script::Runtime::AddType(const std::string & name,
 Object::Object(const std::string & t) {
     SANDBOXE_SCOPE;
     data = new NativeRef;
+    data->isNative = true;
     data->typeData = types[t];
     if (data->typeData == nullptr) {
         v8::ThrowException(v8::String::New("sandboxe script object: Type does not exist"));
@@ -474,6 +496,15 @@ Object::Object(const std::string & t) {
     data->reference.MakeWeak(nullptr, nullptr);
 }
 
+
+// non-native object
+Object::Object(NativeRef & inData) {
+    data = &inData;
+    // set a ref to the type info
+    data->reference->SetPointerInInternalField(0, data);
+    data->typeData = nullptr;
+}
+
 Object::~Object() {
     delete data;
 }
@@ -484,7 +515,11 @@ Primitive Object::Get(const std::string & name) {
         v8::ThrowException(v8::String::New("sandboxe script object: Get() failed; reference is dead"));
         return Primitive();
     }
-    v8::String::Utf8Value value(data->reference->Get(v8::String::New(name.c_str())));
+    v8::Handle<v8::Value> obj = data->reference->Get(v8::String::New(name.c_str()));
+    if (obj->IsObject() && (obj->IsFunction() || obj->IsArray())) {
+        return sandboxe_object_reference_temporary_from_v8_value(obj);
+    }
+    v8::String::Utf8Value value(obj);
     return (*value ? Primitive(std::string(*value)) : Primitive());
 }
 
@@ -496,12 +531,15 @@ void Object::Set(const std::string & name, const Primitive & d) {
     data->reference->Set(
         v8::String::New(name.c_str()),
         sandboxe_primitive_to_v8_value(d)
+            
     );
 
 }
 
 
 const std::string & Object::GetType() const {
+    static std::string bad;
+    if (!data->typeData) return bad;
     return data->typeData->name;
 }
 
@@ -516,14 +554,24 @@ void * Object::GetNativeAddress(uint32_t index) {
     return data->userData[index];
 }
 
+
 Primitive Object::CallMethod(const std::string & str, const std::vector<Primitive> & args) {
     SANDBOXE_SCOPE;
-    v8::Handle<v8::Value> pre = data->reference->Get(v8::String::New(str.c_str()));
-    if (!(!pre.IsEmpty() && pre->IsObject())) {
-        // throw error?
-        return Primitive();
+    
+    v8::Handle<v8::Object> fn;
+    
+    if (str.size()) {
+        v8::Handle<v8::Value> pre = data->reference->Get(v8::String::New(str.c_str()));
+        if (!(!pre.IsEmpty() && pre->IsObject())) {
+            // throw error?
+            return Primitive();
+        }
+        fn = pre->ToObject();
+
+    } else {
+        fn = data->reference;
     }
-    v8::Handle<v8::Object> fn = pre->ToObject();
+    
     if (!fn->IsCallable()) {
         return Primitive();
     }
@@ -532,11 +580,13 @@ Primitive Object::CallMethod(const std::string & str, const std::vector<Primitiv
     for(uint32_t i = 0; i < args.size(); ++i) {
         args_conv[i] = v8::String::New(std::string(args[i]).c_str());
     }
+    
     v8::Handle<v8::Value> result = fn->CallAsFunction(
         data->reference,
         args.size(),
         &args_conv[0]
     );
+    
     if (!(!result.IsEmpty() && !result->IsUndefined())) return Primitive();
     const char * out = *v8::String::Utf8Value(result);
     if (out) {
@@ -545,10 +595,23 @@ Primitive Object::CallMethod(const std::string & str, const std::vector<Primitiv
     return Primitive();
 }
 
+bool Object::IsNative() const {
+    return data->isNative;
+}
+
+
 void Context::ScriptError(const std::string & str) {
     v8::ThrowException(v8::String::New(str.c_str()));
 }
 
+
+void PerformGarbageCollection() {
+    for(uint32_t i = 0; i < temporary.size(); ++i) {
+        delete temporary[i]->GetNative();
+        delete temporary[i];
+    }
+
+}
 
 
 

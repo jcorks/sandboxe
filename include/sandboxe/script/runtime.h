@@ -25,6 +25,7 @@ class Primitive {
         UInt64T,
         StringT,
         ObjectReferenceT,
+        ObjectReferenceNonNativeT
     };
     Primitive(); // undefined
 
@@ -74,9 +75,16 @@ class Context {
     // than the simple primitive
     void SetReturnArray(const std::vector<Primitive> & arr) { returnArray = arr; isArray = true;} 
         
+    // Gets the return value set
     const Primitive & GetReturnValue() const {return value;}
+
+    // gets the return value set
     const std::vector<Primitive> & GetReturnArray() const {return returnArray;}
+
+    // returns whether isArray is set
     bool ReturnsArray() const {return isArray;}
+
+
     
     
   private:
@@ -126,6 +134,7 @@ class Object {
   public: 
     // Instantiates a new object of the given type
     Object(const std::string &);
+    Object(NativeRef &);
     ~Object();   
     
     // Returns a property of the object of the given name.
@@ -142,15 +151,29 @@ class Object {
     // through GetNativeAddress();
     void SetNativeAddress(void * data, uint32_t index = 0);
 
+    // Sets data associated with the object only retrievable 
+    // through GetNonNativeReference();
+    void SetNonNativeReference(Object *, uint32_t index = 0);
+
+    // Sets data associated with the object only retrievable 
+    // through GetNonNativeReference();
+    Object * GetNonNativeReference(Object *, uint32_t index = 0);
+
     // Retrieves the indexed data set with
     // SetNativeAddress()
     void * GetNativeAddress(uint32_t index = 0);
     
+    // Calls the given method. If name is blank, the 
+    // object itself is attempted to be called as a function
     Primitive CallMethod(const std::string & name, const std::vector<Primitive> & args = {});
     
+    // Returns whether the object is native. NonNative objects 
+    // have restricted functionality.
+    bool IsNative() const;
+    
     NativeRef * GetNative() {return data;}
+    
   private:
-    Object(void *);
     NativeRef * data;
 };
 
