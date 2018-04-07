@@ -5,6 +5,7 @@
 #include "dynacoe_console.hpp"
 #include "dynacoe_entity.hpp"
 #include "dynacoe_component.hpp"
+#include "dynacoe_vector.hpp"
 
 
 namespace Sandboxe {
@@ -15,6 +16,7 @@ std::vector<std::pair<std::string, Runtime::Function>> GatherNativeBindings() {
     Bindings::dynacoe_console(out);
     Bindings::dynacoe_entity(out);
     Bindings::dynacoe_component(out);
+    Bindings::dynacoe_vector(out);
     return out;
 }   
 

@@ -1,14 +1,25 @@
 #ifndef sandboxe_entity_included_h
 #define sandboxe_entity_included_h
 
+#include <sandboxe/native/native.h>
+
+
+
 namespace Sandboxe {
 class Entity : public Dynacoe::Entity {
   public:
+// helpers 
+      
     ~Entity() {
         auto components = GetComponents();
         for(uint32_t i = 0; i < components.size(); ++i) {
             delete(components[i]);
         }
+    }
+    
+    Entity() {
+        object = nullptr;
+        RemoveComponent(&node);
     }
       
     void SetObjectSource(Sandboxe::Script::Runtime::Object * obj) {

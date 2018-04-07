@@ -1,6 +1,7 @@
 #ifndef H_sandboxe_bindings_dynacoe_console
 #define H_sandboxe_bindings_dynacoe_console
-#include "binding_helpers.h"
+#include <sandboxe/native/native.h>
+
 
 namespace Sandboxe {
 namespace Bindings {

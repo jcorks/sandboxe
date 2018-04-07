@@ -158,11 +158,11 @@ class Object {
 
     // Sets data associated with the object only retrievable 
     // through GetNonNativeReference();
-    Object * GetNonNativeReference(uint32_t index = 0);
+    Object * GetNonNativeReference(uint32_t index = 0) const;
 
     // Retrieves the indexed data set with
     // SetNativeAddress()
-    void * GetNativeAddress(uint32_t index = 0);
+    void * GetNativeAddress(uint32_t index = 0) const;
     
     // Calls the given method. If name is blank, the 
     // object itself is attempted to be called as a function

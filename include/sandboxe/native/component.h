@@ -3,6 +3,7 @@
 
 #include <Dynacoe/Library.h>
 #include <sandboxe/script/runtime.h>
+#include <sandboxe/native/native.h>
 
 
 /*
@@ -23,7 +24,8 @@
 namespace Sandboxe {
 class Component : public Dynacoe::Component {
   public:
-    
+      
+
       // data is the function object
       // Generic event handler that calls non-native script object functions
       static DynacoeEvent(NativeHandler) {

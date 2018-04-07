@@ -567,14 +567,14 @@ void Object::SetNonNativeReference(Object * d, uint32_t index) {
     }
 }
 
-Object * Object::GetNonNativeReference(uint32_t index) {
+Object * Object::GetNonNativeReference(uint32_t index) const {
     while(data->nonNatives.size() <= index) data->nonNatives.push_back(nullptr);
     return data->nonNatives[index];    
 }
 
 
 
-void * Object::GetNativeAddress(uint32_t index) {
+void * Object::GetNativeAddress(uint32_t index) const {
     while(data->userData.size() <= index) data->userData.push_back(nullptr);
     return data->userData[index];
 }

@@ -3,10 +3,20 @@
 
 
 var sandboxe = {
+
+    vector : {
+        create : __vector_create_new
+    },
     
     entity : {
         create : __entity_create_default,
-        getAll : __entity_get_all
+        getAll : __entity_get_all,
+        
+        
+        updateClass : {
+            before : 0,
+            ater : 1
+        }
     },
 
     component : {
@@ -48,6 +58,9 @@ var sandboxe = {
 
     }
 };
+
+
+
 
 
 

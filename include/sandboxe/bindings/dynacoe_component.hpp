@@ -1,21 +1,14 @@
 #ifndef dynacoe_component_binding_sandboxe_included
 #define dynacoe_component_binding_sandboxe_included
 
-#include <sandboxe/bindings/binding_helpers.h>
-#include <sandboxe/component/component.h>
-#include <sandboxe/entity/entity.h>
+#include <sandboxe/native/native.h>
+#include <sandboxe/native/component.h>
+#include <sandboxe/native/entity.h>
 namespace Sandboxe {
 namespace Bindings {
 
 
-// helpers 
-static Sandboxe::Component * __component_new(const std::string & tag, const std::string & info) {
-    Sandboxe::Script::Runtime::Object * object = new Sandboxe::Script::Runtime::Object("component");
-    Sandboxe::Component * component = new Sandboxe::Component(tag, info); 
-    component->SetObjectSource(object);
-    object->SetNativeAddress(component);
-    return component;
-}
+
 
 // native functions 
 
@@ -48,11 +41,19 @@ SANDBOXE_NATIVE_DEF(__component_uninstall_event) {
 }
 
 SANDBOXE_NATIVE_DEF(__component_emit_event) {
-    SANDBOXE_ASSERT__ARG_COUNT(2);
+    Dynacoe::Entity::ID other;
+    if (arguments.size() >= 2) {
+        SANDBOXE_ASSERT__ARG_COUNT(2);
+        SANDBOXE_ASSERT__ARG_TYPE(1, ObjectReferenceT);
+        SANDBOXE_ASSERT__ARG_NATIVE_TYPE(1, EntityIDT);
 
+        other = ((uint64_t)((Sandboxe::Script::Runtime::Object*)arguments[1])->GetNativeAddress());
+    } else if (arguments.size() < 1) {
+        return;
+    }
+        
+        
     // TODO: allow undefined
-    SANDBOXE_ASSERT__ARG_TYPE(1, ObjectReferenceT);
-    Dynacoe::Entity::ID other((uint64_t)((Sandboxe::Script::Runtime::Object*)arguments[1])->GetNativeAddress());
     Sandboxe::Component * component = (Sandboxe::Component *)source->GetNativeAddress();
     component->EmitEvent(
         arguments[0],
@@ -77,6 +78,7 @@ SANDBOXE_NATIVE_DEF(__component_can_handle_event) {
 SANDBOXE_NATIVE_DEF(__component_install_hook) {
     SANDBOXE_ASSERT__ARG_COUNT(2);
     SANDBOXE_ASSERT__ARG_TYPE(1, ObjectReferenceNonNativeT);
+
 
     Sandboxe::Component * component = (Sandboxe::Component *)source->GetNativeAddress();
     component->InstallHook_Sandboxe(
@@ -182,18 +184,14 @@ SANDBOXE_NATIVE_DEF(__component_get_host) {
 //// global functions 
 SANDBOXE_NATIVE_DEF(__component_create) {
     SANDBOXE_ASSERT__ARG_COUNT(2);
-    context.SetReturnValue(
-        __component_new(
-            arguments[0],
-            arguments[1]        
-        )->GetObjectSource()
-    );
+    context.SetReturnValue(Sandboxe::NativeObject::New(Sandboxe::NativeType::ComponentT, {arguments[0], arguments[1]}));
 }
 
 
 void dynacoe_component(std::vector<std::pair<std::string, Sandboxe::Script::Runtime::Function>> & fns) {
     Sandboxe::Script::Runtime::AddType(
-        "component",
+        Sandboxe::NativeTypeToString(Sandboxe::NativeType::ComponentT),
+
         // Functions
         {
             {"step", __component_step},
