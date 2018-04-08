@@ -20,6 +20,8 @@ class Node_Transform {
         scale = Sandboxe::NativeObject::Get<Dynacoe::Vector>(scaleO);
         rotation = Sandboxe::NativeObject::Get<Dynacoe::Vector>(rotationO);
         
+        *scale = {1, 1, 1};
+        
         object->Set("position", positionO);
         object->Set("scale", scaleO);
         object->Set("rotation", rotationO);

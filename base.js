@@ -3,7 +3,14 @@
 
 
 var sandboxe = {
-
+    engine : {
+        getRoot : __engine_get_root,
+        setRoot : __engine_set_root,
+        quit : __engine_quit,
+        attachManager : __engine_attach_manager
+        
+    },
+    
     vector : {
         create : __vector_create_new
     },

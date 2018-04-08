@@ -23,8 +23,10 @@ class Entity : public Dynacoe::Entity {
         object = nullptr;
         RemoveComponent(&node);
         realNode = nullptr;
+        
+
     }
-      
+    Dynacoe::Shape2D * shape;
     void SetObjectSource(Sandboxe::Script::Runtime::Object * obj);
     
     
@@ -51,9 +53,7 @@ class Entity : public Dynacoe::Entity {
     void OnPreDraw() {
         object->CallMethod("onPreDraw");
     }
-    void OnDraw() {
-        object->CallMethod("onDraw");
-    }
+    void OnDraw();
 
 
   private:
