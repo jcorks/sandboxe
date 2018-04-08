@@ -17,7 +17,8 @@ enum class NativeType {
     EntityIDT = 1,
     ComponentT,
     VectorT,
-    Node_TransformT
+    Node_TransformT,
+    NodeT
 };
 
 

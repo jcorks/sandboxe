@@ -5,6 +5,7 @@
 #include <sandboxe/native/entity.h>
 #include <sandboxe/native/component.h>
 #include <sandboxe/native/vector.h>
+#include <sandboxe/native/node.h>
 
 #include <cassert>
 
@@ -29,7 +30,7 @@ Sandboxe::Script::Runtime::Object * NativeObject::New(NativeType type, const std
           assert(args.size() >= 2);
           Sandboxe::Component * component = new Sandboxe::Component(args[0], args[1]);
           component->SetObjectSource(object);
-          v = (void*) component;
+          v = (void*) dynamic_cast<Sandboxe::ComponentAdaptor*>(component);
           break;
       }
 
@@ -40,10 +41,15 @@ Sandboxe::Script::Runtime::Object * NativeObject::New(NativeType type, const std
       }
       
       case NativeType::Node_TransformT: {
-          v = (void*) new Dynacoe::Node::Transform();
+          v = (void*) new Sandboxe::Node_Transform(object);
           break;
       }
-
+      
+      case NativeType::NodeT: {
+          auto ref = new Sandboxe::Node(object);
+          v = (void*) dynamic_cast<Sandboxe::ComponentAdaptor*>(ref);
+          break;
+      }
 
     }
     
@@ -54,12 +60,13 @@ Sandboxe::Script::Runtime::Object * NativeObject::New(NativeType type, const std
 
 
 
-const char * NativeTypeToString(NativeType type) {
+const char * Sandboxe::NativeTypeToString(NativeType type) {
   switch(type) {
     case NativeType::EntityIDT: return "Entity";
     case NativeType::ComponentT: return "Component";
     case NativeType::VectorT: return "Vector";
     case NativeType::Node_TransformT: return "Node::Transform";
+    case NativeType::NodeT: return "Node";
     default: return "Unknown";
   }        
 }

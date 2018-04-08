@@ -5,7 +5,9 @@
 
 
 
+
 namespace Sandboxe {
+class Node;
 class Entity : public Dynacoe::Entity {
   public:
 // helpers 
@@ -20,11 +22,12 @@ class Entity : public Dynacoe::Entity {
     Entity() {
         object = nullptr;
         RemoveComponent(&node);
+        realNode = nullptr;
     }
       
-    void SetObjectSource(Sandboxe::Script::Runtime::Object * obj) {
-        object = obj;
-    }
+    void SetObjectSource(Sandboxe::Script::Runtime::Object * obj);
+    
+    
     Sandboxe::Script::Runtime::Object * GetObjectSource() const {
         return object;
     }
@@ -56,6 +59,7 @@ class Entity : public Dynacoe::Entity {
   private:
       
     Sandboxe::Script::Runtime::Object * object;
+    Sandboxe::Node * realNode;
 };
 }
 

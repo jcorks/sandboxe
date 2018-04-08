@@ -3,3 +3,5 @@
 ./src/script/runtime.cc
 ./src/script/runtime_v8.cc
 ./src/native.cc
+
+./src/native/entity.cc

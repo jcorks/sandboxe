@@ -248,14 +248,14 @@ SANDBOXE_NATIVE_DEF(__entity_add_component) {
         SANDBOXE_ASSERT__ARG_COUNT(2);        
     }
     
-    Sandboxe::Component * component;
+    Sandboxe::ComponentAdaptor * component;
     SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceT);
-    component = (Component*)((Sandboxe::Script::Runtime::Object*)arguments[0])->GetNativeAddress();
+    component = (Sandboxe::ComponentAdaptor *)((Sandboxe::Script::Runtime::Object*)arguments[0])->GetNativeAddress();
 
     if (arguments.size() >= 2) {
-        e->AddComponent(component, (Dynacoe::Entity::UpdateClass)(int)arguments[1]);
+        e->AddComponent(component->Native_GetDynacoeComponent(), (Dynacoe::Entity::UpdateClass)(int)arguments[1]);
     } else {        
-        e->AddComponent(component);
+        e->AddComponent(component->Native_GetDynacoeComponent());
     }    
 }
 
@@ -269,7 +269,7 @@ SANDBOXE_NATIVE_DEF(__entity_query_component) {
     auto list = e->GetComponents();
     for(uint32_t i = 0; i < list.size(); ++i) {
         if (list[i]->GetTag() == t) {
-            context.SetReturnValue(((Sandboxe::Component*)list[i])->GetObjectSource());
+            context.SetReturnValue(((Sandboxe::ComponentAdaptor*)list[i])->GetObjectSource());
         }
     }
 }
@@ -283,7 +283,7 @@ SANDBOXE_NATIVE_DEF(__entity_get_components) {
     std::vector<Sandboxe::Script::Runtime::Primitive> list;
     auto components = e->GetComponents();
     for(uint32_t i = 0; i < components.size(); ++i) {
-        list.push_back(((Sandboxe::Component*)components[i])->GetObjectSource());
+        list.push_back((dynamic_cast<Sandboxe::ComponentAdaptor*>(components[i]))->GetObjectSource());
     }
     
     context.SetReturnArray(list);
