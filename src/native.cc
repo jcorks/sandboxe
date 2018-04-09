@@ -6,6 +6,7 @@
 #include <sandboxe/native/component.h>
 #include <sandboxe/native/vector.h>
 #include <sandboxe/native/node.h>
+#include <sandboxe/native/buttonListener.h>
 
 #include <cassert>
 
@@ -51,6 +52,10 @@ Sandboxe::Script::Runtime::Object * NativeObject::New(NativeType type, const std
           break;
       }
 
+      case NativeType::ButtonListenerT: {
+          auto ref = new ButtonListener(object);
+          v = (void*) ref;
+      }
     }
     
     object->SetNativeAddress((void*)v);
@@ -67,6 +72,7 @@ const char * Sandboxe::NativeTypeToString(NativeType type) {
     case NativeType::VectorT: return "Vector";
     case NativeType::Node_TransformT: return "Node::Transform";
     case NativeType::NodeT: return "Node";
+    case NativeType::ButtonListenerT: return "ButtonListener";
     default: return "Unknown";
   }        
 }

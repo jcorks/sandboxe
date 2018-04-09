@@ -9,6 +9,7 @@
 #include "dynacoe_node_transform.hpp"
 #include "dynacoe_node.hpp"
 #include "dynacoe_engine.hpp"
+#include "dynacoe_input.hpp"
 
 namespace Sandboxe {
 namespace Script {
@@ -22,6 +23,7 @@ std::vector<std::pair<std::string, Runtime::Function>> GatherNativeBindings() {
     Bindings::dynacoe_node_transform(out);
     Bindings::dynacoe_node(out);
     Bindings::dynacoe_engine(out);
+    Bindings::dynacoe_input(out);
 
     return out;
 }   

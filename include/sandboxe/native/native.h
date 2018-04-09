@@ -18,7 +18,8 @@ enum class NativeType {
     ComponentT,
     VectorT,
     Node_TransformT,
-    NodeT
+    NodeT,
+    ButtonListenerT
 };
 
 
