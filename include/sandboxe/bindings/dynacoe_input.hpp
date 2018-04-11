@@ -147,8 +147,12 @@ SANDBOXE_NATIVE_DEF(__input_add_listener) {
 }
 
 SANDBOXE_NATIVE_DEF(__input_remove_listener) {
-    SANDBOXE_ASSERT__ARG_COUNT(1);
-    Dynacoe::Input::RemoveListener(arguments[0]);
+    SANDBOXE_ASSERT__ARG_COUNT(2);
+    SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceT);
+    SANDBOXE_ASSERT__ARG_NATIVE_TYPE(0, ButtonListenerT);
+    
+    Sandboxe::ButtonListener * b = Sandboxe::NativeObject::Get<Sandboxe::ButtonListener>(arguments[0]);    
+    Dynacoe::Input::RemoveListener(b);
 }
 
 void dynacoe_input(std::vector<std::pair<std::string, Sandboxe::Script::Runtime::Function>> & fns) {

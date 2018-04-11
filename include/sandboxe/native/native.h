@@ -19,7 +19,9 @@ enum class NativeType {
     VectorT,
     Node_TransformT,
     NodeT,
-    ButtonListenerT
+    ButtonListenerT,
+    AssetIDT,
+    ByteArrayT
 };
 
 

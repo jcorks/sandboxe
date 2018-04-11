@@ -10,6 +10,9 @@
 #include "dynacoe_node.hpp"
 #include "dynacoe_engine.hpp"
 #include "dynacoe_input.hpp"
+#include "dynacoe_assets.hpp"
+
+#include "sandboxe_byte_array.hpp"
 
 namespace Sandboxe {
 namespace Script {
@@ -24,6 +27,10 @@ std::vector<std::pair<std::string, Runtime::Function>> GatherNativeBindings() {
     Bindings::dynacoe_node(out);
     Bindings::dynacoe_engine(out);
     Bindings::dynacoe_input(out);
+    Bindings::dynacoe_assets(out);
+    
+    
+    Bindings::sandboxe_byte_array(out);
 
     return out;
 }   

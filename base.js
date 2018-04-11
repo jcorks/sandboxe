@@ -3,6 +3,41 @@
 
 
 var sandboxe = {
+    trunk : {
+        // prepares a new executable with a trunk
+        //stage : __trunk_add // stages
+        //remove : __trunk_remove
+        //commit :__trunk_commit
+        
+        //query : __trunk_query
+        //clean : __trunk_clean
+        
+    },
+    
+    byteArray : {
+        create : __byte_array_create
+    },
+    
+    assets : {
+        type : {
+            image : 1,
+            font : 2,        
+            audio : 3,          
+            sequence : 4,       
+            particle : 5,       
+            rawData : 6,      
+            model : 7,          
+            noType : 8
+        },
+        
+        load : __assets_load,
+        loadFromBuffer : __assets_load_from_buffer,
+        supportedLoadExtensions : __assets_supported_load_extensions,
+        supportedWriteExtensions : __assets_supported_write_extensions,
+        query : __assets_query,
+        new : __assets_new
+    },
+    
     input : {
         // Keyboard inputs
         key_0 : -1, ///< 0

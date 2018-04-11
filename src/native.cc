@@ -7,7 +7,9 @@
 #include <sandboxe/native/vector.h>
 #include <sandboxe/native/node.h>
 #include <sandboxe/native/buttonListener.h>
+#include <sandboxe/native/assetID.h>
 
+#include <sandboxe/native/byteArray.h>
 #include <cassert>
 
 using namespace Sandboxe;
@@ -53,8 +55,21 @@ Sandboxe::Script::Runtime::Object * NativeObject::New(NativeType type, const std
       }
 
       case NativeType::ButtonListenerT: {
-          auto ref = new ButtonListener(object);
+          auto ref = new Sandboxe::ButtonListener(object);
           v = (void*) ref;
+          break;
+      }
+      
+      case NativeType::AssetIDT: {
+          auto ref = new Sandboxe::AssetID(object);
+          v = (void*) ref;
+          break;
+      }
+      
+      case NativeType::ByteArrayT: {
+          auto ref = new Sandboxe::ByteArray(object);
+          v = (void*) ref;
+          break;
       }
     }
     
@@ -73,6 +88,9 @@ const char * Sandboxe::NativeTypeToString(NativeType type) {
     case NativeType::Node_TransformT: return "Node::Transform";
     case NativeType::NodeT: return "Node";
     case NativeType::ButtonListenerT: return "ButtonListener";
+    case NativeType::AssetIDT: return "AssetID";
+    case NativeType::ByteArrayT: return "ByteArray";
+
     default: return "Unknown";
   }        
 }
