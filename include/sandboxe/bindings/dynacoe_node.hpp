@@ -20,6 +20,23 @@ SANDBOXE_NATIVE_DEF(__node_create) {
     context.SetReturnValue(Sandboxe::NativeObject::New(Sandboxe::NativeType::NodeT));
 }
 
+SANDBOXE_NATIVE_DEF(__node_set_local){}
+SANDBOXE_NATIVE_DEF(__node_set_global){}
+
+
+SANDBOXE_NATIVE_DEF(__node_get_local) {
+    auto t = Sandboxe::NativeObject::Get<Sandboxe::ComponentAdaptor>(source);
+    auto node = (Sandboxe::Node *) t->Native_GetParentPtr();
+    context.SetReturnValue(node->localTransform->object);
+}
+
+SANDBOXE_NATIVE_DEF(__node_get_global) {
+    auto t = Sandboxe::NativeObject::Get<Sandboxe::ComponentAdaptor>(source);
+    auto node = (Sandboxe::Node *) t->Native_GetParentPtr();
+    context.SetReturnValue(node->globalTransform->object);
+}
+
+
 
 void dynacoe_node(std::vector<std::pair<std::string, Sandboxe::Script::Runtime::Function>> & fns) {
     Sandboxe::Script::Runtime::AddType(
@@ -64,7 +81,9 @@ void dynacoe_node(std::vector<std::pair<std::string, Sandboxe::Script::Runtime::
             
             ////////////////////////////////////////////////////////
             //////////////////// imported from component ///////////
-
+            ,
+            {"local", {__node_get_local, __node_set_local}},
+            {"global", {__node_get_local, __node_set_local}}
         }
     );
     

@@ -59,14 +59,16 @@ class Primitive {
 
 
 class Context {
-  public: Context() : isArray(false){}
-      
+  public: Context() : isArray(false), inputArray(nullptr){}
+    ~Context();
     // generates an error from the calling script context.
     // Behavior is implementation dependent
     void ScriptError(const std::string & str);
     
+    // Gets the n'th argument as an array, if it exists.
+    std::vector<Primitive> * GetArrayArgument(uint32_t argument);
     
-    
+    void SetArrayArgument(uint32_t arg, const std::vector<Primitive> &);
     // sets the return value for the native function.
     // If the primitive
     void SetReturnValue(const Primitive & v) {value = v; isArray = false;}
@@ -90,6 +92,7 @@ class Context {
   private:
     Primitive value;
     std::vector<Primitive> returnArray;
+    std::vector<std::vector<Primitive>> * inputArray;
     int isArray;
 };
 

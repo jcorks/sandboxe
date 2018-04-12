@@ -8,6 +8,7 @@
 #include <sandboxe/native/node.h>
 #include <sandboxe/native/buttonListener.h>
 #include <sandboxe/native/assetID.h>
+#include <sandboxe/native/shape2d.h>
 
 #include <sandboxe/native/byteArray.h>
 #include <cassert>
@@ -71,6 +72,19 @@ Sandboxe::Script::Runtime::Object * NativeObject::New(NativeType type, const std
           v = (void*) ref;
           break;
       }
+    
+    
+      case NativeType::ColorT: {
+        v = (void*) new Dynacoe::Color();
+        break;
+      }
+      
+      case NativeType::Shape2DT: {
+          auto ref = new Sandboxe::Shape2D(object);
+          v = (void*) dynamic_cast<Sandboxe::ComponentAdaptor*>(ref);
+        break;
+      }
+
     }
     
     object->SetNativeAddress((void*)v);
@@ -90,6 +104,8 @@ const char * Sandboxe::NativeTypeToString(NativeType type) {
     case NativeType::ButtonListenerT: return "ButtonListener";
     case NativeType::AssetIDT: return "AssetID";
     case NativeType::ByteArrayT: return "ByteArray";
+    case NativeType::ColorT: return "Color";
+    case NativeType::Shape2DT: return "Shape2D";
 
     default: return "Unknown";
   }        

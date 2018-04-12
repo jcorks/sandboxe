@@ -21,7 +21,9 @@ enum class NativeType {
     NodeT,
     ButtonListenerT,
     AssetIDT,
-    ByteArrayT
+    ByteArrayT,
+    ColorT,
+    Shape2DT
 };
 
 

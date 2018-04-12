@@ -24,6 +24,39 @@ SANDBOXE_NATIVE_DEF(__node_transform_set_reverse) {
 }
 
 
+SANDBOXE_NATIVE_DEF(__node_transform_get_position) {
+    Sandboxe::Node_Transform * t = Sandboxe::NativeObject::Get<Sandboxe::Node_Transform>(source);
+    context.SetReturnValue(t->positionObject);
+}
+
+SANDBOXE_NATIVE_DEF(__node_transform_set_position) {
+    Sandboxe::Node_Transform * t = Sandboxe::NativeObject::Get<Sandboxe::Node_Transform>(source);
+    *t->position = Dynacoe::Vector(std::string(arguments[0]));
+}
+
+
+
+SANDBOXE_NATIVE_DEF(__node_transform_get_rotation) {
+    Sandboxe::Node_Transform * t = Sandboxe::NativeObject::Get<Sandboxe::Node_Transform>(source);
+    context.SetReturnValue(t->rotationObject);
+}
+
+SANDBOXE_NATIVE_DEF(__node_transform_set_rotation) {
+    Sandboxe::Node_Transform * t = Sandboxe::NativeObject::Get<Sandboxe::Node_Transform>(source);
+    *t->rotation = Dynacoe::Vector(std::string(arguments[0]));
+}
+
+
+
+SANDBOXE_NATIVE_DEF(__node_transform_get_scale) {
+    Sandboxe::Node_Transform * t = Sandboxe::NativeObject::Get<Sandboxe::Node_Transform>(source);
+    context.SetReturnValue(t->positionObject);
+}
+
+SANDBOXE_NATIVE_DEF(__node_transform_set_scale) {
+    Sandboxe::Node_Transform * t = Sandboxe::NativeObject::Get<Sandboxe::Node_Transform>(source);
+    *t->scale = Dynacoe::Vector(std::string(arguments[0]));
+}
 
 
 
@@ -49,6 +82,9 @@ void dynacoe_node_transform(std::vector<std::pair<std::string, Sandboxe::Script:
         // managed properties,
         {
             {"reverse", {__node_transform_get_reverse, __node_transform_set_reverse}},
+            {"position", {__node_transform_get_position, __node_transform_set_position}},
+            {"scale", {__node_transform_get_scale, __node_transform_set_scale}},
+            {"rotation", {__node_transform_get_rotation, __node_transform_set_rotation}},
 
         } 
     );

@@ -1,5 +1,5 @@
-#ifndef h_dynacoe_sandboxe_node_included
-#define h_dynacoe_sandboxe_node_included
+#ifndef h_dynacoe_sandboxe_shape2d_included
+#define h_dynacoe_sandboxe_shape2d_included
 
 
 #include <sandboxe/native/component.h>
@@ -8,85 +8,40 @@
 
 namespace Sandboxe {
 
-class Node_Transform {
-  public:
-    Node_Transform(Sandboxe::Script::Runtime::Object * o) {
-        object = o;
-        auto positionO = NativeObject::New(NativeType::VectorT);
-        auto scaleO = NativeObject::New(NativeType::VectorT);
-        auto rotationO = NativeObject::New(NativeType::VectorT);
-        
-        position = Sandboxe::NativeObject::Get<Dynacoe::Vector>(positionO);
-        scale = Sandboxe::NativeObject::Get<Dynacoe::Vector>(scaleO);
-        rotation = Sandboxe::NativeObject::Get<Dynacoe::Vector>(rotationO);
 
-        positionObject= positionO;
-        scaleObject= scaleO;
-        rotationObject= rotationO;
-        
-        *scale = {1, 1, 1};
-        
-        reverse = false;
-    }
-      
-    Dynacoe::Vector * position;
-    Dynacoe::Vector * scale;
-    Dynacoe::Vector * rotation;
-    Sandboxe::Script::Runtime::Object * positionObject;
-    Sandboxe::Script::Runtime::Object * scaleObject;
-    Sandboxe::Script::Runtime::Object * rotationObject;
-    
-    Sandboxe::Script::Runtime::Object * object;
-    bool reverse;
-};
-
-
-class Node : public Dynacoe::Node, public Sandboxe::ComponentAdaptor {
+class Shape2D : public Dynacoe::Shape2D, public Sandboxe::ComponentAdaptor {
   public:
     
-    Node(Sandboxe::Script::Runtime::Object * o) : Dynacoe::Node() {
-        object = o;
+    Shape2D(Sandboxe::Script::Runtime::Object * o) : Dynacoe::Shape2D() {
         
-        auto temp = Sandboxe::NativeObject::New(Sandboxe::NativeType::Node_TransformT);
-        localTransform = Sandboxe::NativeObject::Get<Sandboxe::Node_Transform>(temp);        
-        object->Set("local", localTransform->object);
+        auto temp = Sandboxe::NativeObject::New(Sandboxe::NativeType::ColorT);
+        localColor = Sandboxe::NativeObject::Get<Dynacoe::Color>(temp);        
+        localColorObject = temp;
         
-        
-        temp = Sandboxe::NativeObject::New(Sandboxe::NativeType::Node_TransformT);
-        globalTransform = Sandboxe::NativeObject::Get<Sandboxe::Node_Transform>(temp);
-        object->Set("global", globalTransform->object);
-        
+        localNodeObject = Sandboxe::NativeObject::New(Sandboxe::NativeType::NodeT);
+        localNode = (Sandboxe::Node*)Sandboxe::NativeObject::Get<Sandboxe::ComponentAdaptor>(localNodeObject)->Native_GetParentPtr();
+
         SetObjectSource(o);
 
     }
+    
+    Dynacoe::Color * localColor;
+    Sandboxe::Script::Runtime::Object * localColorObject;
+
+    Sandboxe::Node * localNode;
+    Sandboxe::Script::Runtime::Object * localNodeObject;
 
     
-    Sandboxe::Node_Transform * localTransform;
-    Sandboxe::Node_Transform * globalTransform;
-    Sandboxe::Script::Runtime::Object * object;
-
-    
-
-    void OnStep() {
-
-        local.position = *localTransform->position;
-        local.scale = *localTransform->scale;
-        local.rotation = *localTransform->rotation;
-        local.reverse = localTransform->reverse;
-        
-        Dynacoe::Node::OnStep();
+    void OnDraw() {
+        color = *localColor;
+        node.local.position = *localNode->localTransform->position;
+        node.local.rotation = *localNode->localTransform->rotation;
+        node.local.scale = *localNode->localTransform->scale;
+        node.local.reverse = localNode->localTransform->reverse;
+        Dynacoe::Shape2D::OnDraw();
     }
     
-    
-    void OnTransformUpdate() {
-        *globalTransform->position = global.position;
-        *globalTransform->scale = global.scale;
-        *globalTransform->rotation = global.rotation;
-        globalTransform->reverse = global.reverse;
-    }
-    
-    
-    
+
     
     ////////////////////////////////////
     /////////////// STANDARD IMPLEMENTATION 

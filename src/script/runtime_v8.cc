@@ -113,7 +113,35 @@ static Object * sandboxe_object_reference_temporary_from_v8_value(const v8::Hand
     return temp;
 }
 
-static std::vector<Primitive> v8_arguments_to_sandboxe_primitive_array(const v8::Arguments & args) {
+static std::vector<Primitive> v8_array_to_sandboxe_primitive_array(v8::Handle<v8::Object> array) {
+    std::vector<Primitive> arguments;
+    uint32_t len = v8::Array::Cast(*array)->Length();
+    for(uint32_t i = 0; i < len; ++i) {
+        auto item = array->Get(i);
+        // collect native objects 
+        if (item->IsObject()) {
+            v8::Handle<v8::Object> object = item->ToObject();
+            if (object->InternalFieldCount()) { //< - Native object
+                arguments.push_back(
+                    (
+                        (NativeRef*)object->GetPointerFromInternalField(0)
+                    )->parent
+                );            
+            } else if (item->IsFunction()) { //<- non-native object
+
+                arguments.push_back(sandboxe_object_reference_temporary_from_v8_value(item));
+                
+            } else {
+                arguments.push_back(*v8::String::Utf8Value(item) ? Primitive(std::string(*v8::String::Utf8Value(item))) : Primitive());
+            }
+        } else {
+            arguments.push_back(*v8::String::Utf8Value(item) ? Primitive(std::string(*v8::String::Utf8Value(item))) : Primitive());
+        }
+    }
+    return arguments;
+}
+
+static std::vector<Primitive> v8_arguments_to_sandboxe_primitive_array(const v8::Arguments & args, Sandboxe::Script::Runtime::Context & context) {
     std::vector<Primitive> arguments;
     for(uint32_t i = 0; i < args.Length(); ++i) {
 
@@ -126,10 +154,15 @@ static std::vector<Primitive> v8_arguments_to_sandboxe_primitive_array(const v8:
                         (NativeRef*)object->GetPointerFromInternalField(0)
                     )->parent
                 );            
-            } else if (args[i]->IsFunction() || args[i]->IsArray()) { //<- non-native object
+            } else if (args[i]->IsFunction()) { //<- non-native object
 
                 arguments.push_back(sandboxe_object_reference_temporary_from_v8_value(args[i]));
                 
+            } else if (args[i]->IsArray()) {
+                // blank for the slot in the normal argument input.
+                // user functions need to know to check the array argument if they want an array.
+                arguments.push_back(Primitive());
+                context.SetArrayArgument(i, v8_array_to_sandboxe_primitive_array(args[i]->ToObject()));
             } else {    
                 arguments.push_back(*v8::String::Utf8Value(args[i]) ? Primitive(std::string(*v8::String::Utf8Value(args[i]))) : Primitive());
             }
@@ -195,7 +228,7 @@ static v8::Handle<v8::Value> sandboxe_v8_native__invocation(const v8::Arguments 
     SANDBOXE_SCOPE;
     NativeRef * ref = (NativeRef*) args.Holder()->GetPointerFromInternalField(0);
     Context context;
-    std::vector<Primitive> arguments = v8_arguments_to_sandboxe_primitive_array(args);
+    std::vector<Primitive> arguments = v8_arguments_to_sandboxe_primitive_array(args, context);
 
         
     std::string into = *v8::String::Utf8Value(args.Callee()->GetName());
@@ -215,7 +248,7 @@ static v8::Handle<v8::Value> sandboxe_v8_native__global_incovation(const v8::Arg
 
     v8::TryCatch try_catch;
     Sandboxe::Script::Runtime::Context context;
-    std::vector<Primitive> arguments = v8_arguments_to_sandboxe_primitive_array(args);
+    std::vector<Primitive> arguments = v8_arguments_to_sandboxe_primitive_array(args, context);
     
     // gather native objects if applicable
     f(nullptr, arguments, context);
@@ -638,6 +671,7 @@ void PerformGarbageCollection() {
     }
 
 }
+
 
 
 

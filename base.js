@@ -5,13 +5,21 @@
 var sandboxe = {
     trunk : {
         // prepares a new executable with a trunk
-        //stage : __trunk_add // stages
+        //stage : __trunk_stage // stages
         //remove : __trunk_remove
         //commit :__trunk_commit
         
         //query : __trunk_query
         //clean : __trunk_clean
         
+    },
+    
+    shape2d : {
+        create : __shape2d_create
+    },
+    
+    color : {
+        create : __color_create
     },
     
     byteArray : {

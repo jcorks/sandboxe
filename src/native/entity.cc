@@ -6,18 +6,14 @@ void Sandboxe::Entity::SetObjectSource(Sandboxe::Script::Runtime::Object * obj) 
     object = obj;
     if (!realNode) {
         auto nodeObject = Sandboxe::NativeObject::New(NativeType::NodeT);
-        realNode = dynamic_cast<Sandboxe::Node*>(Sandboxe::NativeObject::Get<Sandboxe::ComponentAdaptor>(nodeObject));
-        
-        object->Set("node", nodeObject);
-        AddComponent(realNode->Native_GetDynacoeComponent());
+        //realNode = dynamic_cast<Sandboxe::Node*>(Sandboxe::NativeObject::Get<Sandboxe::ComponentAdaptor>(nodeObject));
+        auto fake = Sandboxe::NativeObject::Get<Sandboxe::ComponentAdaptor>(nodeObject);
+        realNode = dynamic_cast<Sandboxe::Node*>(fake);
+        AddComponent(fake->Native_GetDynacoeComponent());
         
         
     
-        // DEBUG 
-        auto i = BindComponent<Dynacoe::Shape2D>();
-        i->FormRectangle(40, 40);
-        i->color = "cyan";
-        shape = i;
+
     }
 
     

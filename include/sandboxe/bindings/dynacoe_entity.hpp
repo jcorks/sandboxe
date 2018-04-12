@@ -4,6 +4,7 @@
 #include <sandboxe/native/native.h>
 #include <sandboxe/native/entity.h>
 #include <sandboxe/native/component.h>
+#include <sandboxe/native/node.h>
 
 /*
     Dynacoe::Entity class bindings.
@@ -248,9 +249,8 @@ SANDBOXE_NATIVE_DEF(__entity_add_component) {
         SANDBOXE_ASSERT__ARG_COUNT(2);        
     }
     
-    Sandboxe::ComponentAdaptor * component;
     SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceT);
-    component = (Sandboxe::ComponentAdaptor *)((Sandboxe::Script::Runtime::Object*)arguments[0])->GetNativeAddress();
+    auto component = Sandboxe::NativeObject::Get<Sandboxe::ComponentAdaptor>(arguments[0]);
 
     if (arguments.size() >= 2) {
         e->AddComponent(component->Native_GetDynacoeComponent(), (Dynacoe::Entity::UpdateClass)(int)arguments[1]);
@@ -347,6 +347,16 @@ SANDBOXE_NATIVE_DEF(__entity_get_id) {
 SANDBOXE_NATIVE_DEF(__entity_set_id) {}
 
 
+SANDBOXE_NATIVE_DEF(__entity_get_node) {
+    Dynacoe::Entity::ID id((uint64_t)source->GetNativeAddress(Index_EntityID));
+    auto * e = id.IdentifyAs<Sandboxe::Entity>();
+    if (!e) return;            
+    context.SetReturnValue(e->realNode->object);
+}
+
+SANDBOXE_NATIVE_DEF(__entity_set_node) {}
+
+
 SANDBOXE_NATIVE_DEF(__entity_get_name) {
     Dynacoe::Entity::ID id((uint64_t)source->GetNativeAddress(Index_EntityID));
     Dynacoe::Entity * e = id.Identify();
@@ -432,7 +442,8 @@ void dynacoe_entity(std::vector<std::pair<std::string, Sandboxe::Script::Runtime
             {"isStepping", {__entity_get_step, __entity_set_step}},
             {"isDrawing", {__entity_get_draw, __entity_set_draw}},
             {"id", {__entity_get_id, __entity_set_id}},
-            {"name", {__entity_get_name, __entity_set_name}}
+            {"name", {__entity_get_name, __entity_set_name}},
+            {"node", {__entity_get_node, __entity_set_node}}
         }
     );
     

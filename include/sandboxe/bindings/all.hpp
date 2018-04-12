@@ -11,6 +11,8 @@
 #include "dynacoe_engine.hpp"
 #include "dynacoe_input.hpp"
 #include "dynacoe_assets.hpp"
+#include "dynacoe_color.hpp"
+#include "dynacoe_shape2d.hpp"
 
 #include "sandboxe_byte_array.hpp"
 
@@ -28,7 +30,8 @@ std::vector<std::pair<std::string, Runtime::Function>> GatherNativeBindings() {
     Bindings::dynacoe_engine(out);
     Bindings::dynacoe_input(out);
     Bindings::dynacoe_assets(out);
-    
+    Bindings::dynacoe_color(out);
+    Bindings::dynacoe_shape2d(out);
     
     Bindings::sandboxe_byte_array(out);
 

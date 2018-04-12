@@ -26,7 +26,6 @@ class Entity : public Dynacoe::Entity {
         
 
     }
-    Dynacoe::Shape2D * shape;
     void SetObjectSource(Sandboxe::Script::Runtime::Object * obj);
     
     
@@ -55,11 +54,11 @@ class Entity : public Dynacoe::Entity {
     }
     void OnDraw();
 
+    Sandboxe::Node * realNode;
 
   private:
       
     Sandboxe::Script::Runtime::Object * object;
-    Sandboxe::Node * realNode;
 };
 }
 

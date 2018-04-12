@@ -1,6 +1,8 @@
 #include <sandboxe/script/runtime.h>
 
 using Sandboxe::Script::Runtime::Primitive;
+using Sandboxe::Script::Runtime::Context;
+
 using Dynacoe::Chain;
 
 Primitive::Primitive() {
@@ -98,6 +100,31 @@ Primitive::operator Sandboxe::Script::Runtime::Object * () const {
     return (Sandboxe::Script::Runtime::Object*)(Chain() << data).AsUInt64();
 }
 
+
+
+
+Context::~Context() {
+    if (inputArray) {
+        delete inputArray;
+    }
+}
+
+void Context::SetArrayArgument(uint32_t arg, const std::vector<Primitive> & args) {
+    if (!inputArray) {
+        inputArray = new std::vector<std::vector<Primitive>>();
+    }
+    while(arg >= inputArray->size()) {
+        inputArray->push_back({});
+    }
+    (*inputArray)[arg] = args;
+}
+
+
+std::vector<Primitive> * Context::GetArrayArgument(uint32_t arg) {
+    if (!inputArray) return nullptr;
+    if (arg >= inputArray->size()) return nullptr;
+    return &(*inputArray)[arg]; 
+}
 
 
 
