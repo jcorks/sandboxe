@@ -12,7 +12,7 @@ namespace Sandboxe {
 class Shape2D : public Dynacoe::Shape2D, public Sandboxe::ComponentAdaptor {
   public:
     
-    Shape2D(Sandboxe::Script::Runtime::Object * o) : Dynacoe::Shape2D() {
+    Shape2D(Sandboxe::Script::Runtime::Object * o) : Dynacoe::Shape2D(), nonNativeIndex(0) {
         
         auto temp = Sandboxe::NativeObject::New(Sandboxe::NativeType::ColorT);
         localColor = Sandboxe::NativeObject::Get<Dynacoe::Color>(temp);        

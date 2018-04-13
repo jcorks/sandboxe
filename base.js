@@ -14,6 +14,10 @@ var sandboxe = {
         
     },
     
+    clock : {
+        create : __clock_create
+    },
+    
     shape2d : {
         create : __shape2d_create
     },

@@ -33,7 +33,7 @@ class ComponentAdaptor {
         ((Sandboxe::Script::Runtime::Object*)functionData)->CallMethod(
             "", 
             {
-                Script::Runtime::Primitive(((Sandboxe::ComponentAdaptor*)component)->GetObjectSource()),
+                Script::Runtime::Primitive(dynamic_cast<Sandboxe::ComponentAdaptor*>(component)->GetObjectSource()),
                 self.Valid() ? Script::Runtime::Primitive(self.IdentifyAs<Sandboxe::Entity>()->GetObjectSource()) : Script::Runtime::Primitive(),
                 source.Valid() ? Script::Runtime::Primitive(source.IdentifyAs<Sandboxe::Entity>()->GetObjectSource()) : Script::Runtime::Primitive()
             }

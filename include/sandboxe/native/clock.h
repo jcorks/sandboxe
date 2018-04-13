@@ -1,5 +1,5 @@
-#ifndef h_dynacoe_sandboxe_node_included
-#define h_dynacoe_sandboxe_node_included
+#ifndef h_dynacoe_sandboxe_clock_included
+#define h_dynacoe_sandboxe_clock_included
 
 
 #include <sandboxe/native/component.h>
@@ -8,83 +8,20 @@
 
 namespace Sandboxe {
 
-class Node_Transform {
-  public:
-    Node_Transform(Sandboxe::Script::Runtime::Object * o) {
-        object = o;
-        auto positionO = NativeObject::New(NativeType::VectorT);
-        auto scaleO = NativeObject::New(NativeType::VectorT);
-        auto rotationO = NativeObject::New(NativeType::VectorT);
-        
-        position = Sandboxe::NativeObject::Get<Dynacoe::Vector>(positionO);
-        scale = Sandboxe::NativeObject::Get<Dynacoe::Vector>(scaleO);
-        rotation = Sandboxe::NativeObject::Get<Dynacoe::Vector>(rotationO);
-
-        positionObject= positionO;
-        scaleObject= scaleO;
-        rotationObject= rotationO;
-        
-        *scale = {1, 1, 1};
-        
-        reverse = false;
-    }
-      
-    Dynacoe::Vector * position;
-    Dynacoe::Vector * scale;
-    Dynacoe::Vector * rotation;
-    Sandboxe::Script::Runtime::Object * positionObject;
-    Sandboxe::Script::Runtime::Object * scaleObject;
-    Sandboxe::Script::Runtime::Object * rotationObject;
-    
-    Sandboxe::Script::Runtime::Object * object;
-    bool reverse;
-};
 
 
-class Node : public Dynacoe::Node, public Sandboxe::ComponentAdaptor {
+
+class Clock : public Dynacoe::Clock, public Sandboxe::ComponentAdaptor {
   public:
     
-    Node(Sandboxe::Script::Runtime::Object * o) : Dynacoe::Node(), nonNativeIndex(0) {
-        object = o;
-        
-        auto temp = Sandboxe::NativeObject::New(Sandboxe::NativeType::Node_TransformT);
-        localTransform = Sandboxe::NativeObject::Get<Sandboxe::Node_Transform>(temp);        
-        object->Set("local", localTransform->object);
-        
-        
-        temp = Sandboxe::NativeObject::New(Sandboxe::NativeType::Node_TransformT);
-        globalTransform = Sandboxe::NativeObject::Get<Sandboxe::Node_Transform>(temp);
-        object->Set("global", globalTransform->object);
-        
+    Clock(Sandboxe::Script::Runtime::Object * o) : Dynacoe::Clock(), nonNativeIndex(0) {
         SetObjectSource(o);
 
     }
 
     
-    Sandboxe::Node_Transform * localTransform;
-    Sandboxe::Node_Transform * globalTransform;
-    Sandboxe::Script::Runtime::Object * object;
-
     
 
-    void OnStep() {
-
-        local.position = *localTransform->position;
-        local.scale = *localTransform->scale;
-        local.rotation = *localTransform->rotation;
-        local.reverse = localTransform->reverse;
-        
-        Dynacoe::Node::OnStep();
-    }
-    
-    
-    void OnTransformUpdate() {
-        *globalTransform->position = global.position;
-        *globalTransform->scale = global.scale;
-        *globalTransform->rotation = global.rotation;
-        globalTransform->reverse = global.reverse;
-    }
-    
     
     
     

@@ -100,7 +100,8 @@ class Context {
 // represent native code to be run when a script runs a function
 typedef void (*Function)(Object *, const std::vector<Primitive> & arguments, Context & context);
 #define SANDBOXE_NATIVE_DEF(__T__) void __T__(Sandboxe::Script::Runtime::Object * source, const std::vector<Sandboxe::Script::Runtime::Primitive> & arguments, Sandboxe::Script::Runtime::Context & context)
-
+#define SANDBOXE_NATIVE_EMPTY Sandboxe::Script::Runtime::Empty
+void Empty(Sandboxe::Script::Runtime::Object * source, const std::vector<Sandboxe::Script::Runtime::Primitive> & arguments, Sandboxe::Script::Runtime::Context & context);
 
 // initializes the scripting context
 // Optional argument to bind native functions to the global context

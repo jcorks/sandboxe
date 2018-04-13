@@ -126,7 +126,7 @@ std::vector<Primitive> * Context::GetArrayArgument(uint32_t arg) {
     return &(*inputArray)[arg]; 
 }
 
-
+void Sandboxe::Script::Runtime::Empty(Sandboxe::Script::Runtime::Object * source, const std::vector<Sandboxe::Script::Runtime::Primitive> & arguments, Sandboxe::Script::Runtime::Context & context){}
 
 
 

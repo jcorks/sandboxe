@@ -9,6 +9,8 @@
 #include <sandboxe/native/buttonListener.h>
 #include <sandboxe/native/assetID.h>
 #include <sandboxe/native/shape2d.h>
+#include <sandboxe/native/clock.h>
+
 
 #include <sandboxe/native/byteArray.h>
 #include <cassert>
@@ -82,7 +84,13 @@ Sandboxe::Script::Runtime::Object * NativeObject::New(NativeType type, const std
       case NativeType::Shape2DT: {
           auto ref = new Sandboxe::Shape2D(object);
           v = (void*) dynamic_cast<Sandboxe::ComponentAdaptor*>(ref);
+          break;
+      }
+      case NativeType::ClockT: {
+        auto ref = new Sandboxe::Clock(object);
+        v = (void*) dynamic_cast<Sandboxe::ComponentAdaptor*>(ref);
         break;
+
       }
 
     }
@@ -106,6 +114,7 @@ const char * Sandboxe::NativeTypeToString(NativeType type) {
     case NativeType::ByteArrayT: return "ByteArray";
     case NativeType::ColorT: return "Color";
     case NativeType::Shape2DT: return "Shape2D";
+    case NativeType::ClockT: return "Clock";
 
     default: return "Unknown";
   }        

@@ -83,7 +83,7 @@ void dynacoe_node(std::vector<std::pair<std::string, Sandboxe::Script::Runtime::
             //////////////////// imported from component ///////////
             ,
             {"local", {__node_get_local, __node_set_local}},
-            {"global", {__node_get_local, __node_set_local}}
+            {"global", {__node_get_global, __node_set_global}}
         }
     );
     

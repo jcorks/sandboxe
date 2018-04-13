@@ -23,7 +23,8 @@ enum class NativeType {
     AssetIDT,
     ByteArrayT,
     ColorT,
-    Shape2DT
+    Shape2DT,
+    ClockT
 };
 
 
