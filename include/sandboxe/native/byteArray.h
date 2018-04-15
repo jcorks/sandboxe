@@ -5,14 +5,22 @@
 
 namespace Sandboxe {
 
-class ByteArray : public Dynacoe::ButtonListener {
+class ByteArrayObject : public Sandboxe::Script::Runtime::Object {
   public:
-    ByteArray(Sandboxe::Script::Runtime::Object * obj) {
-        object = obj;
-    }
+    ByteArrayObject() :
+        Sandboxe::Script::Runtime::Object((int)Sandboxe::NativeType::ByteArrayT)
+    {}
       
     std::vector<uint8_t> data;
-    Sandboxe::Script::Runtime::Object * object;
+    
+    void OnGarbageCollection() {
+        
+    }
+    
+    const char * GetObjectName() const {
+        return "ByteArray";
+    }
+
 };
 
 }

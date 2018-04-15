@@ -9,10 +9,10 @@ namespace Bindings {
 SANDBOXE_NATIVE_DEF(__engine_set_root) {
     SANDBOXE_ASSERT__ARG_COUNT(1);
     SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceT);
-    SANDBOXE_ASSERT__ARG_NATIVE_TYPE(0, EntityIDT);
+    SANDBOXE_ASSERT__ARG_NATIVE(0, EntityObjectID);
 
     
-    Dynacoe::Entity::ID other((uint64_t)((Sandboxe::Script::Runtime::Object*)arguments[0])->GetNativeAddress());
+    const Dynacoe::Entity::ID & other = ((Sandboxe::EntityObjectID*)(Sandboxe::Script::Runtime::Object*)arguments[0])->id;
     Dynacoe::Engine::Root() = other;
     context.SetReturnValue(arguments[0]);
 }
@@ -22,16 +22,16 @@ SANDBOXE_NATIVE_DEF(__engine_get_root) {
     if (!ent) {
         return;
     }
-    context.SetReturnValue(ent->GetObjectSource());
+    context.SetReturnValue(ent->object);
 }
 
 SANDBOXE_NATIVE_DEF(__engine_attach_manager) {
     SANDBOXE_ASSERT__ARG_COUNT(1);
     SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceT);
-    SANDBOXE_ASSERT__ARG_NATIVE_TYPE(0, EntityIDT);
+    SANDBOXE_ASSERT__ARG_NATIVE(0, EntityObjectID);
 
     
-    Dynacoe::Entity::ID other((uint64_t)((Sandboxe::Script::Runtime::Object*)arguments[0])->GetNativeAddress());
+    const Dynacoe::Entity::ID & other = ((Sandboxe::EntityObjectID*)(Sandboxe::Script::Runtime::Object*)arguments[0])->id;
     Dynacoe::Engine::AttachManager(other);
 }
 

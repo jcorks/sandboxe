@@ -16,7 +16,7 @@ namespace Bindings {
 SANDBOXE_NATIVE_DEF(__byte_array_get) {
     SANDBOXE_ASSERT__ARG_COUNT(1);
     uint32_t i = arguments[0];
-    Sandboxe::ByteArray * t = Sandboxe::NativeObject::Get<Sandboxe::ByteArray>(source);
+    auto t = (Sandboxe::ByteArrayObject*)source;
     if (i >= t->data.size()) return;
     context.SetReturnValue(t->data[i]);
 }
@@ -24,7 +24,7 @@ SANDBOXE_NATIVE_DEF(__byte_array_get) {
 SANDBOXE_NATIVE_DEF(__byte_array_set) {
     SANDBOXE_ASSERT__ARG_COUNT(2);
     uint32_t i = arguments[0];
-    Sandboxe::ByteArray * t = Sandboxe::NativeObject::Get<Sandboxe::ByteArray>(source);
+    auto t = (Sandboxe::ByteArrayObject*)source;
     if (i >= t->data.size()) return;
     uint8_t element = (int)arguments[1];    
     context.SetReturnValue(t->data[i] = element);
@@ -32,12 +32,12 @@ SANDBOXE_NATIVE_DEF(__byte_array_set) {
 
 
 SANDBOXE_NATIVE_DEF(__byte_array_set_size) {
-    Sandboxe::ByteArray * t = Sandboxe::NativeObject::Get<Sandboxe::ByteArray>(source);
+    auto t = (Sandboxe::ByteArrayObject*)source;
     t->data.resize(arguments[0]);
 }
 
 SANDBOXE_NATIVE_DEF(__byte_array_get_size) {
-    Sandboxe::ByteArray * t = Sandboxe::NativeObject::Get<Sandboxe::ByteArray>(source);
+    auto t = (Sandboxe::ByteArrayObject*)source;
     context.SetReturnValue(t->data.size());
 }
 
@@ -49,13 +49,13 @@ SANDBOXE_NATIVE_DEF(__byte_array_get_size) {
 
 /// global functions
 SANDBOXE_NATIVE_DEF(__byte_array_create) {
-    context.SetReturnValue(Sandboxe::NativeObject::New(Sandboxe::NativeType::ByteArrayT));
+    context.SetReturnValue(new Sandboxe::ByteArrayObject);
 }
 
 
 void sandboxe_byte_array(std::vector<std::pair<std::string, Sandboxe::Script::Runtime::Function>> & fns) {
     Sandboxe::Script::Runtime::AddType(
-        Sandboxe::NativeTypeToString(Sandboxe::NativeType::ByteArrayT),
+        (int) Sandboxe::NativeType::ByteArrayT,
         // methods
         {
             {"get", __byte_array_get},

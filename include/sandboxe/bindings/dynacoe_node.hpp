@@ -17,7 +17,7 @@ namespace Bindings {
 
 /// global functions
 SANDBOXE_NATIVE_DEF(__node_create) {
-    context.SetReturnValue(Sandboxe::NativeObject::New(Sandboxe::NativeType::NodeT));
+    context.SetReturnValue(new Sandboxe::NodeObject);
 }
 
 SANDBOXE_NATIVE_DEF(__node_set_local){}
@@ -25,22 +25,20 @@ SANDBOXE_NATIVE_DEF(__node_set_global){}
 
 
 SANDBOXE_NATIVE_DEF(__node_get_local) {
-    auto t = Sandboxe::NativeObject::Get<Sandboxe::ComponentAdaptor>(source);
-    auto node = (Sandboxe::Node *) t->Native_GetParentPtr();
-    context.SetReturnValue(node->localTransform->object);
+    auto node = (Sandboxe::NodeObject*)source;
+    context.SetReturnValue(node->localTransform);
 }
 
 SANDBOXE_NATIVE_DEF(__node_get_global) {
-    auto t = Sandboxe::NativeObject::Get<Sandboxe::ComponentAdaptor>(source);
-    auto node = (Sandboxe::Node *) t->Native_GetParentPtr();
-    context.SetReturnValue(node->globalTransform->object);
+    auto node = (Sandboxe::NodeObject*)source;
+    context.SetReturnValue(node->globalTransform);
 }
 
 
 
 void dynacoe_node(std::vector<std::pair<std::string, Sandboxe::Script::Runtime::Function>> & fns) {
     Sandboxe::Script::Runtime::AddType(
-        Sandboxe::NativeTypeToString(Sandboxe::NativeType::NodeT),
+        (int)Sandboxe::NativeType::NodeT,
         {
             
             ////////////////////////////////////////////////////////

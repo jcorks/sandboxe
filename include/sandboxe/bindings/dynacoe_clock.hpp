@@ -20,37 +20,34 @@ namespace Bindings {
     
 // member functions 
 SANDBOXE_NATIVE_DEF(__clock_set) {
-    auto t = Sandboxe::NativeObject::Get<Sandboxe::ComponentAdaptor>(source);
-    auto clock = (Sandboxe::Clock *) t->Native_GetParentPtr();
+    auto clock = (Sandboxe::ClockObject*)source;
     if (arguments.size() >= 1)
-        clock->Set(arguments[0]);
+        dynamic_cast<Dynacoe::Clock*>(clock)->Set(arguments[0]);
     else 
-        clock->Set();
+        dynamic_cast<Dynacoe::Clock*>(clock)->Set();
 }
 
 
 SANDBOXE_NATIVE_DEF(__clock_reset) {
-    auto t = Sandboxe::NativeObject::Get<Sandboxe::ComponentAdaptor>(source);
-    auto clock = (Sandboxe::Clock *) t->Native_GetParentPtr();
+    auto clock = (Sandboxe::ClockObject*)source;
     clock->Reset();
 }
 
 SANDBOXE_NATIVE_DEF(__clock_pause) {
-    auto t = Sandboxe::NativeObject::Get<Sandboxe::ComponentAdaptor>(source);
-    auto clock = (Sandboxe::Clock *) t->Native_GetParentPtr();
+    auto clock = (Sandboxe::ClockObject*)source;
     clock->Pause();
 }
 
 SANDBOXE_NATIVE_DEF(__clock_resume) {
-    auto t = Sandboxe::NativeObject::Get<Sandboxe::ComponentAdaptor>(source);
-    auto clock = (Sandboxe::Clock *) t->Native_GetParentPtr();
+    auto clock = (Sandboxe::ClockObject*)source;
+    
     clock->Resume();
 }
 
 
 /// global functions
 SANDBOXE_NATIVE_DEF(__clock_create) {
-    context.SetReturnValue(Sandboxe::NativeObject::New(Sandboxe::NativeType::ClockT));
+    context.SetReturnValue(new Sandboxe::ClockObject);
 }
 
 
@@ -58,40 +55,40 @@ SANDBOXE_NATIVE_DEF(__clock_create) {
 // managed properties
 
 SANDBOXE_NATIVE_DEF(__clock_get_paused) {
-    auto t = Sandboxe::NativeObject::Get<Sandboxe::ComponentAdaptor>(source);
-    auto clock = (Sandboxe::Clock *) t->Native_GetParentPtr();
+    auto clock = (Sandboxe::ClockObject*)source;
+    
     context.SetReturnValue(clock->IsPaused());
 }
 
 SANDBOXE_NATIVE_DEF(__clock_get_expired) {
-    auto t = Sandboxe::NativeObject::Get<Sandboxe::ComponentAdaptor>(source);
-    auto clock = (Sandboxe::Clock *) t->Native_GetParentPtr();
+    auto clock = (Sandboxe::ClockObject*)source;
+    
     context.SetReturnValue(clock->IsExpired());
 }
 
 SANDBOXE_NATIVE_DEF(__clock_get_time_left) {
-    auto t = Sandboxe::NativeObject::Get<Sandboxe::ComponentAdaptor>(source);
-    auto clock = (Sandboxe::Clock *) t->Native_GetParentPtr();
+    auto clock = (Sandboxe::ClockObject*)source;
+    
     context.SetReturnValue(clock->GetTimeLeft());
 }
 
 SANDBOXE_NATIVE_DEF(__clock_get_time_since) {
-    auto t = Sandboxe::NativeObject::Get<Sandboxe::ComponentAdaptor>(source);
-    auto clock = (Sandboxe::Clock *) t->Native_GetParentPtr();
+    auto clock = (Sandboxe::ClockObject*)source;
+    
     context.SetReturnValue(clock->GetTimeSince());
 }
 
 
 SANDBOXE_NATIVE_DEF(__clock_get_duration) {
-    auto t = Sandboxe::NativeObject::Get<Sandboxe::ComponentAdaptor>(source);
-    auto clock = (Sandboxe::Clock *) t->Native_GetParentPtr();
+    auto clock = (Sandboxe::ClockObject*)source;
+    
     context.SetReturnValue(clock->GetDuration());
 }
 
 
 void dynacoe_clock(std::vector<std::pair<std::string, Sandboxe::Script::Runtime::Function>> & fns) {
     Sandboxe::Script::Runtime::AddType(
-        Sandboxe::NativeTypeToString(Sandboxe::NativeType::ClockT),
+        (int)Sandboxe::NativeType::ClockT,
         {
             
             ////////////////////////////////////////////////////////

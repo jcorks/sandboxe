@@ -2,6 +2,7 @@
 #define dynacoe_color_sandboxe_binding_included
 
 #include <sandboxe/native/native.h>
+#include <sandboxe/native/color.h>
 
 
 
@@ -25,59 +26,57 @@ namespace Bindings {
 
 
 SANDBOXE_NATIVE_DEF(__color_r_get) {
-    Dynacoe::Color * t = Sandboxe::NativeObject::Get<Dynacoe::Color>(source);
-    context.SetReturnValue((float)t->r);
+    auto t = (Sandboxe::ColorObject*)source;
+    context.SetReturnValue((float)t->color.r);
 }
 
 SANDBOXE_NATIVE_DEF(__color_r_set) {
-    Dynacoe::Color * t = Sandboxe::NativeObject::Get<Dynacoe::Color>(source);
-    t->r = (float)arguments[0];
+    auto t = (Sandboxe::ColorObject*)source;
+    t->color.r = (float)arguments[0];
 }
 
 SANDBOXE_NATIVE_DEF(__color_g_get) {
-    Dynacoe::Color * t = Sandboxe::NativeObject::Get<Dynacoe::Color>(source);
-    context.SetReturnValue((float)t->g);
+    auto t = (Sandboxe::ColorObject*)source;
+    context.SetReturnValue((float)t->color.g);
 }
 
 SANDBOXE_NATIVE_DEF(__color_g_set) {
-    Dynacoe::Color * t = Sandboxe::NativeObject::Get<Dynacoe::Color>(source);
-    t->g = (float)arguments[0];
+    auto t = (Sandboxe::ColorObject*)source;
+    t->color.g = (float)arguments[0];
 }
 
 SANDBOXE_NATIVE_DEF(__color_b_get) {
-    Dynacoe::Color * t = Sandboxe::NativeObject::Get<Dynacoe::Color>(source);
-    context.SetReturnValue((float)t->b);
+    auto t = (Sandboxe::ColorObject*)source;
+    context.SetReturnValue((float)t->color.b);
 }
 
 SANDBOXE_NATIVE_DEF(__color_b_set) {
-    Dynacoe::Color * t = Sandboxe::NativeObject::Get<Dynacoe::Color>(source);
-    t->b = (float)arguments[0];
+    auto t = (Sandboxe::ColorObject*)source;
+    t->color.b = (float)arguments[0];
 }
 
 
 SANDBOXE_NATIVE_DEF(__color_a_get) {
-    Dynacoe::Color * t = Sandboxe::NativeObject::Get<Dynacoe::Color>(source);
-    context.SetReturnValue((float)t->a);
+    auto t = (Sandboxe::ColorObject*)source;
+    context.SetReturnValue((float)t->color.a);
 }
 
 SANDBOXE_NATIVE_DEF(__color_a_set) {
-    Dynacoe::Color * t = Sandboxe::NativeObject::Get<Dynacoe::Color>(source);
-    t->a = (float)arguments[0];
+    auto t = (Sandboxe::ColorObject*)source;
+    t->color.a = (float)arguments[0];
 }
 
 
 SANDBOXE_NATIVE_DEF(__color_to_string) {
-    Dynacoe::Color * t = Sandboxe::NativeObject::Get<Dynacoe::Color>(source);
-    context.SetReturnValue(t->ToString());
+    auto t = (Sandboxe::ColorObject*)source;
+    context.SetReturnValue(t->color.ToString());
 }
 
 SANDBOXE_NATIVE_DEF(__color_clone) {
-    Dynacoe::Color * src = Sandboxe::NativeObject::Get<Dynacoe::Color>(source);
+    auto src = (Sandboxe::ColorObject*)source;
 
-    auto t = Sandboxe::NativeObject::New(Sandboxe::NativeType::ColorT);
-    Dynacoe::Color * color = Sandboxe::NativeObject::Get<Dynacoe::Color>(t);
-
-    *color = *src;
+    auto t = new Sandboxe::ColorObject;
+    t->color = src->color;
     context.SetReturnValue(t);
 }
 
@@ -86,14 +85,13 @@ SANDBOXE_NATIVE_DEF(__color_clone) {
 
 /// global functions
 SANDBOXE_NATIVE_DEF(__color_create) {
-    auto t = Sandboxe::NativeObject::New(Sandboxe::NativeType::ColorT);
-    Dynacoe::Color * color = Sandboxe::NativeObject::Get<Dynacoe::Color>(t);
+    auto t = new Sandboxe::ColorObject;
     if (arguments.size() == 1) {
-        *color = Dynacoe::Color(std::string(arguments[0]));
+        t->color = Dynacoe::Color(std::string(arguments[0]));
     } else if (arguments.size() == 3){
-        *color = Dynacoe::Color((float)arguments[0], (float)arguments[1], (float)arguments[2]);
+        t->color = Dynacoe::Color((float)arguments[0], (float)arguments[1], (float)arguments[2]);
     } else if (arguments.size() == 2) {
-        *color = Dynacoe::Color((float)arguments[0], (float)arguments[1], (float)arguments[2], (float)arguments[3]);
+        t->color = Dynacoe::Color((float)arguments[0], (float)arguments[1], (float)arguments[2], (float)arguments[3]);
     }
     context.SetReturnValue(t);
 }
@@ -101,7 +99,7 @@ SANDBOXE_NATIVE_DEF(__color_create) {
 
 void dynacoe_color(std::vector<std::pair<std::string, Sandboxe::Script::Runtime::Function>> & fns) {
     Sandboxe::Script::Runtime::AddType(
-        Sandboxe::NativeTypeToString(Sandboxe::NativeType::ColorT),
+        (int)Sandboxe::NativeType::ColorT,
         // methods
         {
             {"toString", __color_to_string},

@@ -14,48 +14,48 @@ namespace Bindings {
 
 
 SANDBOXE_NATIVE_DEF(__node_transform_get_reverse) {
-    Sandboxe::Node_Transform * t = Sandboxe::NativeObject::Get<Sandboxe::Node_Transform>(source);
+    auto t = (Sandboxe::Node_TransformObject*)source;
     context.SetReturnValue(t->reverse);
 }
 
 SANDBOXE_NATIVE_DEF(__node_transform_set_reverse) {
-    Sandboxe::Node_Transform * t = Sandboxe::NativeObject::Get<Sandboxe::Node_Transform>(source);
+    auto t = (Sandboxe::Node_TransformObject*)source;
     t->reverse = arguments[0];
 }
 
 
 SANDBOXE_NATIVE_DEF(__node_transform_get_position) {
-    Sandboxe::Node_Transform * t = Sandboxe::NativeObject::Get<Sandboxe::Node_Transform>(source);
-    context.SetReturnValue(t->positionObject);
+    auto t = (Sandboxe::Node_TransformObject*)source;
+    context.SetReturnValue(t->position);
 }
 
 SANDBOXE_NATIVE_DEF(__node_transform_set_position) {
-    Sandboxe::Node_Transform * t = Sandboxe::NativeObject::Get<Sandboxe::Node_Transform>(source);
-    *t->position = Dynacoe::Vector(std::string(arguments[0]));
+    auto t = (Sandboxe::Node_TransformObject*)source;
+    t->position->vector = Dynacoe::Vector(std::string(arguments[0]));
 }
 
 
 
 SANDBOXE_NATIVE_DEF(__node_transform_get_rotation) {
-    Sandboxe::Node_Transform * t = Sandboxe::NativeObject::Get<Sandboxe::Node_Transform>(source);
-    context.SetReturnValue(t->rotationObject);
+    auto t = (Sandboxe::Node_TransformObject*)source;
+    context.SetReturnValue(t->rotation);
 }
 
 SANDBOXE_NATIVE_DEF(__node_transform_set_rotation) {
-    Sandboxe::Node_Transform * t = Sandboxe::NativeObject::Get<Sandboxe::Node_Transform>(source);
-    *t->rotation = Dynacoe::Vector(std::string(arguments[0]));
+    auto t = (Sandboxe::Node_TransformObject*)source;
+    t->rotation->vector = Dynacoe::Vector(std::string(arguments[0]));
 }
 
 
 
 SANDBOXE_NATIVE_DEF(__node_transform_get_scale) {
-    Sandboxe::Node_Transform * t = Sandboxe::NativeObject::Get<Sandboxe::Node_Transform>(source);
-    context.SetReturnValue(t->positionObject);
+    auto t = (Sandboxe::Node_TransformObject*)source;
+    context.SetReturnValue(t->position);
 }
 
 SANDBOXE_NATIVE_DEF(__node_transform_set_scale) {
-    Sandboxe::Node_Transform * t = Sandboxe::NativeObject::Get<Sandboxe::Node_Transform>(source);
-    *t->scale = Dynacoe::Vector(std::string(arguments[0]));
+    auto t = (Sandboxe::Node_TransformObject*)source;
+    t->scale->vector = Dynacoe::Vector(std::string(arguments[0]));
 }
 
 
@@ -64,13 +64,13 @@ SANDBOXE_NATIVE_DEF(__node_transform_set_scale) {
 
 /// global functions
 SANDBOXE_NATIVE_DEF(__node_transform_create) {
-    context.SetReturnValue(Sandboxe::NativeObject::New(Sandboxe::NativeType::Node_TransformT));
+    context.SetReturnValue(new Sandboxe::Node_TransformObject);
 }
 
 
 void dynacoe_node_transform(std::vector<std::pair<std::string, Sandboxe::Script::Runtime::Function>> & fns) {
     Sandboxe::Script::Runtime::AddType(
-        Sandboxe::NativeTypeToString(Sandboxe::NativeType::Node_TransformT),
+        (int)Sandboxe::NativeType::Node_TransformT,
         // methods
         {
 

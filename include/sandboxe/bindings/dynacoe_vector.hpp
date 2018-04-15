@@ -4,7 +4,7 @@
 
 
 #include <sandboxe/native/native.h>
-
+#include <sandboxe/native/vector.h>
 
 /*
     Dynacoe::Vector  class bindings.
@@ -30,74 +30,77 @@ namespace Bindings {
 // functions 
 
 SANDBOXE_NATIVE_DEF(__vector_length) {
-    Dynacoe::Vector * v = (Dynacoe::Vector *)source->GetNativeAddress();
-    context.SetReturnValue(v->Length());
+    Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
+    context.SetReturnValue(v->vector.Length());
 }
 
 SANDBOXE_NATIVE_DEF(__vector_clone) {
-    Dynacoe::Vector * v = (Dynacoe::Vector *)source->GetNativeAddress();
-    auto object = Sandboxe::NativeObject::New(Sandboxe::NativeType::VectorT);
-    *Sandboxe::NativeObject::Get<Dynacoe::Vector>(object) = *v;
+    Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
+    auto object = new Sandboxe::VectorObject(v->vector);
     context.SetReturnValue(object); 
 }
 
 SANDBOXE_NATIVE_DEF(__vector_to_string) {
-    Dynacoe::Vector * v = (Dynacoe::Vector *)source->GetNativeAddress();
+    Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
     context.SetReturnValue(
-       std::string(Dynacoe::Chain() << "{" << v->x << ", " << v->y << ", " << v->z << "}")
+       std::string(Dynacoe::Chain() << "{" << v->vector.x << ", " << v->vector.y << ", " << v->vector.z << "}")
     );    
 }
 
 SANDBOXE_NATIVE_DEF(__vector_distance) {
     SANDBOXE_ASSERT__ARG_COUNT(1)
     SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceT);
-    SANDBOXE_ASSERT__ARG_NATIVE_TYPE(0, VectorT);
+    SANDBOXE_ASSERT__ARG_NATIVE(0, VectorObject);
     
     Sandboxe::Script::Runtime::Object * obj = arguments[0];
-    Dynacoe::Vector * v = (Dynacoe::Vector *)source->GetNativeAddress();
-    Dynacoe::Vector * src = (Dynacoe::Vector *)obj->GetNativeAddress();
-    context.SetReturnValue(v->Distance(*src));
+    Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
+    Sandboxe::VectorObject * src = (Sandboxe::VectorObject*)obj;
+    context.SetReturnValue(v->vector.Distance(src->vector));
 }
 
 
 SANDBOXE_NATIVE_DEF(__vector_normalize) {    
-    Dynacoe::Vector * v = (Dynacoe::Vector *)source->GetNativeAddress();
-    v->SetToNormalize();
+    Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
+    v->vector.SetToNormalize();
     context.SetReturnValue(source);
 }
 
 SANDBOXE_NATIVE_DEF(__vector_dot) {
     SANDBOXE_ASSERT__ARG_COUNT(1)
     SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceT);
-    SANDBOXE_ASSERT__ARG_NATIVE_TYPE(0, VectorT);
-    
+    SANDBOXE_ASSERT__ARG_NATIVE(0, VectorObject);
+
+        
     Sandboxe::Script::Runtime::Object * obj = arguments[0];
-    Dynacoe::Vector * v = (Dynacoe::Vector *)source->GetNativeAddress();
-    Dynacoe::Vector * src = (Dynacoe::Vector *)obj->GetNativeAddress();
-    context.SetReturnValue(v->Dot(*src));
+    Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
+    Sandboxe::VectorObject * src = (Sandboxe::VectorObject*)obj;
+    context.SetReturnValue(v->vector.Dot(src->vector));
 }
 
 SANDBOXE_NATIVE_DEF(__vector_cross_2D) {
     SANDBOXE_ASSERT__ARG_COUNT(1)
     SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceT);
-    SANDBOXE_ASSERT__ARG_NATIVE_TYPE(0, VectorT);
+    SANDBOXE_ASSERT__ARG_NATIVE(0, VectorObject);
+
     
     Sandboxe::Script::Runtime::Object * obj = arguments[0];
-    Dynacoe::Vector * v = (Dynacoe::Vector *)source->GetNativeAddress();
-    Dynacoe::Vector * src = (Dynacoe::Vector *)obj->GetNativeAddress();
-    context.SetReturnValue(v->CrossFlat(*src));
+    Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
+    Sandboxe::VectorObject * src = (Sandboxe::VectorObject*)obj;
+    context.SetReturnValue(v->vector.CrossFlat(src->vector));
 }
 
 SANDBOXE_NATIVE_DEF(__vector_cross) {
     SANDBOXE_ASSERT__ARG_COUNT(1)
     SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceT);
-    SANDBOXE_ASSERT__ARG_NATIVE_TYPE(0, VectorT);
+    SANDBOXE_ASSERT__ARG_NATIVE(0, VectorObject);
+
     
     Sandboxe::Script::Runtime::Object * obj = arguments[0];
-    Dynacoe::Vector * v = (Dynacoe::Vector *)source->GetNativeAddress();
-    Dynacoe::Vector * src = (Dynacoe::Vector *)obj->GetNativeAddress();
-    auto object = Sandboxe::NativeObject::New(Sandboxe::NativeType::VectorT);
-    *Sandboxe::NativeObject::Get<Dynacoe::Vector>(object) = v->Cross(*src);
+    Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
+    Sandboxe::VectorObject * src = (Sandboxe::VectorObject*)obj;
+    auto object = new Sandboxe::VectorObject();
+
+    v->vector = v->vector.Cross(src->vector);
     context.SetReturnValue(object);
 }
 
@@ -105,28 +108,30 @@ SANDBOXE_NATIVE_DEF(__vector_cross) {
 SANDBOXE_NATIVE_DEF(__vector_rotation_x_diff) {
     SANDBOXE_ASSERT__ARG_COUNT(1)
     SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceT);
-    SANDBOXE_ASSERT__ARG_NATIVE_TYPE(0, VectorT);
+    SANDBOXE_ASSERT__ARG_NATIVE(0, VectorObject);
+
     
     Sandboxe::Script::Runtime::Object * obj = arguments[0];
-    Dynacoe::Vector * v = (Dynacoe::Vector *)source->GetNativeAddress();
-    Dynacoe::Vector * src = (Dynacoe::Vector *)obj->GetNativeAddress();
-    context.SetReturnValue(v->RotationXDiff(*src));
+    Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
+    Sandboxe::VectorObject * src = (Sandboxe::VectorObject*)obj;
+    context.SetReturnValue(v->vector.RotationXDiff(src->vector));
 }
 
 SANDBOXE_NATIVE_DEF(__vector_rotation_x_diff_relative) {
     SANDBOXE_ASSERT__ARG_COUNT(1)
     SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceT);
-    SANDBOXE_ASSERT__ARG_NATIVE_TYPE(0, VectorT);
+    SANDBOXE_ASSERT__ARG_NATIVE(0, VectorObject);
+
     
     Sandboxe::Script::Runtime::Object * obj = arguments[0];
-    Dynacoe::Vector * v = (Dynacoe::Vector *)source->GetNativeAddress();
-    Dynacoe::Vector * src = (Dynacoe::Vector *)obj->GetNativeAddress();
-    context.SetReturnValue(v->RotationXDiffRelative(*src));
+    Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
+    Sandboxe::VectorObject * src = (Sandboxe::VectorObject*)obj;
+    context.SetReturnValue(v->vector.RotationXDiffRelative(src->vector));
 }
 
 SANDBOXE_NATIVE_DEF(__vector_rotation_x) {    
-    Dynacoe::Vector * v = (Dynacoe::Vector *)source->GetNativeAddress();
-    context.SetReturnValue(v->RotationX());
+    Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
+    context.SetReturnValue(v->vector.RotationX());
 }
 
 
@@ -134,78 +139,82 @@ SANDBOXE_NATIVE_DEF(__vector_rotation_x) {
 SANDBOXE_NATIVE_DEF(__vector_rotation_y_diff) {
     SANDBOXE_ASSERT__ARG_COUNT(1)
     SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceT);
-    SANDBOXE_ASSERT__ARG_NATIVE_TYPE(0, VectorT);
+    SANDBOXE_ASSERT__ARG_NATIVE(0, VectorObject);
+
     
     Sandboxe::Script::Runtime::Object * obj = arguments[0];
-    Dynacoe::Vector * v = (Dynacoe::Vector *)source->GetNativeAddress();
-    Dynacoe::Vector * src = (Dynacoe::Vector *)obj->GetNativeAddress();
-    context.SetReturnValue(v->RotationYDiff(*src));
+    Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
+    Sandboxe::VectorObject * src = (Sandboxe::VectorObject*)obj;
+    context.SetReturnValue(v->vector.RotationYDiff(src->vector));
 }
 
 SANDBOXE_NATIVE_DEF(__vector_rotation_y_diff_relative) {
     SANDBOXE_ASSERT__ARG_COUNT(1)
     SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceT);
-    SANDBOXE_ASSERT__ARG_NATIVE_TYPE(0, VectorT);
+    SANDBOXE_ASSERT__ARG_NATIVE(0, VectorObject);
+
     
     Sandboxe::Script::Runtime::Object * obj = arguments[0];
-    Dynacoe::Vector * v = (Dynacoe::Vector *)source->GetNativeAddress();
-    Dynacoe::Vector * src = (Dynacoe::Vector *)obj->GetNativeAddress();
-    context.SetReturnValue(v->RotationYDiffRelative(*src));
+    Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
+    Sandboxe::VectorObject * src = (Sandboxe::VectorObject*)obj;
+    context.SetReturnValue(v->vector.RotationYDiffRelative(src->vector));
 }
 
 SANDBOXE_NATIVE_DEF(__vector_rotation_y) {    
-    Dynacoe::Vector * v = (Dynacoe::Vector *)source->GetNativeAddress();
-    context.SetReturnValue(v->RotationY());
+    Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
+    context.SetReturnValue(v->vector.RotationY());
 }
 
 
 SANDBOXE_NATIVE_DEF(__vector_rotation_z_diff) {
     SANDBOXE_ASSERT__ARG_COUNT(1)
     SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceT);
-    SANDBOXE_ASSERT__ARG_NATIVE_TYPE(0, VectorT);
+    SANDBOXE_ASSERT__ARG_NATIVE(0, VectorObject);
+
     
     Sandboxe::Script::Runtime::Object * obj = arguments[0];
-    Dynacoe::Vector * v = (Dynacoe::Vector *)source->GetNativeAddress();
-    Dynacoe::Vector * src = (Dynacoe::Vector *)obj->GetNativeAddress();
-    context.SetReturnValue(v->RotationZDiff(*src));
+    Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
+    Sandboxe::VectorObject * src = (Sandboxe::VectorObject*)obj;
+    context.SetReturnValue(v->vector.RotationZDiff(src->vector));
 }
 
 SANDBOXE_NATIVE_DEF(__vector_rotation_z_diff_relative) {
     SANDBOXE_ASSERT__ARG_COUNT(1)
     SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceT);
-    SANDBOXE_ASSERT__ARG_NATIVE_TYPE(0, VectorT);
+    SANDBOXE_ASSERT__ARG_NATIVE(0, VectorObject);
+
     
     Sandboxe::Script::Runtime::Object * obj = arguments[0];
-    Dynacoe::Vector * v = (Dynacoe::Vector *)source->GetNativeAddress();
-    Dynacoe::Vector * src = (Dynacoe::Vector *)obj->GetNativeAddress();
-    context.SetReturnValue(v->RotationZDiffRelative(*src));
+    Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
+    Sandboxe::VectorObject * src = (Sandboxe::VectorObject*)obj;
+    context.SetReturnValue(v->vector.RotationZDiffRelative(src->vector));
 }
 
 SANDBOXE_NATIVE_DEF(__vector_rotation_z) {    
-    Dynacoe::Vector * v = (Dynacoe::Vector *)source->GetNativeAddress();
-    context.SetReturnValue(v->RotationZ());
+    Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
+    context.SetReturnValue(v->vector.RotationZ());
 }
 
 
 
 SANDBOXE_NATIVE_DEF(__vector_rotate_x) {
     SANDBOXE_ASSERT__ARG_COUNT(1);
-    Dynacoe::Vector * v = (Dynacoe::Vector *)source->GetNativeAddress();
-    *v = v->RotateX(arguments[0]);
+    Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
+    v->vector = v->vector.RotateX(arguments[0]);
     context.SetReturnValue(source);
 }
 
 SANDBOXE_NATIVE_DEF(__vector_rotate_y) {
     SANDBOXE_ASSERT__ARG_COUNT(1);
-    Dynacoe::Vector * v = (Dynacoe::Vector *)source->GetNativeAddress();
-    *v = v->RotateY(arguments[0]);
+    Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
+    v->vector = v->vector.RotateY(arguments[0]);
     context.SetReturnValue(source);
 }
 
 SANDBOXE_NATIVE_DEF(__vector_rotate_z) {
     SANDBOXE_ASSERT__ARG_COUNT(1);
-    Dynacoe::Vector * v = (Dynacoe::Vector *)source->GetNativeAddress();
-    *v = v->RotateZ(arguments[0]);
+    Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
+    v->vector = v->vector.RotateZ(arguments[0]);
     context.SetReturnValue(source);
 }
 
@@ -214,26 +223,28 @@ SANDBOXE_NATIVE_DEF(__vector_rotate_z) {
 SANDBOXE_NATIVE_DEF(__vector_rotate_x_from) {
     SANDBOXE_ASSERT__ARG_COUNT(2);
     SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceT);
-    SANDBOXE_ASSERT__ARG_NATIVE_TYPE(0, VectorT);
+    SANDBOXE_ASSERT__ARG_NATIVE(0, VectorObject);
 
+    
     Sandboxe::Script::Runtime::Object * obj = arguments[0];
-    Dynacoe::Vector * v = (Dynacoe::Vector *)source->GetNativeAddress();
-    Dynacoe::Vector * src = (Dynacoe::Vector *)obj->GetNativeAddress();
+    Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
+    Sandboxe::VectorObject * src = (Sandboxe::VectorObject*)obj;
 
-    *v = v->RotateXFrom(*src, arguments[1]);
+    v->vector = v->vector.RotateXFrom(src->vector, arguments[1]);
     context.SetReturnValue(source);
 }
 
 SANDBOXE_NATIVE_DEF(__vector_rotate_y_from) {
     SANDBOXE_ASSERT__ARG_COUNT(2);
     SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceT);
-    SANDBOXE_ASSERT__ARG_NATIVE_TYPE(0, VectorT);
+    SANDBOXE_ASSERT__ARG_NATIVE(0, VectorObject);
 
+    
     Sandboxe::Script::Runtime::Object * obj = arguments[0];
-    Dynacoe::Vector * v = (Dynacoe::Vector *)source->GetNativeAddress();
-    Dynacoe::Vector * src = (Dynacoe::Vector *)obj->GetNativeAddress();
+    Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
+    Sandboxe::VectorObject * src = (Sandboxe::VectorObject*)obj;
 
-    *v = v->RotateYFrom(*src, arguments[1]);
+    v->vector = v->vector.RotateYFrom(src->vector, arguments[1]);
     context.SetReturnValue(source);
 }
 
@@ -241,13 +252,14 @@ SANDBOXE_NATIVE_DEF(__vector_rotate_y_from) {
 SANDBOXE_NATIVE_DEF(__vector_rotate_z_from) {
     SANDBOXE_ASSERT__ARG_COUNT(2);
     SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceT);
-    SANDBOXE_ASSERT__ARG_NATIVE_TYPE(0, VectorT);
+    SANDBOXE_ASSERT__ARG_NATIVE(0, VectorObject);
 
+    
     Sandboxe::Script::Runtime::Object * obj = arguments[0];
-    Dynacoe::Vector * v = (Dynacoe::Vector *)source->GetNativeAddress();
-    Dynacoe::Vector * src = (Dynacoe::Vector *)obj->GetNativeAddress();
+    Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
+    Sandboxe::VectorObject * src = (Sandboxe::VectorObject*)obj;
 
-    *v = v->RotateZFrom(*src, arguments[1]);
+    v->vector = v->vector.RotateZFrom(src->vector, arguments[1]);
     context.SetReturnValue(source);
 }
 
@@ -256,36 +268,36 @@ SANDBOXE_NATIVE_DEF(__vector_rotate_z_from) {
 // managed properties
 
 SANDBOXE_NATIVE_DEF(__vector_x_get) {
-    Dynacoe::Vector * v = (Dynacoe::Vector *)source->GetNativeAddress();
-    context.SetReturnValue(v->x);
+    Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
+    context.SetReturnValue(v->vector.x);
 }
 
 SANDBOXE_NATIVE_DEF(__vector_x_set) {
-    Dynacoe::Vector * v = (Dynacoe::Vector *)source->GetNativeAddress();
-    v->x = arguments[0];
+    Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
+    v->vector.x = arguments[0];
 }
 
 
 
 SANDBOXE_NATIVE_DEF(__vector_y_get) {
-    Dynacoe::Vector * v = (Dynacoe::Vector *)source->GetNativeAddress();
-    context.SetReturnValue(v->y);
+    Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
+    context.SetReturnValue(v->vector.y);
 }
 
 SANDBOXE_NATIVE_DEF(__vector_y_set) {
-    Dynacoe::Vector * v = (Dynacoe::Vector *)source->GetNativeAddress();
-    v->y = arguments[0];
+    Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
+    v->vector.y = arguments[0];
 }
 
 
 SANDBOXE_NATIVE_DEF(__vector_z_get) {
-    Dynacoe::Vector * v = (Dynacoe::Vector *)source->GetNativeAddress();
-    context.SetReturnValue(v->z);
+    Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
+    context.SetReturnValue(v->vector.z);
 }
 
 SANDBOXE_NATIVE_DEF(__vector_z_set) {
-    Dynacoe::Vector * v = (Dynacoe::Vector *)source->GetNativeAddress();
-    v->z = arguments[0];
+    Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
+    v->vector.z = arguments[0];
 }
 
 
@@ -295,23 +307,25 @@ SANDBOXE_NATIVE_DEF(__vector_z_set) {
 
 /// global functions
 SANDBOXE_NATIVE_DEF(__vector_create_default) {
-    auto object = Sandboxe::NativeObject::New(Sandboxe::NativeType::VectorT);
-    context.SetReturnValue(object);
-    Dynacoe::Vector * v = Sandboxe::NativeObject::Get<Dynacoe::Vector>(object);
+    Sandboxe::VectorObject * object = nullptr;
     
     if (arguments.size() == 1) {
-        *v = Dynacoe::Vector(arguments[0]);
+        object = new Sandboxe::VectorObject(Dynacoe::Vector(arguments[0]));
     } else if (arguments.size() == 2) {
-        *v = Dynacoe::Vector(arguments[0], arguments[1]);
+        object = new Sandboxe::VectorObject(Dynacoe::Vector(arguments[0], arguments[1]));
     } else if (arguments.size() == 3) {
-        *v = Dynacoe::Vector(arguments[0], arguments[1], arguments[2]);
+        object = new Sandboxe::VectorObject(Dynacoe::Vector(arguments[0], arguments[1], arguments[2]));
+    } else {
+        object = new Sandboxe::VectorObject();
     }
+    context.SetReturnValue(object);
+
 }
 
 
 void dynacoe_vector(std::vector<std::pair<std::string, Sandboxe::Script::Runtime::Function>> & fns) {
     Sandboxe::Script::Runtime::AddType(
-        Sandboxe::NativeTypeToString(Sandboxe::NativeType::VectorT),
+        (int)Sandboxe::NativeType::VectorT,
         // methods
         {
             {"length", __vector_length},

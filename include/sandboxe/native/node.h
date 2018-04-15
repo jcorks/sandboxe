@@ -3,79 +3,85 @@
 
 
 #include <sandboxe/native/component.h>
-
+#include <sandboxe/native/vector.h>
 
 
 namespace Sandboxe {
 
-class Node_Transform {
+class Node_TransformObject : public Sandboxe::Script::Runtime::Object {
   public:
-    Node_Transform(Sandboxe::Script::Runtime::Object * o) {
-        object = o;
-        auto positionO = NativeObject::New(NativeType::VectorT);
-        auto scaleO = NativeObject::New(NativeType::VectorT);
-        auto rotationO = NativeObject::New(NativeType::VectorT);
+    Node_TransformObject() :
+        Sandboxe::Script::Runtime::Object((int) Sandboxe::NativeType::Node_TransformT)
+    {
         
-        position = Sandboxe::NativeObject::Get<Dynacoe::Vector>(positionO);
-        scale = Sandboxe::NativeObject::Get<Dynacoe::Vector>(scaleO);
-        rotation = Sandboxe::NativeObject::Get<Dynacoe::Vector>(rotationO);
-
-        positionObject= positionO;
-        scaleObject= scaleO;
-        rotationObject= rotationO;
-        
-        *scale = {1, 1, 1};
+        position = new Sandboxe::VectorObject;
+        scale = new Sandboxe::VectorObject({1.f, 1.f, 1.f});
+        rotation = new Sandboxe::VectorObject;
         
         reverse = false;
     }
       
-    Dynacoe::Vector * position;
-    Dynacoe::Vector * scale;
-    Dynacoe::Vector * rotation;
-    Sandboxe::Script::Runtime::Object * positionObject;
-    Sandboxe::Script::Runtime::Object * scaleObject;
-    Sandboxe::Script::Runtime::Object * rotationObject;
+    void OnGarbageCollection() {
+        
+    }
     
-    Sandboxe::Script::Runtime::Object * object;
+    const char * GetObjectName() const {
+        return "Node Transform";
+    }
+      
+    Sandboxe::VectorObject * position;
+    Sandboxe::VectorObject * scale;
+    Sandboxe::VectorObject * rotation;
+    
     bool reverse;
 };
 
 
-class Node : public Dynacoe::Node, public Sandboxe::ComponentAdaptor {
+class NodeObject : public Dynacoe::Node, public Sandboxe::ComponentAdaptor {
   public:
     
-    Node(Sandboxe::Script::Runtime::Object * o) : Dynacoe::Node(), nonNativeIndex(0) {
-        object = o;
+    NodeObject() : Dynacoe::Node(),
+        Sandboxe::ComponentAdaptor((int) Sandboxe::NativeType::NodeT)
+     {
         
-        auto temp = Sandboxe::NativeObject::New(Sandboxe::NativeType::Node_TransformT);
-        localTransform = Sandboxe::NativeObject::Get<Sandboxe::Node_Transform>(temp);        
-        object->Set("local", localTransform->object);
+        localTransform = new Sandboxe::Node_TransformObject();        
+        Set("local", localTransform);
         
         
-        temp = Sandboxe::NativeObject::New(Sandboxe::NativeType::Node_TransformT);
-        globalTransform = Sandboxe::NativeObject::Get<Sandboxe::Node_Transform>(temp);
-        object->Set("global", globalTransform->object);
+        globalTransform = new Sandboxe::Node_TransformObject();        
+        Set("global", globalTransform);
         
-        SetObjectSource(o);
 
     }
 
     
-    Sandboxe::Node_Transform * localTransform;
-    Sandboxe::Node_Transform * globalTransform;
-    Sandboxe::Script::Runtime::Object * object;
+    Sandboxe::Node_TransformObject * localTransform;
+    Sandboxe::Node_TransformObject * globalTransform;
 
     
+    void OnGarbageCollection() {
+        
+    }
+    
+    
+    const char * GetObjectName() const {
+        return "Node";
+    }
+
+
+
 
     void OnStep() {
 
-        local.position = *localTransform->position;
-        local.scale = *localTransform->scale;
-        local.rotation = *localTransform->rotation;
+        local.position = localTransform->position->vector;
+        local.scale = localTransform->scale->vector;
+        local.rotation = localTransform->rotation->vector;
         local.reverse = localTransform->reverse;
         
         Dynacoe::Node::OnStep();
     }
+    
+    
     
     
     void OnTransformUpdate() {
@@ -88,102 +94,7 @@ class Node : public Dynacoe::Node, public Sandboxe::ComponentAdaptor {
     
     
     
-    ////////////////////////////////////
-    /////////////// STANDARD IMPLEMENTATION 
-      
-    void Native_Draw() {
-        Draw();
-    }
-      
-    void Native_Step() {
-        Step();
-    }
-
-    void Native_InstallEvent(const std::string & tag, Sandboxe::Script::Runtime::Object * fn) {
-        GetObjectSource()->SetNonNativeReference(fn, nonNativeIndex++);
-        InstallEvent(tag, NativeHandler, fn);
-    }
-    
-    void Native_UninstallEvent(const std::string & tag) {
-        UninstallEvent(tag);
-    }
-    
-    
-    void Native_EmitEvent(const std::string & evt, Dynacoe::Entity::ID id) {
-        EmitEvent(evt, id);
-    }
-
-
-    bool Native_CanHandleEvent(const std::string & evt) {
-        return CanHandleEvent(evt);
-    }
-    
-    void Native_InstallHook(const std::string & name, Sandboxe::Script::Runtime::Object * fn) {
-        GetObjectSource()->SetNonNativeReference(fn, nonNativeIndex++);
-        InstallHook(name, NativeHandler, fn);
-    }
-    
-    
-    void Native_UninstallHook(const std::string & name) {
-        UninstallHook(name, NativeHandler);
-    }
-    
-    void Native_InstallHandler(const std::string & name, Sandboxe::Script::Runtime::Object * fn){
-        GetObjectSource()->SetNonNativeReference(fn, nonNativeIndex++);
-        InstallHandler(name, NativeHandler, fn);
-    }
-    
-    void Native_UninstallHandler(const std::string & name){
-        UninstallHandler(name, NativeHandler);
-    }
-    
-    
-    
-    std::vector<std::string> Native_GetKnownEvents(){
-        return GetKnownEvents();
-    }
-    
-    std::string Native_GetTag() {
-        return GetTag();
-    }
-    
-    std::string Native_GetInfo() {
-        return GetInfo();
-    }
-    
-    void Native_SetInfo(const std::string & str) {
-    }
-
-    void Native_SetDraw(bool b) {
-        draw = b;
-    }
-    bool Native_GetDraw(){
-        return draw;
-    }
-    void Native_SetStep(bool b){
-        step = b;
-    }
-    bool Native_GetStep(){
-        return step;
-    }
-    Dynacoe::Entity::ID Native_GetHostID() {
-        return GetHostID();
-    }
-    
-    
-    void * Native_GetParentPtr() {
-        return (void*)this;
-    }
-    Dynacoe::Component * Native_GetDynacoeComponent() {
-        return dynamic_cast<Dynacoe::Component*>(this);
-    }
-    
-    uint32_t nonNativeIndex;
-    std::string info;
-    
-    //////////////////////////////////////////
-    //////////////////////////////////////
-    
+    #include "component_implementation_common"
     
     
 };

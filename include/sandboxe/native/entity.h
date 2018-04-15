@@ -2,37 +2,41 @@
 #define sandboxe_entity_included_h
 
 #include <sandboxe/native/native.h>
-
+#include <sandboxe/native/node.h>
 
 
 
 namespace Sandboxe {
-class Node;
+
+class EntityObjectID : public Sandboxe::Script::Runtime::Object {
+  public:
+    EntityObjectID();
+    Dynacoe::Entity::ID id;
+    
+    void OnGarbageCollection() {
+        
+    }
+    
+    const char * GetObjectName() const {
+        return "Entity";
+    }
+    
+    
+    
+};
+
+
 class Entity : public Dynacoe::Entity {
   public:
-// helpers 
-      
-    ~Entity() {
-        auto components = GetComponents();
-        for(uint32_t i = 0; i < components.size(); ++i) {
-            delete(components[i]);
-        }
-    }
-    
     Entity() {
-        object = nullptr;
         RemoveComponent(&node);
-        realNode = nullptr;
-        
+        realNode = new Sandboxe::NodeObject();
+        //realNode = dynamic_cast<Sandboxe::Node*>(Sandboxe::NativeObject::Get<Sandboxe::ComponentAdaptor>(nodeObject));
+        AddComponent(realNode);
+        object = nullptr;
+    }    
+    EntityObjectID * object;
 
-    }
-    void SetObjectSource(Sandboxe::Script::Runtime::Object * obj);
-    
-    
-    Sandboxe::Script::Runtime::Object * GetObjectSource() const {
-        return object;
-    }
-    
     
     void OnEnter() {
         object->CallMethod("onEnter");
@@ -52,15 +56,26 @@ class Entity : public Dynacoe::Entity {
     void OnPreDraw() {
         object->CallMethod("onPreDraw");
     }
-    void OnDraw();
+    void OnDraw(){
+        object->CallMethod("onDraw");
+    }
 
-    Sandboxe::Node * realNode;
-
-  private:
-      
-    Sandboxe::Script::Runtime::Object * object;
+    Sandboxe::NodeObject * realNode;
 };
+
+
+EntityObjectID::EntityObjectID()  :
+    Sandboxe::Script::Runtime::Object((int)Sandboxe::NativeType::EntityIDT)
+{
+    id = Dynacoe::Entity::Create<Sandboxe::Entity>();
+    id.IdentifyAs<Sandboxe::Entity>()->object = this;
 }
+
+
+
+
+}
+
 
 
 #endif

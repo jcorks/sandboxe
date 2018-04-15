@@ -3,26 +3,35 @@
 
 namespace Sandboxe {
     
-class ButtonListener : public Dynacoe::ButtonListener {
+class ButtonListenerObject : public Dynacoe::ButtonListener, public Sandboxe::Script::Runtime::Object {
   public:
-    ButtonListener(Sandboxe::Script::Runtime::Object * obj) {
-        object = obj;
+    ButtonListenerObject() :
+        Sandboxe::Script::Runtime::Object((int)Sandboxe::NativeType::ButtonListenerT)
+    {
+        
+    }
+    
+    void OnGarbageCollection() {
+        
+    }
+    
+    const char * GetObjectName() const {
+        return "ButtonListener";
     }
       
     void OnPress() {
-        object->CallMethod("onPress");
+        CallMethod("onPress");
     }
 
     void OnHold() {
-        object->CallMethod("onHold");
+        CallMethod("onHold");
     }
 
     void OnRelease() {
-        object->CallMethod("onRelease");
+        CallMethod("onRelease");
     }
 
     
-    Sandboxe::Script::Runtime::Object * object;
 };
     
 }

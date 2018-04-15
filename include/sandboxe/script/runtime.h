@@ -126,7 +126,7 @@ void Load(const std::string & path);
 // @param functions Native functions added to the type. Script calling arguments are passed and the runtime object set given
 // @param properties Initialized properties and their values.
 // @param nativeProperties Properties that, when accessed, call native functions to retrieve and update native data. Getter function followed by setter function.
-void AddType  (const std::string & name,
+void AddType  (int typeID,
                const std::vector<std::pair<std::string, Function>> & functions,
                const std::vector<std::pair<std::string, Primitive>> & properties = {},
                const std::vector<std::pair<std::string, std::pair<Function, Function>>> & nativeProperties = {});
@@ -137,7 +137,7 @@ void AddType  (const std::string & name,
 class Object {
   public: 
     // Instantiates a new object of the given type
-    Object(const std::string &);
+    Object(int typeID);
     Object(NativeRef &);
     ~Object();   
     
@@ -147,26 +147,6 @@ class Object {
     
     // Sets the named runtime property with the specified data
     void Set(const std::string & name, const Primitive &);
-        
-    // Returns the type that the object was instantiated with
-    const std::string & GetType() const;
-    
-    // Sets data associated with the object only retrievable 
-    // through GetNativeAddress();
-    void SetNativeAddress(void * data, uint32_t index = 0);
-
-    // Sets data associated with the object only retrievable 
-    // through GetNonNativeReference();
-    // If the given object is native, no action is taken
-    void SetNonNativeReference(Object *, uint32_t index = 0);
-
-    // Sets data associated with the object only retrievable 
-    // through GetNonNativeReference();
-    Object * GetNonNativeReference(uint32_t index = 0) const;
-
-    // Retrieves the indexed data set with
-    // SetNativeAddress()
-    void * GetNativeAddress(uint32_t index = 0) const;
     
     // Calls the given method. If name is blank, the 
     // object itself is attempted to be called as a function
@@ -178,8 +158,32 @@ class Object {
     
     NativeRef * GetNative() {return data;}
     
+    
+    int GetTypeID() const;
+    
+    
+    // callback, if set, called when the script runtime reference 
+    // of the object has been removed
+    virtual void OnGarbageCollection() = 0;
+
+    // Returns the type that the object was instantiated with
+    virtual const char * GetObjectName() const = 0;
+
+
+  protected:
+    // Sets data associated with the object only retrievable 
+    // through GetNonNativeReference();
+    // If the given object is native, no action is taken
+    void SetNonNativeReference(Object *, uint32_t index = 0);
+
+    // Sets data associated with the object only retrievable 
+    // through GetNonNativeReference();
+    Object * GetNonNativeReference(uint32_t index = 0) const;
+
+        
   private:
     NativeRef * data;
+    
 };
 
 // call occasionally to cleanup built-up data generated for management 

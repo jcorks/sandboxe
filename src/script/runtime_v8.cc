@@ -27,8 +27,8 @@ struct SandboxeContextModel {
 
 // stored type information for objects
 struct Type {
-    // name of the type
-    std::string name;
+    // unique identifier of the type
+    int typeID;
 
     // Handle to the v8-mirrored object template
     v8::Persistent<v8::ObjectTemplate> self;
@@ -52,8 +52,6 @@ struct NativeRef {
     // Object reference that owns this NativeRef
     Object * parent;
     
-    // Indexed arbitrary native data.
-    std::vector<void*> userData;
     
     // returns whether this instance is from a native instance
     int isNative; 
@@ -62,6 +60,20 @@ struct NativeRef {
     std::vector<Object *> nonNatives;
 };
 
+
+class ForeignObject : public Object {
+  public:
+    ForeignObject(NativeRef & j) :
+        Object(j){}
+        
+    void OnGarbageCollection() {
+        
+    }
+    
+    const char * GetObjectName() const {
+        return "ForeignObject";
+    }
+};
 
 
 
@@ -73,11 +85,11 @@ static SandboxeContextModel * global = nullptr;
 
 // Table of all objects. Since v8 doesnt seem to send events for object cleanup,
 // this has to be cleaned out every now and then
-Dynacoe::Table<NativeRef*> objects;
+std::vector<NativeRef*> objects;
 std::vector<Object*> temporary;
 
 // Table of all types. 
-std::map<std::string, Type *> types;
+std::vector<Type *> types;
 
 
 
@@ -106,7 +118,7 @@ static Object * sandboxe_object_reference_temporary_from_v8_value(const v8::Hand
     ref->typeData = nullptr;
     ref->reference = v8::Persistent<v8::Object>::New(val->ToObject());
     
-    Object * temp = new Object(*ref);
+    ForeignObject * temp = new ForeignObject(*ref);
 
     // gets cleaned up next cycle
     temporary.push_back(temp);
@@ -452,24 +464,27 @@ void Sandboxe::Script::Runtime::Load(const std::string & path) {
 
 
 
-static std::map<std::string, Type *> typemap;
 
 
-void Sandboxe::Script::Runtime::AddType(const std::string & name,
+void Sandboxe::Script::Runtime::AddType(int typeID,
     const std::vector<std::pair<std::string, Function>> & functions,
     const std::vector<std::pair<std::string, Primitive>> & properties,
     const std::vector<std::pair<std::string, std::pair<Function, Function>>> & nativeProperties
 ) {
-    if (types.find(name) != types.end()) {
+    if (typeID >= 0 && typeID < types.size() && types[typeID]) {
         v8::ThrowException(v8::String::New("sandboxe script object: Type already exists..."));
         return;
     }
+    while(types.size() <= typeID) {
+        types.push_back(nullptr);
+    }
+    
     SANDBOXE_SCOPE;
 
     Type * data = new Type;
     data->self = v8::Persistent<v8::ObjectTemplate>::New(v8::ObjectTemplate::New());
     data->self->SetInternalFieldCount(1);
-    data->name = name;
+    data->typeID = typeID;
     
     
     // normal functions
@@ -500,7 +515,7 @@ void Sandboxe::Script::Runtime::AddType(const std::string & name,
         );
         data->natives[nativeProperties[i].first] = nativeProperties[i].second;
     }
-    types[name] = data;
+    types[typeID] = data;
     
 }
 
@@ -509,14 +524,14 @@ void Sandboxe::Script::Runtime::AddType(const std::string & name,
 
 
 
-Object::Object(const std::string & t) {
+Object::Object(int typeID) {
     SANDBOXE_SCOPE;
     data = new NativeRef;
     data->isNative = true;
-    data->typeData = types[t];
+    data->typeData = types[typeID];
     if (data->typeData == nullptr) {
         v8::ThrowException(v8::String::New("sandboxe script object: Type does not exist"));
-        objects.Insert(data);
+        objects.push_back(data);
         return;
     }
     data->parent = this;
@@ -524,9 +539,9 @@ Object::Object(const std::string & t) {
     // set a ref to the type info
     obj->SetPointerInInternalField(0, data);
 
-    objects.Insert(data);
+    objects.push_back(data);
     data->reference = v8::Persistent<v8::Object>::New(obj);
-    data->reference.MakeWeak(nullptr, nullptr);
+    //data->reference.MakeWeak(nullptr, nullptr);
 }
 
 
@@ -573,17 +588,8 @@ void Object::Set(const std::string & name, const Primitive & d) {
 }
 
 
-const std::string & Object::GetType() const {
-    static std::string bad;
-    if (!data->typeData) return bad;
-    return data->typeData->name;
-}
 
 
-void Object::SetNativeAddress(void * d, uint32_t index) {
-    while(data->userData.size() <= index) data->userData.push_back(nullptr);
-    data->userData[index] = d;
-}
 
 void Object::SetNonNativeReference(Object * d, uint32_t index) {
     if (d->IsNative()) return;
@@ -607,10 +613,6 @@ Object * Object::GetNonNativeReference(uint32_t index) const {
 
 
 
-void * Object::GetNativeAddress(uint32_t index) const {
-    while(data->userData.size() <= index) data->userData.push_back(nullptr);
-    return data->userData[index];
-}
 
 
 Primitive Object::CallMethod(const std::string & str, const std::vector<Primitive> & args) {
@@ -657,18 +659,37 @@ bool Object::IsNative() const {
     return data->isNative;
 }
 
+int Object::GetTypeID() const {
+    return data->typeData->typeID;
+}
 
 void Context::ScriptError(const std::string & str) {
     v8::ThrowException(v8::String::New(str.c_str()));
 }
 
 
-void PerformGarbageCollection() {
+void Sandboxe::Script::Runtime::PerformGarbageCollection() {
     for(uint32_t i = 0; i < temporary.size(); ++i) {
         if (!temporary[i]) continue;
         delete temporary[i]->GetNative();
         delete temporary[i];
     }
+
+    for(uint32_t i = 0; i < objects.size(); ++i) {
+        if (objects[i]) {
+            if (objects[i]->reference.IsNearDeath()) {
+                objects[i]->parent->OnGarbageCollection();
+                objects[i]->reference.Dispose();
+                Dynacoe::Console::Info() << "Removing" << i << "\n";
+                delete objects[i]->parent;
+                objects[i] = nullptr;
+            }
+        }
+    }
+    
+    // TODO:
+    // cleanup schemes
+    // reorganizations
 
 }
 

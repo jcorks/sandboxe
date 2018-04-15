@@ -33,14 +33,14 @@ namespace Bindings {
 // methods 
 
 SANDBOXE_NATIVE_DEF(__entity_step) {
-    Dynacoe::Entity::ID id((uint64_t)source->GetNativeAddress(Index_EntityID));
+    const Dynacoe::Entity::ID & id = ((EntityObjectID*)source)->id;
     Dynacoe::Entity * e = id.Identify();
     if (!e) return;
     e->Step();
 }
 
 SANDBOXE_NATIVE_DEF(__entity_draw) {
-    Dynacoe::Entity::ID id((uint64_t)source->GetNativeAddress(Index_EntityID));
+    const Dynacoe::Entity::ID & id = ((EntityObjectID*)source)->id;
     Dynacoe::Entity * e = id.Identify();
     if (!e) return;
     e->Draw();
@@ -48,12 +48,12 @@ SANDBOXE_NATIVE_DEF(__entity_draw) {
 }
 
 SANDBOXE_NATIVE_DEF(__entity_valid) {
-    Dynacoe::Entity::ID id((uint64_t)source->GetNativeAddress(Index_EntityID));
+    const Dynacoe::Entity::ID & id = ((EntityObjectID*)source)->id;
     context.SetReturnValue(id.Valid());
 }
 
 SANDBOXE_NATIVE_DEF(__entity_remove) {
-    Dynacoe::Entity::ID id((uint64_t)source->GetNativeAddress(Index_EntityID));
+    const Dynacoe::Entity::ID & id = ((EntityObjectID*)source)->id;
     Dynacoe::Entity * e = id.Identify();    
     if (!e) return;
     e->Remove();
@@ -62,33 +62,33 @@ SANDBOXE_NATIVE_DEF(__entity_remove) {
 SANDBOXE_NATIVE_DEF(__entity_attach) {
     SANDBOXE_ASSERT__ARG_COUNT(1);
     SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceT);
-    SANDBOXE_ASSERT__ARG_NATIVE_TYPE(0, EntityIDT);
+    SANDBOXE_ASSERT__ARG_NATIVE(0, EntityObjectID);
 
-    Dynacoe::Entity::ID id((uint64_t)source->GetNativeAddress(Index_EntityID));
+    const Dynacoe::Entity::ID & id = ((EntityObjectID*)source)->id;
     Dynacoe::Entity * e = id.Identify();    
     if (!e) return;
 
     
-    Dynacoe::Entity::ID other((uint64_t)((Sandboxe::Script::Runtime::Object*)arguments[0])->GetNativeAddress(Index_EntityID));
+    const Dynacoe::Entity::ID & other = ((EntityObjectID*)((Sandboxe::Script::Runtime::Object*)arguments[0]))->id;
     e->Attach(other);
 }
 
 SANDBOXE_NATIVE_DEF(__entity_detach) {
     SANDBOXE_ASSERT__ARG_COUNT(1);
     SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceT);
-    SANDBOXE_ASSERT__ARG_NATIVE_TYPE(0, EntityIDT);
+    SANDBOXE_ASSERT__ARG_NATIVE(0, EntityObjectID);
 
 
-    Dynacoe::Entity::ID id((uint64_t)source->GetNativeAddress(Index_EntityID));
+    const Dynacoe::Entity::ID & id = ((EntityObjectID*)source)->id;
     Dynacoe::Entity * e = id.Identify();    
     if (!e) return;
     
-    Dynacoe::Entity::ID other((uint64_t)((Sandboxe::Script::Runtime::Object*)arguments[0])->GetNativeAddress(Index_EntityID));
+    const Dynacoe::Entity::ID & other = ((EntityObjectID*)((Sandboxe::Script::Runtime::Object*)arguments[0]))->id;
     e->Detach(other);
 }
 
 SANDBOXE_NATIVE_DEF(__entity_get_num_children) {
-    Dynacoe::Entity::ID id((uint64_t)source->GetNativeAddress(Index_EntityID));
+    const Dynacoe::Entity::ID & id = ((EntityObjectID*)source)->id;
     Dynacoe::Entity * e = id.Identify();    
     if (!e) return;
 
@@ -98,39 +98,39 @@ SANDBOXE_NATIVE_DEF(__entity_get_num_children) {
 SANDBOXE_NATIVE_DEF(__entity_contains) {
     SANDBOXE_ASSERT__ARG_COUNT(1);
     SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceT);
-    SANDBOXE_ASSERT__ARG_NATIVE_TYPE(0, EntityIDT);
+    SANDBOXE_ASSERT__ARG_NATIVE(0, EntityObjectID);
 
-    Dynacoe::Entity::ID id((uint64_t)source->GetNativeAddress(Index_EntityID));
+    const Dynacoe::Entity::ID & id = ((EntityObjectID*)source)->id;
     Dynacoe::Entity * e = id.Identify();    
     if (!e) return;
     
-    Dynacoe::Entity::ID other((uint64_t)((Sandboxe::Script::Runtime::Object*)arguments[0])->GetNativeAddress(Index_EntityID));
+    const Dynacoe::Entity::ID & other = ((EntityObjectID*)((Sandboxe::Script::Runtime::Object*)arguments[0]))->id;
     context.SetReturnValue(e->Contains(other));
 }
 
 SANDBOXE_NATIVE_DEF(__entity_get_children) {
-    Dynacoe::Entity::ID id((uint64_t)source->GetNativeAddress(Index_EntityID));
+    const Dynacoe::Entity::ID & id = ((EntityObjectID*)source)->id;
     Dynacoe::Entity * e = id.Identify();    
     if (!e) return;
 
     auto list = e->GetChildren();
     std::vector<Sandboxe::Script::Runtime::Primitive> out;
     for(uint32_t i = 0; i < list.size(); ++i) {
-        out.push_back(list[i].IdentifyAs<Sandboxe::Entity>()->GetObjectSource());
+        out.push_back(list[i].IdentifyAs<Sandboxe::Entity>()->object);
     }
     
     context.SetReturnArray(out);
 }
 
 SANDBOXE_NATIVE_DEF(__entity_get_all_sub_entities) {
-    Dynacoe::Entity::ID id((uint64_t)source->GetNativeAddress(Index_EntityID));
+    const Dynacoe::Entity::ID & id = ((EntityObjectID*)source)->id;
     Dynacoe::Entity * e = id.Identify();    
     if (!e) return;
 
     auto list = e->GetAllSubEntities();
     std::vector<Sandboxe::Script::Runtime::Primitive> out;
     for(uint32_t i = 0; i < list.size(); ++i) {
-        out.push_back(list[i].IdentifyAs<Sandboxe::Entity>()->GetObjectSource());
+        out.push_back(list[i].IdentifyAs<Sandboxe::Entity>()->object);
     }
     
     context.SetReturnArray(out);
@@ -139,26 +139,26 @@ SANDBOXE_NATIVE_DEF(__entity_get_all_sub_entities) {
 
 SANDBOXE_NATIVE_DEF(__entity_find_child_by_name) {
     SANDBOXE_ASSERT__ARG_COUNT(1);
-    Dynacoe::Entity::ID id((uint64_t)source->GetNativeAddress(Index_EntityID));
+    const Dynacoe::Entity::ID & id = ((EntityObjectID*)source)->id;
     Dynacoe::Entity * e = id.Identify();    
     if (!e) return;
 
     auto list = e->FindChildByName(arguments[0]);
     std::vector<Sandboxe::Script::Runtime::Primitive> out;
     for(uint32_t i = 0; i < list.size(); ++i) {
-        out.push_back(list[i].IdentifyAs<Sandboxe::Entity>()->GetObjectSource());
+        out.push_back(list[i].IdentifyAs<Sandboxe::Entity>()->object);
     }
     
     context.SetReturnArray(out);
 }
 
 SANDBOXE_NATIVE_DEF(__entity_create_child) {
-    Dynacoe::Entity::ID id((uint64_t)source->GetNativeAddress(Index_EntityID));
+    const Dynacoe::Entity::ID & id = ((EntityObjectID*)source)->id;
     Dynacoe::Entity * e = id.Identify();    
     if (!e) return;
 
-    auto object = Sandboxe::NativeObject::New(Sandboxe::NativeType::EntityIDT);
-    Sandboxe::Entity * child = Dynacoe::Entity::ID((uint64_t)Sandboxe::NativeObject::Get<void>(object)).IdentifyAs<Sandboxe::Entity>();
+    auto object = new Sandboxe::EntityObjectID();
+    Sandboxe::Entity * child = object->id.IdentifyAs<Sandboxe::Entity>();
 
 
     e->Attach(child->GetID());
@@ -170,7 +170,7 @@ SANDBOXE_NATIVE_DEF(__entity_create_child) {
 
 
 SANDBOXE_NATIVE_DEF(__entity_draw_duration) {
-    Dynacoe::Entity::ID id((uint64_t)source->GetNativeAddress(Index_EntityID));
+    const Dynacoe::Entity::ID & id = ((EntityObjectID*)source)->id;
     Dynacoe::Entity * e = id.Identify();    
     if (!e) return;
 
@@ -178,7 +178,7 @@ SANDBOXE_NATIVE_DEF(__entity_draw_duration) {
 }
 
 SANDBOXE_NATIVE_DEF(__entity_step_duration) {
-    Dynacoe::Entity::ID id((uint64_t)source->GetNativeAddress(Index_EntityID));
+    const Dynacoe::Entity::ID & id = ((EntityObjectID*)source)->id;
     Dynacoe::Entity * e = id.Identify();    
     if (!e) return;
 
@@ -187,7 +187,7 @@ SANDBOXE_NATIVE_DEF(__entity_step_duration) {
 
 SANDBOXE_NATIVE_DEF(__entity_set_priority) {
     SANDBOXE_ASSERT__ARG_COUNT(1);
-    Dynacoe::Entity::ID id((uint64_t)source->GetNativeAddress(Index_EntityID));
+    const Dynacoe::Entity::ID & id = ((EntityObjectID*)source)->id;
     Dynacoe::Entity * e = id.Identify();    
     if (!e) return;
 
@@ -195,7 +195,7 @@ SANDBOXE_NATIVE_DEF(__entity_set_priority) {
 }
 
 SANDBOXE_NATIVE_DEF(__entity_get_priority) {
-    Dynacoe::Entity::ID id((uint64_t)source->GetNativeAddress(Index_EntityID));
+    const Dynacoe::Entity::ID & id = ((EntityObjectID*)source)->id;
     Dynacoe::Entity * e = id.Identify();    
     if (!e) return;
 
@@ -203,7 +203,7 @@ SANDBOXE_NATIVE_DEF(__entity_get_priority) {
 }
 
 SANDBOXE_NATIVE_DEF(__entity_set_priority_last) {
-    Dynacoe::Entity::ID id((uint64_t)source->GetNativeAddress(Index_EntityID));
+    const Dynacoe::Entity::ID & id = ((EntityObjectID*)source)->id;
     Dynacoe::Entity * e = id.Identify();    
     if (!e) return;
 
@@ -211,7 +211,7 @@ SANDBOXE_NATIVE_DEF(__entity_set_priority_last) {
 }
 
 SANDBOXE_NATIVE_DEF(__entity_set_priority_first) {
-    Dynacoe::Entity::ID id((uint64_t)source->GetNativeAddress(Index_EntityID));
+    const Dynacoe::Entity::ID & id = ((EntityObjectID*)source)->id;
     Dynacoe::Entity * e = id.Identify();    
     if (!e) return;
 
@@ -220,19 +220,19 @@ SANDBOXE_NATIVE_DEF(__entity_set_priority_first) {
 
 
 SANDBOXE_NATIVE_DEF(__entity_get_parent) {
-    Dynacoe::Entity::ID id((uint64_t)source->GetNativeAddress(Index_EntityID));
+    const Dynacoe::Entity::ID & id = ((EntityObjectID*)source)->id;
     Dynacoe::Entity * e = id.Identify();    
     if (!e) return;
 
     if (!e->HasParent()) return;
     context.SetReturnValue(
-        dynamic_cast<Sandboxe::Entity*>(&e->GetParent())->GetObjectSource()
+        dynamic_cast<Sandboxe::Entity*>(&e->GetParent())->object
     );
 }
 
 
 SANDBOXE_NATIVE_DEF(__entity_has_parent) {
-    Dynacoe::Entity::ID id((uint64_t)source->GetNativeAddress(Index_EntityID));
+    const Dynacoe::Entity::ID & id = ((EntityObjectID*)source)->id;
     Dynacoe::Entity * e = id.Identify();    
     if (!e) return;
 
@@ -240,7 +240,7 @@ SANDBOXE_NATIVE_DEF(__entity_has_parent) {
 }
 
 SANDBOXE_NATIVE_DEF(__entity_add_component) {
-    Dynacoe::Entity::ID id((uint64_t)source->GetNativeAddress(Index_EntityID));
+    const Dynacoe::Entity::ID & id = ((EntityObjectID*)source)->id;
     Dynacoe::Entity * e = id.Identify();    
     if (!e) return;
 
@@ -250,7 +250,8 @@ SANDBOXE_NATIVE_DEF(__entity_add_component) {
     }
     
     SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceT);
-    auto component = Sandboxe::NativeObject::Get<Sandboxe::ComponentAdaptor>(arguments[0]);
+    SANDBOXE_ASSERT__ARG_NATIVE(0, ComponentAdaptor);
+    auto component = dynamic_cast<Sandboxe::ComponentAdaptor *>((Sandboxe::Script::Runtime::Object*)arguments[0]);
 
     if (arguments.size() >= 2) {
         e->AddComponent(component->Native_GetDynacoeComponent(), (Dynacoe::Entity::UpdateClass)(int)arguments[1]);
@@ -261,7 +262,7 @@ SANDBOXE_NATIVE_DEF(__entity_add_component) {
 
 SANDBOXE_NATIVE_DEF(__entity_query_component) {
     SANDBOXE_ASSERT__ARG_COUNT(1);
-    Dynacoe::Entity::ID id((uint64_t)source->GetNativeAddress(Index_EntityID));
+    const Dynacoe::Entity::ID & id = ((EntityObjectID*)source)->id;
     Dynacoe::Entity * e = id.Identify();    
     if (!e) return;
 
@@ -269,21 +270,21 @@ SANDBOXE_NATIVE_DEF(__entity_query_component) {
     auto list = e->GetComponents();
     for(uint32_t i = 0; i < list.size(); ++i) {
         if (list[i]->GetTag() == t) {
-            context.SetReturnValue(((Sandboxe::ComponentAdaptor*)list[i])->GetObjectSource());
+            context.SetReturnValue(dynamic_cast<ComponentAdaptor*>(list[i]));
         }
     }
 }
 
 
 SANDBOXE_NATIVE_DEF(__entity_get_components) {
-    Dynacoe::Entity::ID id((uint64_t)source->GetNativeAddress(Index_EntityID));
+    const Dynacoe::Entity::ID & id = ((EntityObjectID*)source)->id;
     Dynacoe::Entity * e = id.Identify();    
     if (!e) return;
 
     std::vector<Sandboxe::Script::Runtime::Primitive> list;
     auto components = e->GetComponents();
     for(uint32_t i = 0; i < components.size(); ++i) {
-        list.push_back((dynamic_cast<Sandboxe::ComponentAdaptor*>(components[i]))->GetObjectSource());
+        list.push_back(dynamic_cast<Sandboxe::ComponentAdaptor*>(components[i]));
     }
     
     context.SetReturnArray(list);
@@ -291,7 +292,7 @@ SANDBOXE_NATIVE_DEF(__entity_get_components) {
 
 SANDBOXE_NATIVE_DEF(__entity_remove_component) {
     SANDBOXE_ASSERT__ARG_COUNT(1);
-    Dynacoe::Entity::ID id((uint64_t)source->GetNativeAddress(Index_EntityID));
+    const Dynacoe::Entity::ID & id = ((EntityObjectID*)source)->id;
     Dynacoe::Entity * e = id.Identify();    
     if (!e) return;
 
@@ -311,28 +312,28 @@ SANDBOXE_NATIVE_DEF(__entity_remove_component) {
 // native properties
     
 SANDBOXE_NATIVE_DEF(__entity_get_step) {
-    Dynacoe::Entity::ID id((uint64_t)source->GetNativeAddress(Index_EntityID));
+    const Dynacoe::Entity::ID & id = ((EntityObjectID*)source)->id;
     Dynacoe::Entity * e = id.Identify();
     if (!e) return;
     context.SetReturnValue(e->step);
 }
 
 SANDBOXE_NATIVE_DEF(__entity_set_step) {
-    Dynacoe::Entity::ID id((uint64_t)source->GetNativeAddress(Index_EntityID));
+    const Dynacoe::Entity::ID & id = ((EntityObjectID*)source)->id;
     Dynacoe::Entity * e = id.Identify();
     if (!e) return;
     e->step = arguments[0];
 }
 
 SANDBOXE_NATIVE_DEF(__entity_get_draw) {
-    Dynacoe::Entity::ID id((uint64_t)source->GetNativeAddress(Index_EntityID));
+    const Dynacoe::Entity::ID & id = ((EntityObjectID*)source)->id;
     Dynacoe::Entity * e = id.Identify();
     if (!e) return;            
     context.SetReturnValue(e->draw);
 }
 
 SANDBOXE_NATIVE_DEF(__entity_set_draw) {
-    Dynacoe::Entity::ID id((uint64_t)source->GetNativeAddress(Index_EntityID));
+    const Dynacoe::Entity::ID & id = ((EntityObjectID*)source)->id;
     Dynacoe::Entity * e = id.Identify();
     if (!e) return;            
     e->draw = arguments[0];
@@ -340,7 +341,7 @@ SANDBOXE_NATIVE_DEF(__entity_set_draw) {
 
 
 SANDBOXE_NATIVE_DEF(__entity_get_id) {
-    Dynacoe::Entity::ID id((uint64_t)source->GetNativeAddress(Index_EntityID));
+    const Dynacoe::Entity::ID & id = ((EntityObjectID*)source)->id;
     context.SetReturnValue(id.Value());
 }
 
@@ -348,24 +349,24 @@ SANDBOXE_NATIVE_DEF(__entity_set_id) {}
 
 
 SANDBOXE_NATIVE_DEF(__entity_get_node) {
-    Dynacoe::Entity::ID id((uint64_t)source->GetNativeAddress(Index_EntityID));
+    const Dynacoe::Entity::ID & id = ((EntityObjectID*)source)->id;
     auto * e = id.IdentifyAs<Sandboxe::Entity>();
     if (!e) return;            
-    context.SetReturnValue(e->realNode->object);
+    context.SetReturnValue(e->realNode);
 }
 
 SANDBOXE_NATIVE_DEF(__entity_set_node) {}
 
 
 SANDBOXE_NATIVE_DEF(__entity_get_name) {
-    Dynacoe::Entity::ID id((uint64_t)source->GetNativeAddress(Index_EntityID));
+    const Dynacoe::Entity::ID & id = ((EntityObjectID*)source)->id;
     Dynacoe::Entity * e = id.Identify();
     if (!e) return;            
     context.SetReturnValue(e->GetName());
 }
 
 SANDBOXE_NATIVE_DEF(__entity_set_name) {
-    Dynacoe::Entity::ID id((uint64_t)source->GetNativeAddress(Index_EntityID));
+    const Dynacoe::Entity::ID & id = ((EntityObjectID*)source)->id;
     Dynacoe::Entity * e = id.Identify();
     if (!e) return;            
     e->SetName(arguments[0]);
@@ -376,7 +377,7 @@ SANDBOXE_NATIVE_DEF(__entity_set_name) {
 /// global functions
 
 SANDBOXE_NATIVE_DEF(__entity_create_default) {
-    context.SetReturnValue(Sandboxe::NativeObject::New(Sandboxe::NativeType::EntityIDT));
+    context.SetReturnValue(new Sandboxe::EntityObjectID);
 }
 
 SANDBOXE_NATIVE_DEF(__entity_get_all) {
@@ -386,7 +387,7 @@ SANDBOXE_NATIVE_DEF(__entity_get_all) {
     for(uint32_t i = 0; i < list.size(); ++i) {
         e = list[i].IdentifyAs<Sandboxe::Entity>();
         if (!e) continue;
-        out.push_back(e->GetObjectSource());
+        out.push_back(e->object);
     }
     context.SetReturnArray(out);
 }
@@ -397,7 +398,7 @@ SANDBOXE_NATIVE_DEF(__entity_get_all) {
 
 void dynacoe_entity(std::vector<std::pair<std::string, Sandboxe::Script::Runtime::Function>> & fns) {
     Sandboxe::Script::Runtime::AddType(
-        Sandboxe::NativeTypeToString(Sandboxe::NativeType::EntityIDT),
+        (int)Sandboxe::NativeType::EntityIDT,
         // methods
         {
             {"draw", __entity_draw},

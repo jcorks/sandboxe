@@ -14,13 +14,13 @@ namespace Sandboxe {
 namespace Bindings {
 
 SANDBOXE_NATIVE_DEF(__asset_id_valid_get) {
-    Sandboxe::AssetID * id = Sandboxe::NativeObject::Get<Sandboxe::AssetID>(source);
+    auto id = (Sandboxe::AssetIDObject*)source;
     context.SetReturnValue(id->id.Valid());
 }
 SANDBOXE_NATIVE_DEF(__asset_id_valid_set) {}
 
 SANDBOXE_NATIVE_DEF(__asset_id_name_get) {
-    Sandboxe::AssetID * id = Sandboxe::NativeObject::Get<Sandboxe::AssetID>(source);
+    auto id = (Sandboxe::AssetIDObject*)source;
     context.SetReturnValue(Dynacoe::Assets::Name(id->id));
 }
 SANDBOXE_NATIVE_DEF(__asset_id_name_set) {}
@@ -31,12 +31,12 @@ SANDBOXE_NATIVE_DEF(__asset_id_get) {
 }
 
 SANDBOXE_NATIVE_DEF(__asset_id_remove) {
-    Sandboxe::AssetID * id = Sandboxe::NativeObject::Get<Sandboxe::AssetID>(source);
+    auto id = (Sandboxe::AssetIDObject*)source;
     Dynacoe::Assets::Remove(id->id);
 }
 SANDBOXE_NATIVE_DEF(__asset_id_write) {
     SANDBOXE_ASSERT__ARG_COUNT(2);
-    Sandboxe::AssetID * id = Sandboxe::NativeObject::Get<Sandboxe::AssetID>(source);
+    auto id = (Sandboxe::AssetIDObject*)source;
     context.SetReturnValue(Dynacoe::Assets::Write(id->id, arguments[0], arguments[1]));
 }
 
@@ -52,24 +52,22 @@ SANDBOXE_NATIVE_DEF(__assets_load) {
     } else {
         return;
     }
-    auto object = Sandboxe::NativeObject::New(Sandboxe::NativeType::AssetIDT);
-    Sandboxe::AssetID * s = Sandboxe::NativeObject::Get<Sandboxe::AssetID>(object);
-    s->id = id;
+    auto object = new Sandboxe::AssetIDObject();
+    object->id = id;
     context.SetReturnValue(object);
 }
 
 SANDBOXE_NATIVE_DEF(__assets_load_from_buffer) {
     SANDBOXE_ASSERT__ARG_COUNT(3);
     SANDBOXE_ASSERT__ARG_TYPE(2, ObjectReferenceT);
-    SANDBOXE_ASSERT__ARG_NATIVE_TYPE(2, ByteArrayT);
+    SANDBOXE_ASSERT__ARG_NATIVE(2, ByteArrayObject);
     
-    Sandboxe::ByteArray * array = Sandboxe::NativeObject::Get<Sandboxe::ByteArray>(arguments[2]);
+    auto array = (Sandboxe::ByteArrayObject *)(Sandboxe::Script::Runtime::Object*)(arguments[2]);
     
     Dynacoe::AssetID id;
     id = Dynacoe::Assets::LoadFromBuffer(arguments[0], arguments[1], array->data);
-    auto object = Sandboxe::NativeObject::New(Sandboxe::NativeType::AssetIDT);
-    Sandboxe::AssetID * s = Sandboxe::NativeObject::Get<Sandboxe::AssetID>(object);
-    s->id = id;
+    auto object = new Sandboxe::AssetIDObject;
+    object->id = id;
     context.SetReturnValue(object);
 }
 
@@ -103,10 +101,10 @@ SANDBOXE_NATIVE_DEF(__assets_query) {
     SANDBOXE_ASSERT__ARG_COUNT(2);
     int i = arguments[0];
     if (i < 1 || i >= (int) Dynacoe::Assets::Type::NoType) return;
-
-    auto object = Sandboxe::NativeObject::New(Sandboxe::NativeType::AssetIDT);
-    Sandboxe::AssetID * s = Sandboxe::NativeObject::Get<Sandboxe::AssetID>(object);
-    s->id = Dynacoe::Assets::Query((Dynacoe::Assets::Type)i, arguments[1]);
+    
+    
+    auto object = new Sandboxe::AssetIDObject;
+    object->id = Dynacoe::Assets::Query((Dynacoe::Assets::Type)i, arguments[1]);
     context.SetReturnValue(object);
 }
 
@@ -123,9 +121,8 @@ SANDBOXE_NATIVE_DEF(__assets_new) {
     int i = arguments[0];
     if (i < 1 || i >= (int) Dynacoe::Assets::Type::NoType) return;
 
-    auto object = Sandboxe::NativeObject::New(Sandboxe::NativeType::AssetIDT);
-    Sandboxe::AssetID * s = Sandboxe::NativeObject::Get<Sandboxe::AssetID>(object);
-    s->id = Dynacoe::Assets::New((Dynacoe::Assets::Type)i, name);
+    auto object = new Sandboxe::AssetIDObject;
+    object->id = Dynacoe::Assets::New((Dynacoe::Assets::Type)i, name);
     context.SetReturnValue(object);
 }
 
@@ -134,7 +131,7 @@ SANDBOXE_NATIVE_DEF(__assets_new) {
 void dynacoe_assets(std::vector<std::pair<std::string, Sandboxe::Script::Runtime::Function>> & fns) {
     
     Sandboxe::Script::Runtime::AddType(
-        Sandboxe::NativeTypeToString(Sandboxe::NativeType::AssetIDT),
+        (int) Sandboxe::NativeType::AssetIDT,
         // methods
         {
             {"get", __asset_id_get},

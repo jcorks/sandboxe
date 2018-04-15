@@ -2,6 +2,8 @@
 // "Revealing module pattern"
 
 
+
+/*
 var sandboxe = {
     trunk : {
         // prepares a new executable with a trunk
@@ -291,10 +293,9 @@ var sandboxe = {
 
     }
 };
-
-
-
-
-
-
 sandboxe.script.include("main.js");
+*/
+
+
+
+
