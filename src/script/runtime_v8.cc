@@ -119,6 +119,7 @@ static Object * sandboxe_object_reference_temporary_from_v8_value(const v8::Hand
     ref->reference = v8::Persistent<v8::Object>::New(val->ToObject());
     
     ForeignObject * temp = new ForeignObject(*ref);
+    ref->reference.MakeWeak(nullptr, nullptr);
 
     // gets cleaned up next cycle
     temporary.push_back(temp);
@@ -520,7 +521,14 @@ void Sandboxe::Script::Runtime::AddType(int typeID,
 }
 
 
-
+static void Object_GarbageCollect(v8::Persistent<v8::Value>, void * data) {
+    NativeRef * object = (NativeRef*)data;
+    object->parent->OnGarbageCollection();
+    Dynacoe::Console::Info() << "Removing" << (uint64_t)data << "\n";
+    delete object->parent;
+    delete object;
+    
+}
 
 
 
@@ -531,7 +539,7 @@ Object::Object(int typeID) {
     data->typeData = types[typeID];
     if (data->typeData == nullptr) {
         v8::ThrowException(v8::String::New("sandboxe script object: Type does not exist"));
-        objects.push_back(data);
+        //objects.push_back(data);
         return;
     }
     data->parent = this;
@@ -539,9 +547,9 @@ Object::Object(int typeID) {
     // set a ref to the type info
     obj->SetPointerInInternalField(0, data);
 
-    objects.push_back(data);
+    //objects.push_back(data);
     data->reference = v8::Persistent<v8::Object>::New(obj);
-    //data->reference.MakeWeak(nullptr, nullptr);
+    data->reference.MakeWeak(data, Object_GarbageCollect);
 }
 
 
@@ -596,7 +604,7 @@ void Object::SetNonNativeReference(Object * d, uint32_t index) {
     while(data->nonNatives.size() <= index) data->nonNatives.push_back(nullptr);
     data->nonNatives[index] = d;
 
-    // remove the temporary from destruction
+    // defers destruction of temporary
     // they will be reposted to destruction on this objects destructor
     for(uint32_t i = 0; i < temporary.size(); ++i) {
         if (temporary[i] == d) {
@@ -675,17 +683,6 @@ void Sandboxe::Script::Runtime::PerformGarbageCollection() {
         delete temporary[i];
     }
 
-    for(uint32_t i = 0; i < objects.size(); ++i) {
-        if (objects[i]) {
-            if (objects[i]->reference.IsNearDeath()) {
-                objects[i]->parent->OnGarbageCollection();
-                objects[i]->reference.Dispose();
-                Dynacoe::Console::Info() << "Removing" << i << "\n";
-                delete objects[i]->parent;
-                objects[i] = nullptr;
-            }
-        }
-    }
     
     // TODO:
     // cleanup schemes
