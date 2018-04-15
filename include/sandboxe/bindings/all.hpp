@@ -15,6 +15,7 @@
 #include "dynacoe_color.hpp"
 #include "dynacoe_clock.hpp"
 #include "dynacoe_shape2d.hpp"
+#include "dynacoe_text2d.hpp"
 
 #include "sandboxe_byte_array.hpp"
 
@@ -35,6 +36,7 @@ std::vector<std::pair<std::string, Runtime::Function>> GatherNativeBindings() {
     Bindings::dynacoe_color(out);
     Bindings::dynacoe_clock(out);
     Bindings::dynacoe_shape2d(out);
+    Bindings::dynacoe_text2d(out);
 
     Bindings::sandboxe_byte_array(out);
 

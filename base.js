@@ -16,6 +16,10 @@ var sandboxe = {
         
     },
     
+    text2d : {
+        create : __text2d_create
+    },
+    
     clock : {
         create : __clock_create
     },

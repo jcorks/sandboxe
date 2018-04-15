@@ -134,6 +134,7 @@ SANDBOXE_NATIVE_DEF(__shape2d_color_set) {
 
 
 
+
 SANDBOXE_NATIVE_DEF(__shape2d_mode_get) {
     auto shape = (Sandboxe::Shape2DObject*)source;
     context.SetReturnValue((int)shape->mode);
@@ -185,7 +186,7 @@ void dynacoe_shape2d(std::vector<std::pair<std::string, Sandboxe::Script::Runtim
             {"formImageFrame", __shape2d_form_image_frame},
             {"formCircle", __shape2d_form_circle},
             {"formTriangles", __shape2d_form_triangles},
-            //{"formLines", __shape2d_form_lines},
+            {"formLines", __shape2d_form_lines},
             
             ////////////////////////////////////////////////////////
             //////////////////// imported from component ///////////
