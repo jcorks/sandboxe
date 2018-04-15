@@ -26,7 +26,8 @@ enum class NativeType {
     ColorT,
     Shape2DT,
     ClockT,
-    Text2DT
+    Text2DT,
+    DataTableT
 };
 
 

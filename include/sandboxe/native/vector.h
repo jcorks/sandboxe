@@ -1,6 +1,6 @@
 #ifndef h_sandboxe_vector_included
 #define h_sandboxe_vector_included
-
+#include <cassert>
 namespace Sandboxe {
     
 class VectorObject : public Sandboxe::Script::Runtime::Object {

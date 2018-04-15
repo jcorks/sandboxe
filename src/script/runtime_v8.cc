@@ -521,8 +521,8 @@ void Sandboxe::Script::Runtime::AddType(int typeID,
 }
 
 
-static void Object_GarbageCollect(v8::Persistent<v8::Value>, void * data) {
-    NativeRef * object = (NativeRef*)data;
+static void sandboxe_v8_object_garbage_collect(v8::Persistent<v8::Value> src, void * data) {
+    NativeRef * object = (NativeRef*)src->ToObject()->GetPointerFromInternalField(0);
     object->parent->OnGarbageCollection();
     Dynacoe::Console::Info() << "Removing" << (uint64_t)data << "\n";
     delete object->parent;
@@ -549,7 +549,7 @@ Object::Object(int typeID) {
 
     //objects.push_back(data);
     data->reference = v8::Persistent<v8::Object>::New(obj);
-    data->reference.MakeWeak(data, Object_GarbageCollect);
+    data->reference.MakeWeak(data, sandboxe_v8_object_garbage_collect);
 }
 
 
@@ -681,6 +681,7 @@ void Sandboxe::Script::Runtime::PerformGarbageCollection() {
         if (!temporary[i]) continue;
         delete temporary[i]->GetNative();
         delete temporary[i];
+        Dynacoe::Console::Info() << "DELETING TEMPORARY" << (uint64_t)temporary[i] << "\n";
     }
 
     

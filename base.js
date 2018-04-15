@@ -16,8 +16,17 @@ var sandboxe = {
         
     },
     
+    dataTable : {
+        create : __data_table_create
+    },
+    
     text2d : {
-        create : __text2d_create
+        create : __text2d_create,
+        spacingMode : {
+            kerned : 0,
+            monospace : 1,
+            bitmap : 2
+        }
     },
     
     clock : {

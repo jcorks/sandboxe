@@ -84,12 +84,12 @@ SANDBOXE_NATIVE_DEF(__text2d_font_size_set) {
     shape->SetFontSize(shape->fontSize);
 }
 
-SANDBOXE_NATIVE_DEF(__text2D_spacing_mode_get) {
+SANDBOXE_NATIVE_DEF(__text2d_spacing_mode_get) {
     auto shape = (Sandboxe::Text2DObject*)source;
     context.SetReturnValue(shape->spacingMode);
 }
 
-SANDBOXE_NATIVE_DEF(__text2D_spacing_mode_set) {
+SANDBOXE_NATIVE_DEF(__text2d_spacing_mode_set) {
     auto shape = (Sandboxe::Text2DObject*)source;
     int g = arguments[0];
     if (g < 0 || g > (int)Dynacoe::Text2D::SpacingMode::Bitmap) return;
@@ -194,11 +194,11 @@ void dynacoe_text2d(std::vector<std::pair<std::string, Sandboxe::Script::Runtime
             {"color", {__text2d_color_get, __text2d_color_set}},
             {"text", {__text2d_text_get, __text2d_text_set}},
             {"fontSize", {__text2d_font_size_get, __text2d_font_size_set}},
-            {"spacingMode", {__text2D_spacing_mode_get, __text2d_spacing_mode_set}},
+            {"spacingMode", {__text2d_spacing_mode_get, __text2d_spacing_mode_set}},
             {"font", {__text2d_font_get, __text2d_font_set}},
-            {"mode", {__shape2d_mode_get, __shape2d_mode_set}},
-            {"absolute", {__shape2d_absolute_get, __text2d_absolute_set}},
-            {"node", {__shape2d_node_get, __text2d_node_set}}
+            {"mode", {__text2d_mode_get, __shape2d_mode_set}},
+            {"absolute", {__text2d_absolute_get, __text2d_absolute_set}},
+            {"node", {__text2d_node_get, __text2d_node_set}}
 
         }
         

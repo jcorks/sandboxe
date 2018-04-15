@@ -85,9 +85,9 @@ class NodeObject : public Dynacoe::Node, public Sandboxe::ComponentAdaptor {
     
     
     void OnTransformUpdate() {
-        *globalTransform->position = global.position;
-        *globalTransform->scale = global.scale;
-        *globalTransform->rotation = global.rotation;
+        globalTransform->position->vector = global.position;
+        globalTransform->scale->vector = global.scale;
+        globalTransform->rotation->vector = global.rotation;
         globalTransform->reverse = global.reverse;
     }
     
