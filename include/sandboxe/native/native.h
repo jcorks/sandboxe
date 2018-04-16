@@ -27,7 +27,8 @@ enum class NativeType {
     Shape2DT,
     ClockT,
     Text2DT,
-    DataTableT
+    DataTableT,
+    GUIT
 };
 
 

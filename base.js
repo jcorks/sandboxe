@@ -16,6 +16,12 @@ var sandboxe = {
         
     },
     
+    gui : {
+        create : __gui_create,
+        ungrabInput : __gui_ungrab_input,
+        unfocus : __gui_unfocus
+    },
+    
     dataTable : {
         create : __data_table_create
     },
