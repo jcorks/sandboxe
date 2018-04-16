@@ -15,6 +15,22 @@ var sandboxe = {
         //clean : __trunk_clean
         
     },
+
+    mutator : {
+        mutation : {
+            constant : 0,
+            linear : 1,
+            quadratic : 2,
+            squareRoot : 3,
+            cubic : 4,
+            sinudoidal : 5,
+            logarithmic : 6,
+            randomDistribution : 7
+        },
+
+        create : __mutator_create,
+        step : __mutator_step
+    },
     
     gui : {
         create : __gui_create,

@@ -50,7 +50,7 @@ SANDBOXE_NATIVE_DEF(__node_transform_set_rotation) {
 
 SANDBOXE_NATIVE_DEF(__node_transform_get_scale) {
     auto t = (Sandboxe::Node_TransformObject*)source;
-    context.SetReturnValue(t->position);
+    context.SetReturnValue(t->scale);
 }
 
 SANDBOXE_NATIVE_DEF(__node_transform_set_scale) {
