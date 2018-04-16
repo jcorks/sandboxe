@@ -190,7 +190,7 @@ class Object {
 // of communicating with the scripting language
 void PerformGarbageCollection();
 
-
+void CheckAndHandleErrors();
 
     
 }

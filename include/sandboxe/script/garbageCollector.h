@@ -11,6 +11,7 @@ class GarbageCollector : public Dynacoe::Entity {
         gc->clock.Reset();
         return false;
     }
+    
     GarbageCollector() {
         AddComponent(&clock);
         RemoveComponent(&node);
@@ -20,6 +21,10 @@ class GarbageCollector : public Dynacoe::Entity {
     }
     
     
+    void OnStep() {
+        Sandboxe::Script::Runtime::CheckAndHandleErrors();
+
+    }
 };
 }
 

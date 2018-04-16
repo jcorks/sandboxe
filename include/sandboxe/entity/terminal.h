@@ -17,6 +17,9 @@ class Terminal : public Dynacoe::Entity {
         
     }
     
+    void OnStep() {
+        Sandboxe::Script::Runtime::CheckAndHandleErrors();
+    }
     
     
     

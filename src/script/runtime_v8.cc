@@ -18,6 +18,7 @@ using Sandboxe::Script::Runtime::NativeRef;
 
 struct SandboxeContextModel {
     v8::Persistent<v8::Context> context;
+    v8::TryCatch exceptionHandler;
     v8::Handle<v8::Object> sandboxeJS;
     Object * contextObject;
     Dynacoe::Entity::ID terminal;
@@ -96,6 +97,60 @@ std::vector<Type *> types;
 //////////////////////////////////////
 /// Native helpers
 /////////////////////////////////
+// reports exceptions 
+static void script_exception_handler(v8::TryCatch * tcatch) {
+    v8::HandleScope scopeMonitor;
+    v8::String::Utf8Value exception(tcatch->Exception());
+
+
+    Sandboxe::Script::Terminal * term = global->terminal.IdentifyAs<Sandboxe::Script::Terminal>();
+    if (!term) return;
+
+
+    const char * rawString = *exception;
+    
+    v8::Handle<v8::Message> detail = tcatch->Message();
+
+    // no other info but the bassic message string
+    if(detail.IsEmpty()) {
+        term->ReportError(rawString);
+        return;
+    }
+    
+
+    Dynacoe::Chain message;
+
+    
+    // location first
+    v8::String::Utf8Value filename(detail->GetScriptResourceName());
+    int linenum = detail->GetLineNumber();
+    
+    
+    // erroneous code
+    message 
+        << "  "
+        << (const char*)*filename << ", line " << linenum << ": " << rawString << "\n  "
+        << (const char*)*v8::String::Utf8Value(detail->GetSourceLine()) << "\n  "
+    ;
+    for(int i = 0; i < detail->GetStartColumn(); ++i)
+        message << " ";
+        
+    for(int i = detail->GetStartColumn(); i < detail->GetEndColumn(); ++i) 
+        message << "^";
+    
+    
+    
+    
+    
+    // erroneous code
+    v8::String::Utf8Value st(tcatch->StackTrace());
+    if (*st) {
+        message << "\n  Call Stack info:\n  " << (const char*)*st << "\n";
+    }   
+    term->ReportError(message.ToString().c_str());
+
+}
+
 
 static v8::Handle<v8::Value> sandboxe_primitive_to_v8_value(const Primitive & p) {
     if (!p.IsDefined()) return v8::Undefined();
@@ -250,6 +305,8 @@ static v8::Handle<v8::Value> sandboxe_v8_native__invocation(const v8::Arguments 
         arguments,
         context
     );
+
+
     return sandboxe_context_get_return_value(context);
 
 }
@@ -259,7 +316,6 @@ static v8::Handle<v8::Value> sandboxe_v8_native__global_incovation(const v8::Arg
     SANDBOXE_SCOPE;
     Function f = (Function)(Dynacoe::Chain() << *v8::String::Utf8Value(args.Data())).AsUInt64();
 
-    v8::TryCatch try_catch;
     Sandboxe::Script::Runtime::Context context;
     std::vector<Primitive> arguments = v8_arguments_to_sandboxe_primitive_array(args, context);
     
@@ -307,7 +363,7 @@ static v8::Handle<v8::Value> script_include(const v8::Arguments & args) {
     
     
     // execute the script
-    Sandboxe::Script::Runtime::Execute(rawStr);
+    Sandboxe::Script::Runtime::Execute(rawStr, *path);
         //delete[] rawStr;
         //return v8::ThrowException(v8::String::New((Dynacoe::Chain() << "File " << *path << " could not be accessed.\n").ToString().c_str()));
     
@@ -319,59 +375,6 @@ static v8::Handle<v8::Value> script_include(const v8::Arguments & args) {
 
 
 
-// reports exceptions 
-static void script_exception_handler(v8::TryCatch * tcatch) {
-    v8::HandleScope scopeMonitor;
-    v8::String::Utf8Value exception(tcatch->Exception());
-
-
-    Sandboxe::Script::Terminal * term = global->terminal.IdentifyAs<Sandboxe::Script::Terminal>();
-    if (!term) return;
-
-
-    const char * rawString = *exception;
-    
-    v8::Handle<v8::Message> detail = tcatch->Message();
-
-    // no other info but the bassic message string
-    if(detail.IsEmpty()) {
-        term->ReportError(rawString);
-        return;
-    }
-    
-
-    Dynacoe::Chain message;
-
-    
-    // location first
-    v8::String::Utf8Value filename(detail->GetScriptResourceName());
-    int linenum = detail->GetLineNumber();
-    
-    
-    // erroneous code
-    message 
-        << (const char*)*filename << ", line " << linenum << ": " << rawString << "\n"
-        << (const char*)*v8::String::Utf8Value(detail->GetSourceLine()) << "\n"
-    ;
-    
-    for(int i = 0; i < detail->GetStartColumn(); ++i)
-        message << " ";
-        
-    for(int i = detail->GetStartColumn(); i < detail->GetEndColumn(); ++i) 
-        message << "^";
-    
-    
-    
-    
-    
-    // erroneous code
-    v8::String::Utf8Value st(tcatch->StackTrace());
-    if (*st) {
-        message << "\nCall Stack info:\n" << (const char*)*st << "\n";
-    }   
-    term->ReportError(message.ToString().c_str());
-
-}
 
 
 
@@ -425,7 +428,6 @@ void Sandboxe::Script::Runtime::Initialize(const std::vector<std::pair<std::stri
 
 std::string Sandboxe::Script::Runtime::Execute(const std::string & source, const std::string & name) {
     v8::HandleScope scopeMonitor;
-    v8::TryCatch tcatch;
     v8::Handle<v8::String> sourceHandle = v8::String::New(source.c_str());
     v8::Handle<v8::String> nameHandle = v8::String::New(name.c_str());
 
@@ -433,14 +435,12 @@ std::string Sandboxe::Script::Runtime::Execute(const std::string & source, const
     
     // compilation error
     if (script.IsEmpty()) {
-        script_exception_handler(&tcatch);
         return "";
     }
     
     // runtime error
     v8::Handle<v8::Value> result = script->Run();
     if (result.IsEmpty()) {
-        script_exception_handler(&tcatch);
         return "";
     }
     
@@ -692,7 +692,12 @@ void Sandboxe::Script::Runtime::PerformGarbageCollection() {
 }
 
 
-
+void Sandboxe::Script::Runtime::CheckAndHandleErrors() {
+    if (global->exceptionHandler.HasCaught()) {
+        script_exception_handler(&global->exceptionHandler);
+        global->exceptionHandler.Reset();
+    }
+}
 
 
 
