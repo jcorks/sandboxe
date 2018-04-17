@@ -19,7 +19,7 @@
 #include "dynacoe_data_table.hpp"
 #include "dynacoe_gui.hpp"
 #include "dynacoe_mutator.hpp"
-
+#include "dynacoe_object2d.hpp"
 
 #include "sandboxe_byte_array.hpp"
 
@@ -44,6 +44,7 @@ std::vector<std::pair<std::string, Runtime::Function>> GatherNativeBindings() {
     Bindings::dynacoe_data_table(out);
     Bindings::dynacoe_gui(out);
     Bindings::dynacoe_mutator(out);
+    Bindings::dynacoe_object2d(out);
 
     Bindings::sandboxe_byte_array(out);
 

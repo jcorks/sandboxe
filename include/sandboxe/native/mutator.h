@@ -23,7 +23,7 @@ class MutatorObject : public Dynacoe::Mutator, public Sandboxe::ComponentAdaptor
     
     
     const char * GetObjectName() const {
-        return "Text2D";
+        return "Mutator";
     }
 
     

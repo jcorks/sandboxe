@@ -15,6 +15,9 @@ var sandboxe = {
         //clean : __trunk_clean
         
     },
+    object2d : {
+        create : __object2d_create
+    },
 
     mutator : {
         mutation : {

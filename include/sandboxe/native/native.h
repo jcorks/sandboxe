@@ -29,7 +29,8 @@ enum class NativeType {
     Text2DT,
     DataTableT,
     GUIT,
-    MutatorT
+    MutatorT,
+    Object2DT
 };
 
 
