@@ -20,7 +20,7 @@ class Object2DObject : public Dynacoe::Object2D, public Sandboxe::ComponentAdapt
     
     double frictionX;
     double frictionY;
-    
+
     void OnGarbageCollection() {
         
     }

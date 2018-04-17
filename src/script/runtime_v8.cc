@@ -679,10 +679,10 @@ void Context::ScriptError(const std::string & str) {
 void Sandboxe::Script::Runtime::PerformGarbageCollection() {
     for(uint32_t i = 0; i < temporary.size(); ++i) {
         if (!temporary[i]) continue;
-        delete temporary[i]->GetNative();
         delete temporary[i];
-        Dynacoe::Console::Info() << "DELETING TEMPORARY" << (uint64_t)temporary[i] << "\n";
+        temporary[i] = nullptr;
     }
+    temporary.clear();
 
     
     // TODO:

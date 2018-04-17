@@ -40,11 +40,17 @@ SANDBOXE_NATIVE_DEF(__vector_clone) {
     context.SetReturnValue(object); 
 }
 
+static char vecStringBuffer[1024];
 SANDBOXE_NATIVE_DEF(__vector_to_string) {
     Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
-    context.SetReturnValue(
-       std::string(Dynacoe::Chain() << "{" << v->vector.x << ", " << v->vector.y << ", " << v->vector.z << "}")
-    );    
+    vecStringBuffer[0] = 0;
+    sprintf(vecStringBuffer, "{%f, %f, %f}",
+        v->vector.x,
+        v->vector.y,
+        v->vector.z
+    );
+
+    context.SetReturnValue(std::string(vecStringBuffer));    
 }
 
 SANDBOXE_NATIVE_DEF(__vector_distance) {

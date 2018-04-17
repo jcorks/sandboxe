@@ -30,7 +30,7 @@ enum class NativeType {
     DataTableT,
     GUIT,
     MutatorT,
-    Object2DT
+    Object2DT,
 };
 
 

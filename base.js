@@ -16,7 +16,8 @@ var sandboxe = {
         
     },
     object2d : {
-        create : __object2d_create
+        create : __object2d_create,
+        drawColliders : __object2d_draw_colliders
     },
 
     mutator : {

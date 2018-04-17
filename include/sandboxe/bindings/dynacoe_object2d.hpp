@@ -7,11 +7,13 @@
 
 /*
 
-    Dynacoe::Speed bindings 
+    Dynacoe::Object2D bindings 
 
     Notes:
         - GetSetSpeed() are now just the speed property
         - Friction is a public property
+        - Only one contact poly allowed per through setContactPoly()/setContactBox() 
+        - not yet implementing GetContactPoly
     
 
 */
@@ -41,6 +43,46 @@ SANDBOXE_NATIVE_DEF(__object2d_set_velocity) {
     SANDBOXE_ASSERT__ARG_COUNT(2);
     auto o2d = (Sandboxe::Object2DObject*)source;    
     o2d->SetVelocity(arguments[0], arguments[1]);
+}
+
+SANDBOXE_NATIVE_DEF(__object2d_set_contact_poly) {
+    auto o2d = (Sandboxe::Object2DObject*)source;    
+    auto args = context.GetArrayArgument(0);
+    if (!args) {
+        context.ScriptError("Expected array of numbers for contact polygon x,y position pairs.");
+        return; 
+    }
+
+    std::vector<Dynacoe::Vector> pts;
+    for(uint32_t i = 0; i < args->size()/2; ++i) {
+        Dynacoe::Vector next;
+        next.x = (*args)[i*2];
+        next.y = (*args)[i*2+1];
+    }
+
+    o2d->ClearAllContacts();
+    o2d->AddContactPolygon(pts);
+}
+
+SANDBOXE_NATIVE_DEF(__object2d_set_contact_box) {
+    SANDBOXE_ASSERT__ARG_COUNT(4);
+    auto o2d = (Sandboxe::Object2DObject*)source;    
+
+
+    o2d->ClearAllContacts();
+    o2d->AddContactBox(
+        Dynacoe::Vector(
+            arguments[0],
+            arguments[1]
+        ),
+        arguments[2],
+        arguments[3]
+    );
+}
+
+SANDBOXE_NATIVE_DEF(__object2d_clear_contact) {
+    auto o2d = (Sandboxe::Object2DObject*)source;    
+    o2d->ClearAllContacts();
 }
 
 
@@ -105,6 +147,9 @@ SANDBOXE_NATIVE_DEF(__object2d_create) {
     context.SetReturnValue(new Sandboxe::Object2DObject);
 }
 
+SANDBOXE_NATIVE_DEF(__object2d_draw_colliders) {
+    Dynacoe::Object2D::DrawColliders("yellow");
+}
 
 
 
@@ -118,6 +163,9 @@ void dynacoe_object2d(std::vector<std::pair<std::string, Sandboxe::Script::Runti
             {"addVelocity", __object2d_add_velocity},
             {"setVelocity", __object2d_set_velocity},
             {"halt", __object2d_halt},
+            {"setContactPoly", __object2d_set_contact_poly},
+            {"setContactBox", __object2d_set_contact_box},
+            {"clearContact", __object2d_clear_contact},
             
 
             ////////////////////////////////////////////////////////
@@ -173,6 +221,7 @@ void dynacoe_object2d(std::vector<std::pair<std::string, Sandboxe::Script::Runti
     );
     
     fns.push_back({"__object2d_create", __object2d_create});  
+    fns.push_back({"__object2d_draw_colliders", __object2d_draw_colliders});  
 
   
 }
