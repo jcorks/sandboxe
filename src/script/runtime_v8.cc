@@ -4,6 +4,7 @@
 #include <Dynacoe/Library.h>
 #include <Dynacoe/RawData.h>
 
+#include <cassert>
 #include <v8.h>
 
 #include <map>
@@ -147,8 +148,24 @@ static void script_exception_handler(v8::TryCatch * tcatch) {
     if (*st) {
         message << "\n  Call Stack info:\n  " << (const char*)*st << "\n";
     }   
-    term->ReportError(message.ToString().c_str());
+    
 
+
+    // try to run the default handler. If unsuccessful, return 0
+    // The default handler is passed the system-dependent error string.
+
+    v8::Handle<v8::String> sourceHandle = v8::String::New("try{sandboxe.script.onError();}catch(e){false;return;}true;");
+    v8::Handle<v8::String> nameHandle = v8::String::New("<internal>");
+    v8::Handle<v8::Script> script = v8::Script::Compile(sourceHandle, nameHandle);
+    
+    // compilation error
+    assert(!script.IsEmpty());
+    
+    // runtime error
+    v8::Handle<v8::Value> result = script->Run();
+    if (!(!result.IsEmpty() && result->IsTrue())) {
+        term->ReportError(message.ToString().c_str());
+    }
 }
 
 
@@ -342,14 +359,27 @@ static v8::Handle<v8::Value> sandboxe_v8_native__global_incovation(const v8::Arg
 
 
 // loads a new script file
+static std::set<std::string> includedScripts; 
 static v8::Handle<v8::Value> script_include(const v8::Arguments & args) {
     v8::HandleScope scopeMonitor;
-    if (args.Length() != 1) {
+    if (args.Length() < 1) {
         return v8::ThrowException(v8::String::New((Dynacoe::Chain() << "Exactly one arg, dummy\n").ToString().c_str()));
+    }
+    
+    // having a second argument is a flag for only including rather than running.
+    bool pragmaOnce = false;
+    if (args.Length() == 2) {
+        pragmaOnce = true;
     }
     
     
     v8::String::Utf8Value path(args[0]);
+
+    // if include_once, ignore additional include requests
+    if (pragmaOnce && includedScripts.find(*path) != includedScripts.end()) {
+        return v8::Undefined();
+    }
+    
     Dynacoe::AssetID id = Dynacoe::Assets::Load("", *path);
     if (!id.Valid()) {
         return v8::ThrowException(v8::String::New((Dynacoe::Chain() << "File " << *path << " could not be accessed.\n").ToString().c_str()));
@@ -646,7 +676,7 @@ Primitive Object::CallMethod(const std::string & str, const std::vector<Primitiv
 
     v8::Handle<v8::Value> args_conv[args.size()];
     for(uint32_t i = 0; i < args.size(); ++i) {
-        args_conv[i] = v8::String::New(std::string(args[i]).c_str());
+        args_conv[i] = sandboxe_primitive_to_v8_value(args[i]);
     }
     
     v8::Handle<v8::Value> result = fn->CallAsFunction(

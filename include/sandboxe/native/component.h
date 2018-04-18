@@ -5,7 +5,6 @@
 #include <sandboxe/script/runtime.h>
 #include <sandboxe/native/native.h>
 
-
 /*
     Dynacoe::Component bindings 
     
@@ -29,16 +28,7 @@ class ComponentAdaptor : public Sandboxe::Script::Runtime::Object {
   public:
     // data is the function object
     // Generic event handler that calls non-native script object functions
-    static DynacoeEvent(NativeHandler) {
-      ((Sandboxe::Script::Runtime::Object*)functionData)->CallMethod(
-          "", 
-          {
-              Script::Runtime::Primitive(dynamic_cast<Sandboxe::ComponentAdaptor*>(component)),
-              Script::Runtime::Primitive(),//self.Valid() ? Script::Runtime::Primitive(self.IdentifyAs<Sandboxe::Entity>()->GetObjectSource()) : Script::Runtime::Primitive(),
-              Script::Runtime::Primitive()//source.Valid() ? Script::Runtime::Primitive(source.IdentifyAs<Sandboxe::Entity>()->GetObjectSource()) : Script::Runtime::Primitive()
-          }
-      ); 
-    }
+    static DynacoeEvent(NativeHandler);
     ComponentAdaptor(int type) :
         Sandboxe::Script::Runtime::Object(type),
         nonNativeIndex(0){}

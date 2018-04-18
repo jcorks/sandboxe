@@ -109,7 +109,7 @@ void Empty(Sandboxe::Script::Runtime::Object * source, const std::vector<Sandbox
 void Initialize(const std::vector<std::pair<std::string, Function>> & globalFunctions = {});
 
 // executes raw script code. Result is returned
-std::string Execute(const std::string & code, const std::string & name = "_anonymous");
+std::string Execute(const std::string & code, const std::string & name = "<Sandboxe>");
 
 // Loads a script file
 void Load(const std::string & path);

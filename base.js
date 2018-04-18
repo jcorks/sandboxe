@@ -298,7 +298,8 @@ var sandboxe = {
     },
     
     script : {
-        include : __script_include
+        run : __script_include,
+        include : function(script) {__script_include(script, 1);}
     },
 
     console : {
