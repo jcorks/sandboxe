@@ -34,7 +34,16 @@ class Entity : public Dynacoe::Entity {
         //realNode = dynamic_cast<Sandboxe::Node*>(Sandboxe::NativeObject::Get<Sandboxe::ComponentAdaptor>(nodeObject));
         AddComponent(realNode);
         object = nullptr;
+        node.local.scale = Dynacoe::Vector(0, 0, 0);
     }    
+    
+    ~Entity() {
+        auto comps = GetComponents();
+        for(uint32_t i = 0; i < comps.size(); ++i) {
+            RemoveComponent(comps[i]);
+        }
+        
+    }
     EntityObjectID * object;
 
     

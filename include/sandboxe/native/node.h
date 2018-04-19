@@ -51,7 +51,7 @@ class NodeObject : public Dynacoe::Node, public Sandboxe::ComponentAdaptor {
         globalTransform = new Sandboxe::Node_TransformObject();        
         Set("global", globalTransform);
         
-
+        local.scale = Dynacoe::Vector(0, 0, 0);
     }
 
     
