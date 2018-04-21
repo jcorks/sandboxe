@@ -31,6 +31,7 @@ enum class NativeType {
     GUIT,
     MutatorT,
     Object2DT,
+    Camera_EntityIDT
 };
 
 

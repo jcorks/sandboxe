@@ -449,7 +449,7 @@ void Sandboxe::Script::Runtime::Initialize(const std::vector<std::pair<std::stri
     // innitialize dynacoe shell extension
     Sandboxe::Script::Shell::Initialize();
     
-    
+
 
     
     
@@ -549,6 +549,8 @@ void Sandboxe::Script::Runtime::AddType(int typeID,
     types[typeID] = data;
     
 }
+
+
 
 
 static void sandboxe_v8_object_garbage_collect(v8::Persistent<v8::Value> src, void * data) {
@@ -700,6 +702,9 @@ bool Object::IsNative() const {
 int Object::GetTypeID() const {
     return data->typeData->typeID;
 }
+
+
+
 
 void Context::ScriptError(const std::string & str) {
     v8::ThrowException(v8::String::New(str.c_str()));

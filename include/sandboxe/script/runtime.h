@@ -158,8 +158,8 @@ class Object {
     
     NativeRef * GetNative() {return data;}
     
-    
     int GetTypeID() const;
+
     
     
     // callback, if set, called when the script runtime reference 
@@ -168,6 +168,8 @@ class Object {
 
     // Returns the type that the object was instantiated with
     virtual const char * GetObjectName() const = 0;
+
+
 
 
   protected:

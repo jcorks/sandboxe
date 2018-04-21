@@ -15,6 +15,28 @@ var sandboxe = {
         //clean : __trunk_clean
         
     },
+    camera : {
+        create : __camera_create
+    },
+    
+    graphics : {
+        commit : __graphics_commit,
+        draw : __graphics_draw,
+        setDrawEachFrame : __graphics_set_draw_each_frame,
+        getDrawEachFrame : __graphics_get_draw_each_frame,
+        setEnableFiltering : __graphics_set_enable_filtering,
+        
+        setCamera2d : __graphics_set_camera_2d,
+        setCamera3d : __graphics_set_camera_3d,
+        setRenderCamera : __graphics_set_render_camera,
+
+        getCamera2d : __graphics_get_camera_2d,
+        getCamera3d : __graphics_get_camera_3d,
+        getRenderCamera : __graphics_get_render_camera
+
+
+    },
+    
     object2d : {
         create : __object2d_create,
         drawColliders : __object2d_draw_colliders

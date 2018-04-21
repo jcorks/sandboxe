@@ -10,7 +10,7 @@ namespace Sandboxe {
 
 class EntityObjectID : public Sandboxe::Script::Runtime::Object {
   public:
-    EntityObjectID();
+    EntityObjectID(Sandboxe::NativeType t = Sandboxe::NativeType::Camera_EntityIDT);
     Dynacoe::Entity::ID id;
     
     void OnGarbageCollection() {

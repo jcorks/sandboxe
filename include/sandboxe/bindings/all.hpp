@@ -20,7 +20,8 @@
 #include "dynacoe_gui.hpp"
 #include "dynacoe_mutator.hpp"
 #include "dynacoe_object2d.hpp"
-
+#include "dynacoe_camera.hpp"
+#include "dynacoe_graphics.hpp"
 #include "sandboxe_byte_array.hpp"
 
 namespace Sandboxe {
@@ -45,11 +46,40 @@ std::vector<std::pair<std::string, Runtime::Function>> GatherNativeBindings() {
     Bindings::dynacoe_gui(out);
     Bindings::dynacoe_mutator(out);
     Bindings::dynacoe_object2d(out);
+    Bindings::dynacoe_camera(out);
+    Bindings::dynacoe_graphics(out);
 
     Bindings::sandboxe_byte_array(out);
+    
+    
+
 
     return out;
 }   
+
+
+void ApplyPostBindings() {
+    Dynacoe::Graphics::GetCamera2D().Remove();
+    Dynacoe::Graphics::GetCamera3D().Remove();
+    Dynacoe::Graphics::GetRenderCamera().Remove();
+    
+    auto c2d = new Sandboxe::CameraEntityID();
+    auto c3d = new Sandboxe::CameraEntityID();
+
+    c2d->id.IdentifyAs<Sandboxe::Camera>()->Self()->SetType(Dynacoe::Camera::Type::Orthographic2D);
+    c3d->id.IdentifyAs<Sandboxe::Camera>()->Self()->SetType(Dynacoe::Camera::Type::Perspective3D);
+    
+    
+    Dynacoe::Graphics::SetCamera3D(*c3d->id.IdentifyAs<Sandboxe::Camera>()->Self());
+    Dynacoe::Graphics::SetCamera2D(*c2d->id.IdentifyAs<Sandboxe::Camera>()->Self());
+    Dynacoe::Graphics::SetRenderCamera(*c2d->id.IdentifyAs<Sandboxe::Camera>()->Self());
+    
+    c2d->id.IdentifyAs<Sandboxe::Camera>()->Self()->node.local.reverse = true;
+    c2d->id.IdentifyAs<Sandboxe::Camera>()->Self()->SetRenderResolution(640, 480);
+    Dynacoe::Engine::AttachManager(c2d->id);
+    Dynacoe::Engine::AttachManager(c3d->id);
+
+}
 
  
 }

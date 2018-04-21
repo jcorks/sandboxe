@@ -19,6 +19,9 @@ int main() {
 
     Dynacoe::Engine::AttachManager(Dynacoe::Entity::Create<Sandboxe::GarbageCollector>());
 
+    // remainign logic initialization for bindings
+    Sandboxe::Script::ApplyPostBindings();
+
     Dynacoe::Engine::Run();
 
     return 0;

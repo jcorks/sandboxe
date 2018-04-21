@@ -132,5 +132,3 @@ void Sandboxe::Script::Runtime::Empty(Sandboxe::Script::Runtime::Object * source
 
 
 
-
-
