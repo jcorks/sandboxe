@@ -16,6 +16,20 @@ var sandboxe = {
         
     },
     
+    material : {
+        create : __material_create,
+        coreProgram : { 
+            basic : 0,
+            lighting : 1
+        },
+        
+        textureSlot : {
+            color : 0,
+            basic : 1,
+            shiny : 2
+        }
+    },
+    
     shader : {
         create : __shader_create,
         stage : {
