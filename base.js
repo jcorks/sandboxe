@@ -15,6 +15,13 @@ var sandboxe = {
         //clean : __trunk_clean
         
     },
+    renderLight : {
+        create : __render_light_create,
+        type : {
+            point : 0,
+            directional : 1
+        }
+    },
     camera : {
         create : __camera_create
     },
