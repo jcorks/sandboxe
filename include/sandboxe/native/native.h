@@ -32,7 +32,8 @@ enum class NativeType {
     MutatorT,
     Object2DT,
     Camera_EntityIDT,
-    RenderLightT
+    RenderLightT,
+    MeshT
 };
 
 

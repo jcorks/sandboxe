@@ -15,6 +15,15 @@ var sandboxe = {
         //clean : __trunk_clean
         
     },
+    mesh : {
+        create : __mesh_create,
+        vertexAttribute : {
+            position : 0,
+            normal : 1, 
+            uv : 2,   
+            userData : 3 
+        }
+    },
     renderLight : {
         create : __render_light_create,
         type : {

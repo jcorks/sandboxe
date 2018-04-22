@@ -23,6 +23,7 @@
 #include "dynacoe_camera.hpp"
 #include "dynacoe_graphics.hpp"
 #include "dynacoe_render_light.hpp"
+#include "dynacoe_mesh.hpp"
 #include "sandboxe_byte_array.hpp"
 
 namespace Sandboxe {
@@ -50,6 +51,7 @@ std::vector<std::pair<std::string, Runtime::Function>> GatherNativeBindings() {
     Bindings::dynacoe_camera(out);
     Bindings::dynacoe_graphics(out);
     Bindings::dynacoe_render_light(out);
+    Bindings::dynacoe_mesh(out);
     Bindings::sandboxe_byte_array(out);
     
     
