@@ -35,7 +35,8 @@ enum class NativeType {
     RenderLightT,
     MeshT,
     MaterialT,
-    ShaderT
+    ShaderT,
+    RenderMeshT
 };
 
 

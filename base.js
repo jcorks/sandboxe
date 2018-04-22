@@ -15,6 +15,13 @@ var sandboxe = {
         //clean : __trunk_clean
         
     },
+    renderMesh : {
+        create : __render_mesh_create,
+        polygon : {
+            triangle : 0,
+            line : 1
+        }
+    },
     
     material : {
         create : __material_create,
