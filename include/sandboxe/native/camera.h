@@ -27,7 +27,7 @@ class Camera : public Sandboxe::Entity {
         i->node.local.position = realNode->localTransform->position->vector;
         i->node.local.scale = realNode->localTransform->scale->vector;
         i->node.local.rotation = realNode->localTransform->rotation->vector;
-        i->node.local.reverse = realNode->localTransform->reverse;
+        i->node.local.reverse = realNode->local.reverse;
         realCamera.Identify()->Step();
         object->CallMethod("onStep");
     }

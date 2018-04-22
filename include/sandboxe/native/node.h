@@ -10,6 +10,22 @@ namespace Sandboxe {
 
 class Node_TransformObject : public Sandboxe::Script::Runtime::Object {
   public:
+      
+    static void OnChange_Position(VectorObject * object, void * data) {
+        Node_TransformObject * node = (Node_TransformObject*)data;
+        node->t->position = object->vector;
+    }    
+
+    static void OnChange_Scale(VectorObject * object, void * data) {
+        Node_TransformObject * node = (Node_TransformObject*)data;
+        node->t->scale = object->vector;
+    }    
+
+    static void OnChange_Rotation(VectorObject * object, void * data) {
+        Node_TransformObject * node = (Node_TransformObject*)data;
+        node->t->rotation = object->vector;
+    }    
+      
     Node_TransformObject() :
         Sandboxe::Script::Runtime::Object((int) Sandboxe::NativeType::Node_TransformT)
     {
@@ -18,7 +34,11 @@ class Node_TransformObject : public Sandboxe::Script::Runtime::Object {
         scale = new Sandboxe::VectorObject({1.f, 1.f, 1.f});
         rotation = new Sandboxe::VectorObject;
         
-        reverse = false;
+        position->delta.Set(OnChange_Position, (void*)this);
+        rotation->delta.Set(OnChange_Rotation, (void*)this);
+        scale   ->delta.Set(OnChange_Scale,    (void*)this);
+        
+        
     }
       
     void OnGarbageCollection() {
@@ -32,13 +52,17 @@ class Node_TransformObject : public Sandboxe::Script::Runtime::Object {
     Sandboxe::VectorObject * position;
     Sandboxe::VectorObject * scale;
     Sandboxe::VectorObject * rotation;
-    
-    bool reverse;
+    Dynacoe::Node::Transform * t;
+
 };
 
 
 class NodeObject : public Dynacoe::Node, public Sandboxe::ComponentAdaptor {
   public:
+    
+
+
+
     
     NodeObject() : Dynacoe::Node(),
         Sandboxe::ComponentAdaptor((int) Sandboxe::NativeType::NodeT)
@@ -46,12 +70,16 @@ class NodeObject : public Dynacoe::Node, public Sandboxe::ComponentAdaptor {
         
         localTransform = new Sandboxe::Node_TransformObject();        
         Set("local", localTransform);
+        localTransform->t = &local;
         
+
         
         globalTransform = new Sandboxe::Node_TransformObject();        
         Set("global", globalTransform);
+        globalTransform->t = &global;
+
         
-        local.scale = Dynacoe::Vector(0, 0, 0);
+        //local.scale = Dynacoe::Vector(0, 0, 0);
     }
 
     
@@ -71,16 +99,6 @@ class NodeObject : public Dynacoe::Node, public Sandboxe::ComponentAdaptor {
 
 
 
-    void OnStep() {
-
-        local.position = localTransform->position->vector;
-        local.scale = localTransform->scale->vector;
-        local.rotation = localTransform->rotation->vector;
-        local.reverse = localTransform->reverse;
-        
-        Dynacoe::Node::OnStep();
-    }
-    
     
     
     
@@ -88,7 +106,6 @@ class NodeObject : public Dynacoe::Node, public Sandboxe::ComponentAdaptor {
         globalTransform->position->vector = global.position;
         globalTransform->scale->vector = global.scale;
         globalTransform->rotation->vector = global.rotation;
-        globalTransform->reverse = global.reverse;
     }
     
     

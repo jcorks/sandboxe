@@ -33,7 +33,9 @@ enum class NativeType {
     Object2DT,
     Camera_EntityIDT,
     RenderLightT,
-    MeshT
+    MeshT,
+    MaterialT,
+    ShaderT
 };
 
 

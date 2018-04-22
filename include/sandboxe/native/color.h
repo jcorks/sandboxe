@@ -9,11 +9,14 @@ class ColorObject : public Sandboxe::Script::Runtime::Object {
         Sandboxe::Script::Runtime::Object((int)Sandboxe::NativeType::ColorT)
          {}
         
-        
+    
+    // the color storage    
     Dynacoe::Color color;
-    void OnGarbageCollection() {
-        
-    }
+    
+    // callback called when color changes
+    Delta<ColorObject> delta;
+    
+    void OnGarbageCollection() {}
     
     const char * GetObjectName() const {
         return "Vector";

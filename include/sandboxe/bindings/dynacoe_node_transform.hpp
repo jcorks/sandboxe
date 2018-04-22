@@ -15,12 +15,12 @@ namespace Bindings {
 
 SANDBOXE_NATIVE_DEF(__node_transform_get_reverse) {
     auto t = (Sandboxe::Node_TransformObject*)source;
-    context.SetReturnValue(t->reverse);
+    context.SetReturnValue(t->t->reverse);
 }
 
 SANDBOXE_NATIVE_DEF(__node_transform_set_reverse) {
     auto t = (Sandboxe::Node_TransformObject*)source;
-    t->reverse = arguments[0];
+    t->t->reverse = arguments[0];
 }
 
 
@@ -32,6 +32,7 @@ SANDBOXE_NATIVE_DEF(__node_transform_get_position) {
 SANDBOXE_NATIVE_DEF(__node_transform_set_position) {
     auto t = (Sandboxe::Node_TransformObject*)source;
     t->position->vector = Dynacoe::Vector(std::string(arguments[0]));
+    t->position->delta.Changed(t->position);
 }
 
 
@@ -44,6 +45,8 @@ SANDBOXE_NATIVE_DEF(__node_transform_get_rotation) {
 SANDBOXE_NATIVE_DEF(__node_transform_set_rotation) {
     auto t = (Sandboxe::Node_TransformObject*)source;
     t->rotation->vector = Dynacoe::Vector(std::string(arguments[0]));
+    t->rotation->delta.Changed(t->rotation);
+
 }
 
 
@@ -56,16 +59,12 @@ SANDBOXE_NATIVE_DEF(__node_transform_get_scale) {
 SANDBOXE_NATIVE_DEF(__node_transform_set_scale) {
     auto t = (Sandboxe::Node_TransformObject*)source;
     t->scale->vector = Dynacoe::Vector(std::string(arguments[0]));
+    t->scale->delta.Changed(t->scale);
+
 }
 
 
 
-
-
-/// global functions
-SANDBOXE_NATIVE_DEF(__node_transform_create) {
-    context.SetReturnValue(new Sandboxe::Node_TransformObject);
-}
 
 
 void dynacoe_node_transform(std::vector<std::pair<std::string, Sandboxe::Script::Runtime::Function>> & fns) {
@@ -89,7 +88,6 @@ void dynacoe_node_transform(std::vector<std::pair<std::string, Sandboxe::Script:
         } 
     );
     
-    fns.push_back({"__node_transform_create", __node_transform_create});    
 }
     
     

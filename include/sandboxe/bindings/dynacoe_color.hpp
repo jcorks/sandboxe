@@ -33,6 +33,7 @@ SANDBOXE_NATIVE_DEF(__color_r_get) {
 SANDBOXE_NATIVE_DEF(__color_r_set) {
     auto t = (Sandboxe::ColorObject*)source;
     t->color.r = (float)arguments[0];
+    t->delta.Changed(t);
 }
 
 SANDBOXE_NATIVE_DEF(__color_g_get) {
@@ -43,6 +44,8 @@ SANDBOXE_NATIVE_DEF(__color_g_get) {
 SANDBOXE_NATIVE_DEF(__color_g_set) {
     auto t = (Sandboxe::ColorObject*)source;
     t->color.g = (float)arguments[0];
+    t->delta.Changed(t);
+
 }
 
 SANDBOXE_NATIVE_DEF(__color_b_get) {
@@ -53,6 +56,7 @@ SANDBOXE_NATIVE_DEF(__color_b_get) {
 SANDBOXE_NATIVE_DEF(__color_b_set) {
     auto t = (Sandboxe::ColorObject*)source;
     t->color.b = (float)arguments[0];
+    t->delta.Changed(t);
 }
 
 
@@ -64,6 +68,7 @@ SANDBOXE_NATIVE_DEF(__color_a_get) {
 SANDBOXE_NATIVE_DEF(__color_a_set) {
     auto t = (Sandboxe::ColorObject*)source;
     t->color.a = (float)arguments[0];
+    t->delta.Changed(t);
 }
 
 

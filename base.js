@@ -15,6 +15,20 @@ var sandboxe = {
         //clean : __trunk_clean
         
     },
+    
+    shader : {
+        create : __shader_create,
+        stage : {
+            vertexProcessor : 0,
+            FragmentProcessor : 1
+        },
+        status : {
+            invalid : 0,
+            success : 1,
+            notCompiled : 2
+        }
+    },
+    
     mesh : {
         create : __mesh_create,
         vertexAttribute : {

@@ -26,7 +26,7 @@ class GUIObject : public Dynacoe::GUI, public Sandboxe::ComponentAdaptor {
         node.local.position = localNode->localTransform->position->vector;
         node.local.rotation = localNode->localTransform->rotation->vector;
         node.local.scale = localNode->localTransform->scale->vector;
-        node.local.reverse = localNode->localTransform->reverse;
+        node.local.reverse = localNode->local.reverse;
         Dynacoe::GUI::OnDraw();
     }
     

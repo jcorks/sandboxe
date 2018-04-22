@@ -107,6 +107,8 @@ SANDBOXE_NATIVE_DEF(__vector_cross) {
     auto object = new Sandboxe::VectorObject();
 
     v->vector = v->vector.Cross(src->vector);
+    v->delta.Changed(v);
+
     context.SetReturnValue(object);
 }
 
@@ -207,6 +209,8 @@ SANDBOXE_NATIVE_DEF(__vector_rotate_x) {
     SANDBOXE_ASSERT__ARG_COUNT(1);
     Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
     v->vector = v->vector.RotateX(arguments[0]);
+    v->delta.Changed(v);
+
     context.SetReturnValue(source);
 }
 
@@ -214,6 +218,8 @@ SANDBOXE_NATIVE_DEF(__vector_rotate_y) {
     SANDBOXE_ASSERT__ARG_COUNT(1);
     Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
     v->vector = v->vector.RotateY(arguments[0]);
+    v->delta.Changed(v);
+
     context.SetReturnValue(source);
 }
 
@@ -221,6 +227,8 @@ SANDBOXE_NATIVE_DEF(__vector_rotate_z) {
     SANDBOXE_ASSERT__ARG_COUNT(1);
     Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
     v->vector = v->vector.RotateZ(arguments[0]);
+    v->delta.Changed(v);
+
     context.SetReturnValue(source);
 }
 
@@ -237,6 +245,8 @@ SANDBOXE_NATIVE_DEF(__vector_rotate_x_from) {
     Sandboxe::VectorObject * src = (Sandboxe::VectorObject*)obj;
 
     v->vector = v->vector.RotateXFrom(src->vector, arguments[1]);
+    v->delta.Changed(v);
+
     context.SetReturnValue(source);
 }
 
@@ -251,6 +261,8 @@ SANDBOXE_NATIVE_DEF(__vector_rotate_y_from) {
     Sandboxe::VectorObject * src = (Sandboxe::VectorObject*)obj;
 
     v->vector = v->vector.RotateYFrom(src->vector, arguments[1]);
+    v->delta.Changed(v);
+
     context.SetReturnValue(source);
 }
 
@@ -266,6 +278,8 @@ SANDBOXE_NATIVE_DEF(__vector_rotate_z_from) {
     Sandboxe::VectorObject * src = (Sandboxe::VectorObject*)obj;
 
     v->vector = v->vector.RotateZFrom(src->vector, arguments[1]);
+    v->delta.Changed(v);
+
     context.SetReturnValue(source);
 }
 
@@ -281,6 +295,7 @@ SANDBOXE_NATIVE_DEF(__vector_x_get) {
 SANDBOXE_NATIVE_DEF(__vector_x_set) {
     Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
     v->vector.x = arguments[0];
+    v->delta.Changed(v);
 }
 
 
@@ -293,6 +308,8 @@ SANDBOXE_NATIVE_DEF(__vector_y_get) {
 SANDBOXE_NATIVE_DEF(__vector_y_set) {
     Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
     v->vector.y = arguments[0];
+    v->delta.Changed(v);
+
 }
 
 
@@ -304,6 +321,8 @@ SANDBOXE_NATIVE_DEF(__vector_z_get) {
 SANDBOXE_NATIVE_DEF(__vector_z_set) {
     Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
     v->vector.z = arguments[0];
+    v->delta.Changed(v);
+
 }
 
 

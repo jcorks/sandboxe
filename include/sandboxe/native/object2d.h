@@ -17,6 +17,9 @@ class Object2DObject : public Dynacoe::Object2D, public Sandboxe::ComponentAdapt
         SetFrictionY(0.0);
     }
     
+    ~Object2DObject() {
+        
+    }
     
     double frictionX;
     double frictionY;
