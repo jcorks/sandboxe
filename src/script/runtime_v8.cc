@@ -360,6 +360,36 @@ static v8::Handle<v8::Value> sandboxe_v8_native__global_incovation(const v8::Arg
 
 // loads a new script file
 static std::set<std::string> includedScripts; 
+
+static v8::Handle<v8::Value> debug_is_native(const v8::Arguments & args) {
+    v8::HandleScope scopeMonitor;
+    if (args.Length() < 1) {
+        return v8::Undefined();
+    }
+    if (args[0]->IsObject() && args[0]->ToObject()->InternalFieldCount()) return v8::True();
+    return v8::False();
+}
+
+static v8::Handle<v8::Value> debug_is_function(const v8::Arguments & args) {
+    v8::HandleScope scopeMonitor;
+    if (args.Length() < 1) {
+        return v8::Undefined();
+    }
+    if (args[0]->IsFunction()) return v8::True();
+    return v8::False();
+}
+
+static v8::Handle<v8::Value> debug_get_properties(const v8::Arguments & args) {
+    v8::HandleScope scopeMonitor;
+    if (args.Length() < 1) {
+        return v8::Undefined();
+    }
+    if (args[0]->IsObject()) {
+        return args[0]->ToObject()->GetPropertyNames();
+    }
+    return v8::Undefined();
+}
+
 static v8::Handle<v8::Value> script_include(const v8::Arguments & args) {
     v8::HandleScope scopeMonitor;
     if (args.Length() < 1) {
@@ -418,6 +448,10 @@ void Sandboxe::Script::Runtime::Initialize(const std::vector<std::pair<std::stri
     v8::Handle<v8::ObjectTemplate> base = v8::ObjectTemplate::New();
     // set base functions
     base->Set(v8::String::New("__script_include"), v8::FunctionTemplate::New(script_include)); 
+
+    base->Set(v8::String::New("__debug_get_properties"), v8::FunctionTemplate::New(debug_get_properties)); 
+    base->Set(v8::String::New("__debug_isFunction"), v8::FunctionTemplate::New(debug_is_function)); 
+    base->Set(v8::String::New("__debug_isNative"), v8::FunctionTemplate::New(debug_is_native)); 
 
 
     if (fns.size()) {

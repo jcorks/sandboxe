@@ -5,6 +5,11 @@
 
 
 var sandboxe = {
+    debug : {
+        getProperties : __debug_get_properties,
+        isNative : __debug_isNative,
+        isFunction : __debug_isFunction
+    },
     trunk : {
         // prepares a new executable with a trunk
         //stage : __trunk_stage // stages
