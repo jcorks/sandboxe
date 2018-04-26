@@ -95,7 +95,7 @@ SANDBOXE_NATIVE_DEF(__render_mesh_node_get) {
 
 /// global functions
 SANDBOXE_NATIVE_DEF(__render_mesh_create) {
-    context.SetReturnValue(new Sandboxe::Shape2DObject);
+    context.SetReturnValue(new Sandboxe::RenderMeshObject);
 }
 
 

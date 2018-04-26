@@ -32,7 +32,7 @@ SANDBOXE_NATIVE_DEF(__material_set_program) {
     SANDBOXE_ASSERT__ARG_COUNT(1);
     auto mat = (Sandboxe::MaterialObject *)source;
     
-    if (arguments[1].hint == Sandboxe::Script::Runtime::Primitive::TypeHint::ObjectReferenceT) {
+    if (arguments[0].hint == Sandboxe::Script::Runtime::Primitive::TypeHint::ObjectReferenceT) {
         SANDBOXE_ASSERT__ARG_NATIVE(0, ShaderObject);
         ShaderObject * o = (ShaderObject*)(Sandboxe::Script::Runtime::Object*)arguments[0];
         mat->mat.SetProgram(o->shader.GetID());

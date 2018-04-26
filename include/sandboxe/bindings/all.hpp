@@ -80,7 +80,10 @@ void ApplyPostBindings() {
 
     c2d->id.IdentifyAs<Sandboxe::Camera>()->Self()->SetType(Dynacoe::Camera::Type::Orthographic2D);
     c3d->id.IdentifyAs<Sandboxe::Camera>()->Self()->SetType(Dynacoe::Camera::Type::Perspective3D);
-    
+    c3d->id.IdentifyAs<Sandboxe::Camera>()->Self()->BindTransformBuffers(
+        Dynacoe::Graphics::GetRenderer()->GetStaticViewingMatrixID(),
+        Dynacoe::Graphics::GetRenderer()->GetStaticProjectionMatrixID()
+    );
     
     Dynacoe::Graphics::SetCamera3D(*c3d->id.IdentifyAs<Sandboxe::Camera>()->Self());
     Dynacoe::Graphics::SetCamera2D(*c2d->id.IdentifyAs<Sandboxe::Camera>()->Self());

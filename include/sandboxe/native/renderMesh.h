@@ -28,7 +28,7 @@ class RenderMeshObject : public Dynacoe::RenderMesh, public Sandboxe::ComponentA
     void OnDraw() {
         node.local.position = localNode->localTransform->position->vector;
         node.local.rotation = localNode->localTransform->rotation->vector;
-        node.local.scale = localNode->localTransform->scale->vector;
+        node.local.scale    = localNode->localTransform->scale->vector;
         node.local.reverse = localNode->local.reverse;
         
         Material() = localMaterial->mat;

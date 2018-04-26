@@ -14,13 +14,15 @@ int main() {
         Sandboxe::Script::GatherNativeBindings()
     );
     
-    // finally, load in base logic for sandboxe bindings
-    Sandboxe::Script::Runtime::Load("base.js");
+    // remainign logic initialization for bindings
+    Sandboxe::Script::ApplyPostBindings();
 
     Dynacoe::Engine::AttachManager(Dynacoe::Entity::Create<Sandboxe::GarbageCollector>());
 
-    // remainign logic initialization for bindings
-    Sandboxe::Script::ApplyPostBindings();
+    // finally, load in base logic for sandboxe bindings
+    Sandboxe::Script::Runtime::Load("base.js");
+
+
 
     Dynacoe::Engine::Run();
 
