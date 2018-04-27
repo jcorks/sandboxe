@@ -10,9 +10,15 @@ var sandboxe = {
         isNative : __debug_isNative,
         isFunction : __debug_isFunction
     },
+    stateControl : {
+        create : __state_control_create
+    },
     scheduler : {
         create : __scheduler_create
     },
+    
+    
+    
     trunk : {
         // prepares a new executable with a trunk
         //stage : __trunk_stage // stages

@@ -29,6 +29,7 @@
 #include "dynacoe_material.hpp"
 #include "dynacoe_render_mesh.hpp"
 #include "dynacoe_scheduler.hpp"
+#include "dynacoe_state_control.hpp"
 
 #include "sandboxe_byte_array.hpp"
 
@@ -62,6 +63,8 @@ std::vector<std::pair<std::string, Runtime::Function>> GatherNativeBindings() {
     Bindings::dynacoe_material(out);
     Bindings::dynacoe_render_mesh(out);
     Bindings::dynacoe_scheduler(out);
+    Bindings::dynacoe_state_control(out);
+
 
     Bindings::sandboxe_byte_array(out);
     
