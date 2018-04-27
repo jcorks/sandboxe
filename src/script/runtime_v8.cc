@@ -664,8 +664,20 @@ void Object::Set(const std::string & name, const Primitive & d) {
 
 
 
-
-void Object::SetNonNativeReference(Object * d, uint32_t index) {
+uint32_t Object::AddNonNativeReference(Object * d) {
+    uint32_t out = data->nonNatives.size();
+    data->nonNatives.push_back(d);
+    // defers destruction of temporary
+    // they will be reposted to destruction on this objects destructor
+    for(uint32_t i = 0; i < temporary.size(); ++i) {
+        if (temporary[i] == d) {
+            temporary.erase(temporary.begin() + i);
+            return out;
+        }
+    }    
+    return out;
+}
+void Object::UpdateNonNativeReference(Object * d, uint32_t index) {
     if (d->IsNative()) return;
     while(data->nonNatives.size() <= index) data->nonNatives.push_back(nullptr);
     data->nonNatives[index] = d;
@@ -722,8 +734,8 @@ Primitive Object::CallMethod(const std::string & str, const std::vector<Primitiv
     );
     
     if (!(!result.IsEmpty() && !result->IsUndefined())) return Primitive();
-    const char * out = *v8::String::Utf8Value(result);
-    if (out) {
+    std::string out = *v8::String::Utf8Value(result) ? std::string(*v8::String::Utf8Value(result)) : "";
+    if (out.size()) {
         return Primitive(std::string(out));
     }
     return Primitive();

@@ -7,7 +7,7 @@ DynacoeEvent(Sandboxe::ComponentAdaptor::NativeHandler) {
     if (sourceRef) {sourceRef->id = source;}
     if (selfRef)   {selfRef->id   = self;}
 
-    ((ComponentAdaptor*)functionData)->CallMethod(
+    auto p = ((ComponentAdaptor*)functionData)->CallMethod(
       "", 
       {
           Script::Runtime::Primitive(dynamic_cast<Sandboxe::Script::Runtime::Object*>(component)),
@@ -15,8 +15,8 @@ DynacoeEvent(Sandboxe::ComponentAdaptor::NativeHandler) {
           sourceRef ? Script::Runtime::Primitive((Sandboxe::Script::Runtime::Object*)sourceRef) : Script::Runtime::Primitive(),
       }
     ); 
-
+    
     if (sourceRef) delete sourceRef;
     if (selfRef) delete selfRef;
-
+    return p.IsDefined();
 }

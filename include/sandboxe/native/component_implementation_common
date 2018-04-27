@@ -10,7 +10,7 @@ void Native_Step() {
 }
 
 void Native_InstallEvent(const std::string & tag, Sandboxe::Script::Runtime::Object * fn) {
-    SetNonNativeReference(fn, nonNativeIndex++);
+    AddNonNativeReference(fn);
     InstallEvent(tag, NativeHandler, fn);
 }
 
@@ -29,7 +29,7 @@ bool Native_CanHandleEvent(const std::string & evt) {
 }
 
 void Native_InstallHook(const std::string & name, Sandboxe::Script::Runtime::Object * fn) {
-    SetNonNativeReference(fn, nonNativeIndex++);
+    AddNonNativeReference(fn);
     InstallHook(name, NativeHandler, fn);
 }
 
@@ -39,7 +39,7 @@ void Native_UninstallHook(const std::string & name) {
 }
 
 void Native_InstallHandler(const std::string & name, Sandboxe::Script::Runtime::Object * fn){
-    SetNonNativeReference(fn, nonNativeIndex++);
+    AddNonNativeReference(fn);
     InstallHandler(name, NativeHandler, fn);
 }
 

@@ -169,18 +169,20 @@ class Object {
     // Returns the type that the object was instantiated with
     virtual const char * GetObjectName() const = 0;
 
+    uint32_t AddNonNativeReference(Object *);
 
-
-
-  protected:
     // Sets data associated with the object only retrievable 
     // through GetNonNativeReference();
     // If the given object is native, no action is taken
-    void SetNonNativeReference(Object *, uint32_t index = 0);
+    void UpdateNonNativeReference(Object *, uint32_t index = 0);
 
     // Sets data associated with the object only retrievable 
     // through GetNonNativeReference();
     Object * GetNonNativeReference(uint32_t index = 0) const;
+
+
+  protected:
+
 
         
   private:

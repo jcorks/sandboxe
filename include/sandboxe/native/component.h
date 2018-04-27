@@ -30,8 +30,8 @@ class ComponentAdaptor : public Sandboxe::Script::Runtime::Object {
     // Generic event handler that calls non-native script object functions
     static DynacoeEvent(NativeHandler);
     ComponentAdaptor(int type) :
-        Sandboxe::Script::Runtime::Object(type),
-        nonNativeIndex(0){}
+        Sandboxe::Script::Runtime::Object(type)
+        {}
         
         
     virtual void Native_Draw(){}
@@ -62,7 +62,6 @@ class ComponentAdaptor : public Sandboxe::Script::Runtime::Object {
     virtual Dynacoe::Component * Native_GetDynacoeComponent() {
         return nullptr;
     }
-    uint32_t nonNativeIndex;
 
 };
 
