@@ -15,13 +15,79 @@ var sandboxe = {
         destroyDisplay : __view_manager_destroy_display,
         setMain : __view_manager_set_main,
     },
-    stateControl : {
-        create : __state_control_create
-    },
-    scheduler : {
-        create : __scheduler_create
-    },
     
+    component : {
+        create : __component_create,
+        
+        stateControl : {
+            create : __state_control_create
+        },
+        scheduler : {
+            create : __scheduler_create
+        },
+        renderMesh : {
+            create : __render_mesh_create,
+            polygon : {
+                triangle : 0,
+                line : 1
+            }
+        },
+        renderLight : {
+            create : __render_light_create,
+            type : {
+                point : 0,
+                directional : 1
+            }
+        },
+        object2d : {
+            create : __object2d_create,
+            drawColliders : __object2d_draw_colliders
+        },
+
+        mutator : {
+            mutation : {
+                constant : 0,
+                linear : 1,
+                quadratic : 2,
+                squareRoot : 3,
+                cubic : 4,
+                sinudoidal : 5,
+                logarithmic : 6,
+                randomDistribution : 7
+            },
+
+            create : __mutator_create,
+            step : __mutator_step
+        },
+        
+        gui : {
+            create : __gui_create,
+            ungrabInput : __gui_ungrab_input,
+            unfocus : __gui_unfocus
+        },
+        
+        dataTable : {
+            create : __data_table_create
+        },
+        
+        text2d : {
+            create : __text2d_create,
+            spacingMode : {
+                kerned : 0,
+                monospace : 1,
+                bitmap : 2
+            }
+        },
+        
+        clock : {
+            create : __clock_create
+        },
+        
+        shape2d : {
+            create : __shape2d_create
+        },
+    },
+
     
     
     trunk : {
@@ -34,14 +100,7 @@ var sandboxe = {
         //clean : __trunk_clean
         
     },
-    renderMesh : {
-        create : __render_mesh_create,
-        polygon : {
-            triangle : 0,
-            line : 1
-        }
-    },
-    
+
     material : {
         create : __material_create,
         coreProgram : { 
@@ -78,13 +137,7 @@ var sandboxe = {
             userData : 3 
         }
     },
-    renderLight : {
-        create : __render_light_create,
-        type : {
-            point : 0,
-            directional : 1
-        }
-    },
+
     camera : {
         create : __camera_create
     },
@@ -107,53 +160,7 @@ var sandboxe = {
 
     },
     
-    object2d : {
-        create : __object2d_create,
-        drawColliders : __object2d_draw_colliders
-    },
 
-    mutator : {
-        mutation : {
-            constant : 0,
-            linear : 1,
-            quadratic : 2,
-            squareRoot : 3,
-            cubic : 4,
-            sinudoidal : 5,
-            logarithmic : 6,
-            randomDistribution : 7
-        },
-
-        create : __mutator_create,
-        step : __mutator_step
-    },
-    
-    gui : {
-        create : __gui_create,
-        ungrabInput : __gui_ungrab_input,
-        unfocus : __gui_unfocus
-    },
-    
-    dataTable : {
-        create : __data_table_create
-    },
-    
-    text2d : {
-        create : __text2d_create,
-        spacingMode : {
-            kerned : 0,
-            monospace : 1,
-            bitmap : 2
-        }
-    },
-    
-    clock : {
-        create : __clock_create
-    },
-    
-    shape2d : {
-        create : __shape2d_create
-    },
     
     color : {
         create : __color_create
@@ -385,9 +392,7 @@ var sandboxe = {
         }
     },
 
-    component : {
-        create : __component_create
-    },
+
     
     script : {
         run : __script_include,

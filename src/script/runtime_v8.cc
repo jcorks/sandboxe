@@ -592,7 +592,6 @@ static void sandboxe_v8_object_garbage_collect(v8::Persistent<v8::Value> src, vo
     object->parent->OnGarbageCollection();
     Dynacoe::Console::Info() << "Removing" << (uint64_t)data << "\n";
     delete object->parent;
-    delete object;
     
 }
 

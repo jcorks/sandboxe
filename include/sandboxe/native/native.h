@@ -39,7 +39,8 @@ enum class NativeType {
     RenderMeshT,
     SchedulerT,
     StateControlT,
-    DisplayT
+    DisplayT,
+    ActiveSoundT
 };
 
 
