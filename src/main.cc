@@ -8,7 +8,7 @@
 int main() {
     Dynacoe::Engine::Startup();
 
-    Dynacoe::ViewManager::NewMain("sandboxe");
+    //Dynacoe::ViewManager::NewMain("sandboxe");
 
     Sandboxe::Script::Runtime::Initialize(
         Sandboxe::Script::GatherNativeBindings()

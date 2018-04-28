@@ -38,7 +38,8 @@ enum class NativeType {
     ShaderT,
     RenderMeshT,
     SchedulerT,
-    StateControlT
+    StateControlT,
+    DisplayT
 };
 
 

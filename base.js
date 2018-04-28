@@ -10,6 +10,11 @@ var sandboxe = {
         isNative : __debug_isNative,
         isFunction : __debug_isFunction
     },
+    view : {
+        createDisplay : __view_manager_create_display,
+        destroyDisplay : __view_manager_destroy_display,
+        setMain : __view_manager_set_main,
+    },
     stateControl : {
         create : __state_control_create
     },
