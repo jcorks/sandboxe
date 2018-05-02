@@ -57,7 +57,7 @@ SANDBOXE_NATIVE_DEF(__active_sound_set_volume) {
     obj->volume = arguments[0];
     obj->sound.SetVolume(obj->volume);
 }
-
+ 
 
 
 SANDBOXE_NATIVE_DEF(__active_sound_get_panning) {

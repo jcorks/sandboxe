@@ -5,6 +5,15 @@
 
 
 var sandboxe = {
+    sound : {
+        isPlaying : __sound_is_playing,
+        playAudio : __sound_play_audio,
+        channelAddEffect : __sound_channel_add_effect,
+        channelReset : __sound_channel_reset,
+        channelSetVolume : __sound_channel_set_volume,
+        channelSetPanning : __sound_channel_set_panning,
+        channelKeepAwake : __sound_channel_keep_awake
+    },
     debug : {
         getProperties : __debug_get_properties,
         isNative : __debug_isNative,

@@ -40,7 +40,12 @@ enum class NativeType {
     SchedulerT,
     StateControlT,
     DisplayT,
-    ActiveSoundT
+    ActiveSoundT,
+    AudioBufferT,
+    AudioEffectT,
+    AudioBlockT,
+    ImageT,
+    ImageFrameT
 };
 
 

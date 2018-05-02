@@ -33,6 +33,10 @@
 #include "dynacoe_display.hpp"
 #include "dynacoe_view_manager.hpp"
 #include "dynacoe_active_sound.hpp"
+#include "dynacoe_sound.hpp"
+#include "dynacoe_audio_block.hpp"
+#include "dynacoe_image.hpp"
+#include "dynacoe_image_frame.hpp"
 
 #include "sandboxe_byte_array.hpp"
 
@@ -70,6 +74,10 @@ std::vector<std::pair<std::string, Runtime::Function>> GatherNativeBindings() {
     Bindings::dynacoe_display(out);
     Bindings::dynacoe_view_manager(out);
     Bindings::dynacoe_active_sound(out);
+    Bindings::dynacoe_sound(out);
+    Bindings::dynacoe_audio_block(out);
+    Bindings::dynacoe_image(out);
+    Bindings::dynacoe_image_frame(out);
 
 
     Bindings::sandboxe_byte_array(out);
