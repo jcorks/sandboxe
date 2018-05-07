@@ -5,6 +5,10 @@
 
 
 var sandboxe = {
+    particleEmitter2D : {
+        create : __particle_emitter_2d_create
+    },
+    
     sound : {
         isPlaying : __sound_is_playing,
         playAudio : __sound_play_audio,

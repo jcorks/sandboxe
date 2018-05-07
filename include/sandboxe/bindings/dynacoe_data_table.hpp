@@ -4,7 +4,6 @@
 #include <sandboxe/native/native.h>
 #include <sandboxe/native/dataTable.h>
 #include <sandboxe/bindings/dynacoe_component.hpp>
-#include <sandboxe/native/byteArray.h>
 /*
 
     Dynacoe::DataTable bindings 
@@ -28,9 +27,13 @@ namespace Bindings {
 SANDBOXE_NATIVE_DEF(__data_table_read_byte_array) {
     SANDBOXE_ASSERT__ARG_COUNT(1);
     auto data = (Sandboxe::DataTableObject*)source;
-    auto out = new Sandboxe::ByteArrayObject;
-    data->Read(arguments[0], out->data);
-    context.SetReturnValue(out);
+    std::vector<uint8_t> out;
+    data->Read(arguments[0], out);
+    std::vector<Sandoxe::Script::Runtime::Primitive> converted(out.size());
+    for(uint32_t i = 0; i < out.size(); ++i) {
+        converted[i] = out[i];
+    }
+    context.SetReturnArray(converted);
 }
 
 SANDBOXE_NATIVE_DEF(__data_table_read_string) {

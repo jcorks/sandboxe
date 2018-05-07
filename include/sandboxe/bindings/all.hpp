@@ -37,6 +37,7 @@
 #include "dynacoe_audio_block.hpp"
 #include "dynacoe_image.hpp"
 #include "dynacoe_image_frame.hpp"
+#include "dynacoe_particle_emitter_2d.hpp"
 
 #include "sandboxe_byte_array.hpp"
 
@@ -78,7 +79,7 @@ std::vector<std::pair<std::string, Runtime::Function>> GatherNativeBindings() {
     Bindings::dynacoe_audio_block(out);
     Bindings::dynacoe_image(out);
     Bindings::dynacoe_image_frame(out);
-
+    Bindings::dynacoe_particle_emitter_2d(out);
 
     Bindings::sandboxe_byte_array(out);
     
