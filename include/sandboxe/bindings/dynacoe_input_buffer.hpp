@@ -66,7 +66,6 @@ SANDBOXE_NATIVE_DEF(__input_buffer_read_bytes) {
 }
 
 SANDBOXE_NATIVE_DEF(__input_buffer_read) {
-    SANDBOXE_ASSERT__ARG_COUNT(1);
     Sandboxe::InputBufferObject * v = (Sandboxe::InputBufferObject*)source;
     switch((int)arguments[0]) {
       case 0: context.SetReturnValue(v->localIO.Read<int>()); break;

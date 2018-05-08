@@ -16,6 +16,10 @@ var sandboxe = {
         create : __input_buffer_create
     },
     
+    outputBuffer : {
+        create : __output_buffer_create
+    },
+
     particleEmitter2D : {
         create : __particle_emitter_2d_create
     },
