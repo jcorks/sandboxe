@@ -2,7 +2,6 @@
 #define H_sandboxe_bindings_dynacoe_assets
 #include <sandboxe/native/native.h>
 #include <sandboxe/native/assetID.h>
-#include <sandboxe/native/byteArray.h>
 /*
     Dynacoe::Assets Bindings
     
@@ -59,13 +58,14 @@ SANDBOXE_NATIVE_DEF(__assets_load) {
 
 SANDBOXE_NATIVE_DEF(__assets_load_from_buffer) {
     SANDBOXE_ASSERT__ARG_COUNT(3);
-    SANDBOXE_ASSERT__ARG_TYPE(2, ObjectReferenceT);
-    SANDBOXE_ASSERT__ARG_NATIVE(2, ByteArrayObject);
-    
-    auto array = (Sandboxe::ByteArrayObject *)(Sandboxe::Script::Runtime::Object*)(arguments[2]);
+    auto array = context.GetArrayArgument(2);
+    std::vector<uint8_t> bytes(array->size());
+    for(uint32_t i = 0; i < array->size(); ++i) {
+        bytes[i] = (int)(*array)[i];
+    }
     
     Dynacoe::AssetID id;
-    id = Dynacoe::Assets::LoadFromBuffer(arguments[0], arguments[1], array->data);
+    id = Dynacoe::Assets::LoadFromBuffer(arguments[0], arguments[1], bytes);
     auto object = new Sandboxe::AssetIDObject;
     object->id = id;
     context.SetReturnValue(object);

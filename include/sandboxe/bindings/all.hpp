@@ -39,7 +39,6 @@
 #include "dynacoe_image_frame.hpp"
 #include "dynacoe_particle_emitter_2d.hpp"
 
-#include "sandboxe_byte_array.hpp"
 
 namespace Sandboxe {
 namespace Script {
@@ -81,7 +80,6 @@ std::vector<std::pair<std::string, Runtime::Function>> GatherNativeBindings() {
     Bindings::dynacoe_image_frame(out);
     Bindings::dynacoe_particle_emitter_2d(out);
 
-    Bindings::sandboxe_byte_array(out);
     
     
 
