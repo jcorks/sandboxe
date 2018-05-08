@@ -5,6 +5,17 @@
 
 
 var sandboxe = {
+    type : {
+        int : 0,
+        float : 1,
+        uint32 : 2,
+        byte : 3
+    },
+    
+    inputBuffer : {
+        create : __input_buffer_create
+    },
+    
     particleEmitter2D : {
         create : __particle_emitter_2d_create
     },
@@ -21,7 +32,10 @@ var sandboxe = {
     debug : {
         getProperties : __debug_get_properties,
         isNative : __debug_isNative,
-        isFunction : __debug_isFunction
+        isFunction : __debug_isFunction,
+        assert : function(assertion) {
+            if (!assertion) throw "Assertion failure.";
+        }
     },
     view : {
         createDisplay : __view_manager_create_display,
@@ -179,9 +193,7 @@ var sandboxe = {
         create : __color_create
     },
     
-    byteArray : {
-        create : __byte_array_create
-    },
+
     
     assets : {
         type : {

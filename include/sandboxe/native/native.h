@@ -46,7 +46,9 @@ enum class NativeType {
     AudioBlockT,
     ImageT,
     ImageFrameT,
-    ParticleEmitter2D_EntityIDT
+    ParticleEmitter2D_EntityIDT,
+    InputBufferT,
+    OutputBufferT
 };
 
 
