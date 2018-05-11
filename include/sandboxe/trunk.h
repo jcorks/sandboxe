@@ -33,6 +33,9 @@ bool ItemExists(const std::string & item);
 // returns the given item's raw data
 const std::vector<uint8_t> & ItemGet(const std::string & item);
 
+// adds an item as if it were read from the real trunk
+void AddItem(const std::string & name, const std::vector<uint8_t> & data);
+
 // returns the number of known items
 uint32_t ItemCount();
 

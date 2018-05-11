@@ -140,6 +140,10 @@ class TrunkImporter {
         return sections.find(name)->second;
     }
     
+    void AddItem(const std::string & name, const std::vector<uint8_t> & data) {
+        sections[name] = std::vector<uint8_t>(data);
+    }
+    
   private:
     std::map<std::string, std::vector<uint8_t>> sections;
     
@@ -281,6 +285,10 @@ void Sandboxe::Trunk::Clear() {
 
 bool Sandboxe::Trunk::ItemExists(const std::string & item) {
     return imported->ItemExists(item);
+}
+
+void Sandboxe::Trunk::AddItem(const std::string & itemName, const std::vector<uint8_t> & data) {
+    imported->AddItem(itemName, data);
 }
 
 const std::vector<uint8_t> & Sandboxe::Trunk::ItemGet(const std::string & item) {
