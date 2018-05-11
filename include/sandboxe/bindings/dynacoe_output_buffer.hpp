@@ -37,7 +37,7 @@ SANDBOXE_NATIVE_DEF(__output_buffer_commit) {
     if (arguments.size() > 1)
         append = arguments[1];
     Sandboxe::OutputBufferObject * v = (Sandboxe::OutputBufferObject*)source;
-    v->localIO.CommitToFile(arguments[0], arguments[1]);
+    v->localIO.CommitToFile(arguments[0], append);
 }
 
 SANDBOXE_NATIVE_DEF(__output_buffer_write_string) {

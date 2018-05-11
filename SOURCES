@@ -2,6 +2,7 @@
 ./src/script/shell.cc
 ./src/script/runtime.cc
 ./src/script/runtime_v8.cc
+./src/trunk.cc
 
 ./src/native/component.cc
 ./src/native/entity.cc

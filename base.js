@@ -122,13 +122,12 @@ var sandboxe = {
     
     
     trunk : {
-        // prepares a new executable with a trunk
-        //stage : __trunk_stage // stages
-        //remove : __trunk_remove
-        //commit :__trunk_commit
+        stage : __trunk_stage, // stages
+        remove : __trunk_remove,
+        commit :__trunk_commit,
         
-        //query : __trunk_query
-        //clean : __trunk_clean
+        query : __trunk_query,
+        clear : __trunk_clear
         
     },
 

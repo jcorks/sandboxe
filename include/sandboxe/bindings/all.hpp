@@ -41,6 +41,8 @@
 #include "dynacoe_input_buffer.hpp"
 #include "dynacoe_output_buffer.hpp"
 
+#include "sandboxe_trunk.hpp"
+
 
 namespace Sandboxe {
 namespace Script {
@@ -83,10 +85,12 @@ std::vector<std::pair<std::string, Runtime::Function>> GatherNativeBindings() {
     Bindings::dynacoe_particle_emitter_2d(out);
     Bindings::dynacoe_input_buffer(out);
     Bindings::dynacoe_output_buffer(out);
+
+
     
     
 
-
+    Bindings::sandboxe_trunk(out);
     return out;
 }   
 

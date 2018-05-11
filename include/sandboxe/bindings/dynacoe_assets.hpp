@@ -44,13 +44,24 @@ SANDBOXE_NATIVE_DEF(__asset_id_write) {
 
 SANDBOXE_NATIVE_DEF(__assets_load) {
     Dynacoe::AssetID id;
-    if (arguments.size() == 2) {
-        id = Dynacoe::Assets::Load(arguments[0], arguments[1], false);
-    } else if (arguments.size() == 3) {
-        id = Dynacoe::Assets::Load(arguments[0], arguments[1], arguments[2]);        
+    if (arguments.size() < 2) return;
+    std::string type = arguments[0];
+    std::string name = arguments[1];
+    bool b = false;
+    if (arguments.size() > 2) b = arguments[2];
+    
+    if (Sandboxe::Trunk::ItemExists(name)) {
+        Dynacoe::Console::Info() << "Loading " << name << " from trunk\n";
+        id = Dynacoe::Assets::LoadFromBuffer(
+            type, 
+            name, 
+            Sandboxe::Trunk::ItemGet(name)
+        );
     } else {
-        return;
+        id = Dynacoe::Assets::Load(type, name, b);
     }
+    
+    
     auto object = new Sandboxe::AssetIDObject();
     object->id = id;
     context.SetReturnValue(object);
