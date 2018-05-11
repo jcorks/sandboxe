@@ -35,6 +35,9 @@ const std::vector<uint8_t> & ItemGet(const std::string & item);
 
 // returns the number of known items
 uint32_t ItemCount();
+
+// returns the accessible names of all items stored
+std::vector<std::string> GetItemNames();
     
 }    
 }

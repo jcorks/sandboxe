@@ -127,8 +127,9 @@ var sandboxe = {
         commit :__trunk_commit,
         
         query : __trunk_query,
-        clear : __trunk_clear
+        clear : __trunk_clear,
         
+        getItemNames : __trunk_get_item_names
     },
 
     material : {

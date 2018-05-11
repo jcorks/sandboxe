@@ -291,4 +291,7 @@ uint32_t Sandboxe::Trunk::ItemCount() {
     return imported->ItemCount();
 }
 
+std::vector<std::string> Sandboxe::Trunk::GetItemNames() {
+    return imported->ListItems();
+}
 

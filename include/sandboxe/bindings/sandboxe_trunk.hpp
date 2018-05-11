@@ -9,6 +9,7 @@
 
     Trunk usage support:
         - Asset loading
+        - script including
 
  */
 
@@ -45,6 +46,15 @@ SANDBOXE_NATIVE_DEF(__trunk_clear) {
     Sandboxe::Trunk::Clear();
 }
 
+SANDBOXE_NATIVE_DEF(__trunk_get_item_names) {
+    auto list = Sandboxe::Trunk::GetItemNames();
+    std::vector<Sandboxe::Script::Runtime::Primitive> primitives;
+    for(uint32_t i = 0; i < list.size(); ++i) {
+        primitives.push_back(list[i]);
+    }
+    context.SetReturnArray(primitives);
+}
+
 
 
 void sandboxe_trunk(std::vector<std::pair<std::string, Sandboxe::Script::Runtime::Function>> & fns) {
@@ -53,6 +63,7 @@ void sandboxe_trunk(std::vector<std::pair<std::string, Sandboxe::Script::Runtime
     fns.push_back({"__trunk_remove", __trunk_remove});
     fns.push_back({"__trunk_query", __trunk_query});
     fns.push_back({"__trunk_clear", __trunk_clear});
+    fns.push_back({"__trunk_get_item_names", __trunk_get_item_names});
 
 
 }

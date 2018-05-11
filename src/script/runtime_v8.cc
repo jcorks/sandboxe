@@ -3,7 +3,7 @@
 #include <sandboxe/script/shell.h>
 #include <Dynacoe/Library.h>
 #include <Dynacoe/RawData.h>
-
+#include <sandboxe/trunk.h>
 #include <cassert>
 #include <v8.h>
 
@@ -410,7 +410,16 @@ static v8::Handle<v8::Value> script_include(const v8::Arguments & args) {
         return v8::Undefined();
     }
     
-    Dynacoe::AssetID id = Dynacoe::Assets::Load("", *path);
+    Dynacoe::AssetID id;
+    if (Sandboxe::Trunk::ItemExists(*path)) {
+        Dynacoe::Console::Info() << "Loading " << *path << " from trunk\n";
+        id = Dynacoe::Assets::LoadFromBuffer(
+            "", 
+            *path, 
+            Sandboxe::Trunk::ItemGet(*path)
+        );    } else {
+        id = Dynacoe::Assets::Load("", *path);
+    }
     if (!id.Valid()) {
         return v8::ThrowException(v8::String::New((Dynacoe::Chain() << "File " << *path << " could not be accessed.\n").ToString().c_str()));
     }
