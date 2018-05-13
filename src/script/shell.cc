@@ -18,6 +18,6 @@ class sandboxe_interpreter_command : public Dynacoe::Interpreter::Command {
 
 
 void Sandboxe::Script::Shell::Initialize() {
-    Dynacoe::Console::AddCommand("js", new sandboxe_interpreter_command);
+    Dynacoe::Console::AddCommand(">>", new sandboxe_interpreter_command);
     Dynacoe::Console::Clear();
 }

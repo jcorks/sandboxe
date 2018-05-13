@@ -164,7 +164,15 @@ static void script_exception_handler(v8::TryCatch * tcatch) {
     // runtime error
     v8::Handle<v8::Value> result = script->Run();
     if (!(!result.IsEmpty() && result->IsTrue())) {
+        auto win = Dynacoe::ViewManager::Get(Dynacoe::ViewManager::GetCurrent());
+        if (!win) {
+            Dynacoe::Console::Info() << "**Note**: A display was automatically created and shown to display the scripting error.\n";
+            Dynacoe::ViewManager::NewMain("sandboxe");
+        }
+
         term->ReportError(message.ToString().c_str());
+        Dynacoe::Console::Show(true);
+        
     }
 }
 
@@ -417,8 +425,9 @@ static v8::Handle<v8::Value> script_include(const v8::Arguments & args) {
             "", 
             *path, 
             Sandboxe::Trunk::ItemGet(*path)
-        );    } else {
-        id = Dynacoe::Assets::Load("", *path);
+        );    
+    } else {
+        id = Dynacoe::Assets::Load("", *path, false);
     }
     if (!id.Valid()) {
         return v8::ThrowException(v8::String::New((Dynacoe::Chain() << "File " << *path << " could not be accessed.\n").ToString().c_str()));
