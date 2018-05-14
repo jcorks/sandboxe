@@ -1,4 +1,22 @@
 R"SBINITJS0(//"
+
+
+/**
+ * Collection of classes used and refered to by sandboxe.
+ * @namespace classes
+ */
+ 
+/**
+ * Class the assists in reading byte-based datastreams, granting 
+ * the ability to read wherever in the stream you wish. You can convert 
+ * groups of byte data into familiar types, or just retrieve the raw data itself.
+ * @memberof classes 
+ * @typedef {Object} inputBuffer
+ * @property {Number} position Position of the byte stream being read from. When first open, the default position is 0
+ * @property {Number} size Size of the input byte stream. (read only)
+ 
+ */
+ 
 /**
  * The sandboxe namespace.
  * @namespace 
@@ -6,8 +24,8 @@ R"SBINITJS0(//"
  */
 var sandboxe = {
     /** 
-     * Types of data specified by the native system. For use with InputBuffers 
-     * and outputBuffers 
+     * Types of data specified by the native system. For use with inputBuffer 
+     * and outputBuffer, for example. 
      *
      * @memberof sandboxe 
      * @namespace
@@ -42,19 +60,66 @@ var sandboxe = {
         byte : 3
     },
     
+    
+    /**
+     * inputBuffer utility namespace
+     * @memberof sandboxe
+     * @namespace
+     */
     inputBuffer : {
+        /**
+         * Creates a new inputBuffer object. inputBuffer objects 
+         * contain utilities to help work with binary input data from 
+         * files or arbitrary byte buffers.
+         * @memberof sandboxe.inputBuffer
+         * @returns {inputBuffer}
+         */
         create : __input_buffer_create
     },
-    
+
+    /**
+     * inputBuffer utility namespace
+     * @memberof sandboxe
+     * @namespace
+     */    
     outputBuffer : {
+        /**
+         * Creates a new outputBuffer object. outputBuffer objects 
+         * contain utilities to help work with binary output data for 
+         * files or arbitrary byte buffers.
+         * @memberof sandboxe.outputBuffer
+         * @returns {outputBuffer}
+         */
         create : __output_buffer_create
     },
 
+    /**
+     * particleEmitter2d utility namespace
+     * @memberof sandboxe
+     * @namespace
+     */   
     particleEmitter2D : {
+        /**
+         * Creates a new particleEmitter2D, an entity that 
+         * can efficiently emit particles.
+         * @memberof sandboxe.particleEmitter2D
+         * @returns {particleEmitter2D}
+         */
         create : __particle_emitter_2d_create
     },
-    
+    /**
+     * Sound and general audio utility namespace
+     * @memberof sandboxe
+     * @namespace
+     */   
     sound : {
+
+        /**
+         * Returns whether the given sound file is playing.
+         * @memberof sandboxe.sound
+         * @returns {boolean} 
+         * @param {asset} asset The loaded sound file 
+         */
         isPlaying : __sound_is_playing,
         playAudio : __sound_play_audio,
         channelAddEffect : __sound_channel_add_effect,
