@@ -495,7 +495,7 @@ void Sandboxe::Script::Runtime::Initialize(const std::vector<std::pair<std::stri
     //assert(!global->context.IsEmpty());
     global->context->Enter();
 
-
+    Dynacoe::Console::Info() << "v8 version " << V8_MAJOR_VERSION << "\n";
     
 
     // innitialize dynacoe shell extension

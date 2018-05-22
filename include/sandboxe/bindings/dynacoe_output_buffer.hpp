@@ -62,13 +62,13 @@ SANDBOXE_NATIVE_DEF(__output_buffer_write_bytes) {
 
 
 SANDBOXE_NATIVE_DEF(__output_buffer_write) {
-    SANDBOXE_ASSERT__ARG_COUNT(1);
+    SANDBOXE_ASSERT__ARG_COUNT(2);
     Sandboxe::OutputBufferObject * v = (Sandboxe::OutputBufferObject*)source;
     switch((int)arguments[0]) {
-      case 0: v->localIO.Write<int>(arguments[0]); break;
-      case 1: v->localIO.Write<float>(arguments[0]); break;
-      case 2: v->localIO.Write<uint32_t>(arguments[0]); break;
-      case 3: v->localIO.Write<uint8_t>((int)arguments[0]); break;
+      case 0: v->localIO.Write<int>(arguments[1]); break;
+      case 1: v->localIO.Write<float>(arguments[1]); break;
+      case 2: v->localIO.Write<uint32_t>(arguments[1]); break;
+      case 3: v->localIO.Write<uint8_t>((int)arguments[1]); break;
       default:;
     }
 }
@@ -81,7 +81,6 @@ SANDBOXE_NATIVE_DEF(__output_buffer_clear) {
 
 
 SANDBOXE_NATIVE_DEF(__output_buffer_get_data) {
-    SANDBOXE_ASSERT__ARG_COUNT(1);
     Sandboxe::OutputBufferObject * v = (Sandboxe::OutputBufferObject*)source;
     std::vector<uint8_t> bytes = v->localIO.GetData();
     std::vector<Sandboxe::Script::Runtime::Primitive> output(bytes.size());

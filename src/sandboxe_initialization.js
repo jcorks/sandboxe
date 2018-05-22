@@ -1,21 +1,6 @@
 R"SBINITJS0(//"
 
 
-/**
- * Collection of classes used and refered to by sandboxe.
- * @namespace classes
- */
- 
-/**
- * Class the assists in reading byte-based datastreams, granting 
- * the ability to read wherever in the stream you wish. You can convert 
- * groups of byte data into familiar types, or just retrieve the raw data itself.
- * @memberof classes 
- * @typedef {Object} inputBuffer
- * @property {Number} position Position of the byte stream being read from. When first open, the default position is 0
- * @property {Number} size Size of the input byte stream. (read only)
- 
- */
  
 /**
  * The sandboxe namespace.
@@ -28,7 +13,7 @@ var sandboxe = {
      * and outputBuffer, for example. 
      *
      * @memberof sandboxe 
-     * @namespace
+     * @namespace 
      */
     type : {
         /**
@@ -72,7 +57,7 @@ var sandboxe = {
          * contain utilities to help work with binary input data from 
          * files or arbitrary byte buffers.
          * @memberof sandboxe.inputBuffer
-         * @returns {inputBuffer}
+         * @returns {inputBuffer} A new {@link inputBuffer}.
          */
         create : __input_buffer_create
     },
@@ -590,6 +575,10 @@ var sandboxe = {
 
     }
 };
+
+
+
+
 //")SBINITJS0";
 
 
