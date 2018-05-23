@@ -39,9 +39,14 @@ SANDBOXE_NATIVE_DEF(__particle_emitter_2d_emit_particle) {
     SANDBOXE_ASSERT__ARG_NATIVE(0, AssetIDObject);
     
      
-    auto cam = ((CameraEntityID*)source)->id.IdentifyAs<Sandboxe::Camera>();
-    if (!cam) return;
-    cam->Self()->Refresh();
+    auto pe = ((ParticleEmitter2DEntityID*)source)->id.IdentifyAs<Sandboxe::ParticleEmitter2D>();
+    if (!pe) return;
+    Sandboxe::AssetIDObject * id = (Sandboxe::AssetIDObject*)(Sandboxe::Script::Runtime::Object*)arguments[0];
+    if (!id) return;
+    
+    auto real = pe->realEmitter.IdentifyAs<Dynacoe::ParticleEmitter2D>();
+    real->EmitParticle(id->id, n);
+
 }
 
 

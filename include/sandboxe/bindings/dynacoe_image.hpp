@@ -31,6 +31,7 @@ SANDBOXE_NATIVE_DEF(__image_get_frame) {
     auto out = new Sandboxe::ImageFrameObject();
     out->id = obj->id;
     out->frameIndex = arguments[0];
+    context.SetReturnValue(out);
 }
 
 SANDBOXE_NATIVE_DEF(__image_get_frame_count) {

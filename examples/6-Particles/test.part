@@ -1,0 +1,60 @@
+image_name:SPHERE$SYS
+
+duration_max: 180
+duration_min: 80
+
+alpha_max: 255
+alpha_min: 255
+alpha_delta_max: -4
+alpha_delta_min: -5
+
+xScale_max: 1
+xScale_min: 1
+xScale_delta_min: .1
+xScale_delta_max: .1
+
+yScale_max: 1
+yScale_min: 1
+yScale_delta_min: .1
+yScale_delta_max: .1
+
+multiScale_max: .7
+multiScale_min: 1.1
+multiScale_delta_max: 0
+multiScale_delta_min: 0
+
+rotation_max: 0
+rotation_min: 0
+rotation_delta_max: 0
+rotation_delta_min: 0
+
+direction_min: 70
+direction_max: 110
+direction_delta_max: 0
+direction_delta_min: 0
+
+
+speed_min: .4
+speed_max: 1
+speed_delta_min: 0
+speed_delta_max: .3f
+
+red_max: 255
+red_min: 255
+red_delta_max: 0
+red_delta_min: 0
+
+blue_max: 20
+blue_min: 0
+blue_delta_max: 0
+blue_delta_min: 0
+
+green_max: 200
+green_min: 200
+green_delta_max: -3
+green_delta_min: -4
+
+
+
+
+

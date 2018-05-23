@@ -27,12 +27,15 @@ class ParticleEmitter2D : public Sandboxe::Entity {
     
     void OnStep() {
         auto i = realEmitter.Identify();
-        i->node.local.position = realNode->localTransform->position->vector;
-        i->node.local.scale = realNode->localTransform->scale->vector;
-        i->node.local.rotation = realNode->localTransform->rotation->vector;
-        i->node.local.reverse = realNode->local.reverse;
-        realEmitter.Identify()->Step();
+        i->node.local = node.global;
+        i->Step();
         object->CallMethod("onStep");
+    }
+    
+    void OnDraw() {
+        auto i = realEmitter.Identify();
+        i->Draw();
+        object->CallMethod("onDraw");        
     }
     
     bool localFiltered;

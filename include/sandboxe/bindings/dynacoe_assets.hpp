@@ -2,6 +2,7 @@
 #define H_sandboxe_bindings_dynacoe_assets
 #include <sandboxe/native/native.h>
 #include <sandboxe/native/assetID.h>
+#include <sandboxe/native/image.h>
 /*
     Dynacoe::Assets Bindings
     
@@ -26,7 +27,17 @@ SANDBOXE_NATIVE_DEF(__asset_id_name_set) {}
 
 
 SANDBOXE_NATIVE_DEF(__asset_id_get) {
+    auto id = (Sandboxe::AssetIDObject*)source;
+    if (!id->id.Valid()) return;
+    Dynacoe::Asset * asset = &Dynacoe::Assets::Get<Dynacoe::Asset>(id->id);
+    if (dynamic_cast<Dynacoe::Image*>(asset)) {
+        auto out = new ImageObject;
+        out->id = id->id;
+        context.SetReturnValue(out);
+    }
+
     //TODO
+    
 }
 
 SANDBOXE_NATIVE_DEF(__asset_id_remove) {

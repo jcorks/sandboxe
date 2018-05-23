@@ -7,7 +7,7 @@ class ColorObject : public Sandboxe::Script::Runtime::Object {
   public:
     ColorObject() : 
         Sandboxe::Script::Runtime::Object((int)Sandboxe::NativeType::ColorT)
-         {}
+         {color = "white";}
         
     
     // the color storage    

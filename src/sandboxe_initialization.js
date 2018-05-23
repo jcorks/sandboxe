@@ -464,7 +464,7 @@ var sandboxe = {
         mouseX : __input_mouse_x,
         mouseY : __input_mouse_y,
         mouseXDelta : __input_mouse_x_delta,
-        mouseXDelta : __input_mouse_y_delta,
+        mouseYDelta : __input_mouse_y_delta,
         mouseWheel : __input_mouse_wheel,
         getState : __input_get_state,
         isPressed : __input_is_pressed,
