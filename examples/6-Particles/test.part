@@ -1,54 +1,78 @@
+# Particles are always based off an image
+# Here you can specify either your own image asset name 
+# or a built in image type.
+# The built in types are:
+# 	SPHERE$SYS - circle
+#	FLARE$SYS  - a flare
+#       GLARE$SYS  - lens glare-like effect
+#	LIGHT$SYS  - a short beam of light
+#       RING$SYS   - a ring
+#	BOX$SYS    - a square
+#	STAR$SYS   - a star-like visual
+#	SUN$SYS    - a different star-like visual 
+#
 image_name:SPHERE$SYS
 
+# how long the particle will last, in update steps.
 duration_max: 180
 duration_min: 80
 
+
+# transparency amount. 0 - invisible, 255 - fully visible
 alpha_max: 255
 alpha_min: 255
 alpha_delta_max: -4
 alpha_delta_min: -5
 
+# horizontal scale. 1 - normal scale amount
 xScale_max: 1
 xScale_min: 1
 xScale_delta_min: .1
 xScale_delta_max: .1
 
+# vertical scale amount. 1 - normal scale
 yScale_max: 1
 yScale_min: 1
 yScale_delta_min: .1
 yScale_delta_max: .1
 
+# uniform scale multiplier. 1 - normal multiplier
 multiScale_max: .7
 multiScale_min: 1.1
 multiScale_delta_max: 0
 multiScale_delta_min: 0
 
+# z-rotation amount in degrees. 0 - default rotation
 rotation_max: 0
 rotation_min: 0
 rotation_delta_max: 0
 rotation_delta_min: 0
 
+# direction of movement in degrees
 direction_min: 70
 direction_max: 110
 direction_delta_max: 0
 direction_delta_min: 0
 
-
+# speed of the particle
 speed_min: .4
 speed_max: 1
 speed_delta_min: 0
 speed_delta_max: .3f
 
+# red component of color (0 - 255)
 red_max: 255
 red_min: 255
 red_delta_max: 0
 red_delta_min: 0
 
+#blue component of color (0 - 255)
 blue_max: 20
 blue_min: 0
 blue_delta_max: 0
 blue_delta_min: 0
 
+#green component of color (0 - 255)
 green_max: 200
 green_min: 200
 green_delta_max: -3

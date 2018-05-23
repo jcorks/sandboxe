@@ -92,7 +92,15 @@ SANDBOXE_NATIVE_DEF(__entity_get_num_children) {
     Dynacoe::Entity * e = id.Identify();    
     if (!e) return;
 
-    context.SetReturnValue(e->GetNumChildren());
+    auto list = e->GetChildren();
+    uint32_t realCount = 0;
+    for(uint32_t i = 0; i < list.size(); ++i) {
+        auto child = list[i].IdentifyAs<Sandboxe::Entity>();
+        if (!child) continue; // hidden
+        realCount++;
+    }
+
+    context.SetReturnValue(realCount);
 }
 
 SANDBOXE_NATIVE_DEF(__entity_contains) {
@@ -116,7 +124,9 @@ SANDBOXE_NATIVE_DEF(__entity_get_children) {
     auto list = e->GetChildren();
     std::vector<Sandboxe::Script::Runtime::Primitive> out;
     for(uint32_t i = 0; i < list.size(); ++i) {
-        out.push_back(list[i].IdentifyAs<Sandboxe::Entity>()->object);
+        auto child = list[i].IdentifyAs<Sandboxe::Entity>();
+        if (!child) continue; // hidden
+        out.push_back(child->object);
     }
     
     context.SetReturnArray(out);
@@ -130,7 +140,9 @@ SANDBOXE_NATIVE_DEF(__entity_get_all_sub_entities) {
     auto list = e->GetAllSubEntities();
     std::vector<Sandboxe::Script::Runtime::Primitive> out;
     for(uint32_t i = 0; i < list.size(); ++i) {
-        out.push_back(list[i].IdentifyAs<Sandboxe::Entity>()->object);
+        auto child = list[i].IdentifyAs<Sandboxe::Entity>();
+        if (!child) continue; //hidden
+        out.push_back(child->object);
     }
     
     context.SetReturnArray(out);
@@ -146,7 +158,9 @@ SANDBOXE_NATIVE_DEF(__entity_find_child_by_name) {
     auto list = e->FindChildByName(arguments[0]);
     std::vector<Sandboxe::Script::Runtime::Primitive> out;
     for(uint32_t i = 0; i < list.size(); ++i) {
-        out.push_back(list[i].IdentifyAs<Sandboxe::Entity>()->object);
+        auto ent = list[i].IdentifyAs<Sandboxe::Entity>();
+        if (!ent) continue;
+        out.push_back(ent->object);
     }
     
     context.SetReturnArray(out);
@@ -386,7 +400,7 @@ SANDBOXE_NATIVE_DEF(__entity_get_all) {
     Sandboxe::Entity * e;
     for(uint32_t i = 0; i < list.size(); ++i) {
         e = list[i].IdentifyAs<Sandboxe::Entity>();
-        if (!e) continue;
+        if (!e) continue; // hidden
         out.push_back(e->object);
     }
     context.SetReturnArray(out);

@@ -12,6 +12,7 @@ class ParticleEmitter2D : public Sandboxe::Entity {
     ParticleEmitter2D() {
         realEmitter = Dynacoe::Entity::Create<Dynacoe::ParticleEmitter2D>();
         realEmitter.Identify()->SetName(GetID().String());
+        Attach(realEmitter);
         localFiltered = true;
         localTransluscent = true;
 
@@ -25,19 +26,7 @@ class ParticleEmitter2D : public Sandboxe::Entity {
         realEmitter.Identify()->Remove();
     }
     
-    void OnStep() {
-        auto i = realEmitter.Identify();
-        i->node.local = node.global;
-        i->Step();
-        object->CallMethod("onStep");
-    }
-    
-    void OnDraw() {
-        auto i = realEmitter.Identify();
-        i->Draw();
-        object->CallMethod("onDraw");        
-    }
-    
+        
     bool localFiltered;
     bool localTransluscent;
 
