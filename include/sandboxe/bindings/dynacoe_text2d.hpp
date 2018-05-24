@@ -61,6 +61,13 @@ SANDBOXE_NATIVE_DEF(__text2d_font_get) {
 }
 
 SANDBOXE_NATIVE_DEF(__text2d_font_set) {
+    SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceT);
+    SANDBOXE_ASSERT__ARG_NATIVE(0, AssetIDObject);    
+    Sandboxe::AssetIDObject * id = (Sandboxe::AssetIDObject*)(Sandboxe::Script::Runtime::Object*)arguments[0];
+
+    auto shape = (Sandboxe::Text2DObject*)source;
+    shape->SetFont(id->id);
+    
 }
 
 SANDBOXE_NATIVE_DEF(__text2d_text_get) {

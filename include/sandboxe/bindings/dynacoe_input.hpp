@@ -155,6 +155,10 @@ SANDBOXE_NATIVE_DEF(__input_remove_listener) {
     Dynacoe::Input::RemoveListener(b);
 }
 
+SANDBOXE_NATIVE_DEF(__input_get_last_unicode)  {
+    context.SetReturnValue(Dynacoe::Input::GetLastUnicode());
+}
+
 void dynacoe_input(std::vector<std::pair<std::string, Sandboxe::Script::Runtime::Function>> & fns) {
     Sandboxe::Script::Runtime::AddType(
         (int)Sandboxe::NativeType::ButtonListenerT,
@@ -213,6 +217,7 @@ void dynacoe_input(std::vector<std::pair<std::string, Sandboxe::Script::Runtime:
     fns.push_back({"__input_unmap_input", __input_unmap_input});
     fns.push_back({"__input_add_listener", __input_add_listener});
     fns.push_back({"__input_remove_listener", __input_remove_listener});
+    fns.push_back({"__input_get_last_unicode", __input_get_last_unicode});
 }
 
 }
