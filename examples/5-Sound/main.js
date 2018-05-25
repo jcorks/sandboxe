@@ -38,14 +38,14 @@ clangShape.color = 'grey';
 
 // Lets put them on the screen. Since theyre circlebased, theyre centered 
 // already. We can just divide the screen up
-kickShape.node.local.position.x = sandboxe.graphics.getRenderCamera().width  *.25; 
-kickShape.node.local.position.y = sandboxe.graphics.getRenderCamera().height * .25;
+kickShape.node.position.x = sandboxe.graphics.getRenderCamera().width  *.25; 
+kickShape.node.position.y = sandboxe.graphics.getRenderCamera().height * .25;
 
-snareShape.node.local.position.x = sandboxe.graphics.getRenderCamera().width   * .75;
-snareShape.node.local.position.y = sandboxe.graphics.getRenderCamera().height  * .25;
+snareShape.node.position.x = sandboxe.graphics.getRenderCamera().width   * .75;
+snareShape.node.position.y = sandboxe.graphics.getRenderCamera().height  * .25;
 
-clangShape.node.local.position.x = sandboxe.graphics.getRenderCamera().width   * .5;
-clangShape.node.local.position.y = sandboxe.graphics.getRenderCamera().height  * .75;
+clangShape.node.position.x = sandboxe.graphics.getRenderCamera().width   * .5;
+clangShape.node.position.y = sandboxe.graphics.getRenderCamera().height  * .75;
 
 
 // finally lets make just one entity to hold everything.
@@ -72,15 +72,15 @@ entity.onStep = function() {
     // The Sound modules handles all audio. We're using the simple frame-based input querying 
     // though, inputListeners are usually recommended.
     // We've mapped each sound to a key.
-    if (sandboxe.input.isPressed(sandboxe.input.key_q)) {
+    if (sandboxe.input.isPressed(sandboxe.key_q)) {
         kickSample = sandboxe.sound.playAudio(kickSound);
     }
 
-    if (sandboxe.input.isPressed(sandboxe.input.key_w)) {
+    if (sandboxe.input.isPressed(sandboxe.key_w)) {
         snareSample = sandboxe.sound.playAudio(snareSound);
     }
 
-    if (sandboxe.input.isPressed(sandboxe.input.key_e)) {
+    if (sandboxe.input.isPressed(sandboxe.key_e)) {
         clangSample = sandboxe.sound.playAudio(clangSound);
     }
 
@@ -95,14 +95,14 @@ entity.onStep = function() {
     snareScale = (snareSample && snareSample.valid ? 2.0 : .5);
     clangScale = (clangSample && clangSample.valid ? 2.0 : .5);
     
-    snareShape.node.local.scale.x = sandboxe.component.mutator.step(snareShape.node.local.scale.x, snareScale, .1);
-    snareShape.node.local.scale.y = snareShape.node.local.scale.x; 
+    snareShape.node.scale.x = sandboxe.component.mutator.step(snareShape.node.scale.x, snareScale, .1);
+    snareShape.node.scale.y = snareShape.node.scale.x; 
 
-    kickShape.node.local.scale.x = sandboxe.component.mutator.step(kickShape.node.local.scale.x, kickScale, .1);
-    kickShape.node.local.scale.y = kickShape.node.local.scale.x; 
+    kickShape.node.scale.x = sandboxe.component.mutator.step(kickShape.node.scale.x, kickScale, .1);
+    kickShape.node.scale.y = kickShape.node.scale.x; 
 
-    clangShape.node.local.scale.x = sandboxe.component.mutator.step(clangShape.node.local.scale.x, clangScale, .1);
-    clangShape.node.local.scale.y = clangShape.node.local.scale.x; 
+    clangShape.node.scale.x = sandboxe.component.mutator.step(clangShape.node.scale.x, clangScale, .1);
+    clangShape.node.scale.y = clangShape.node.scale.x; 
 
 }
 

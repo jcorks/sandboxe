@@ -40,8 +40,8 @@ image.addComponent(image.shape);
 // position to be 1/2 of its width and height
 imageReference = id.get();
 frame = imageReference.getFrame(0);
-image.shape.node.local.position.x = frame.width  * -.5;
-image.shape.node.local.position.y = frame.height * -.5;
+image.shape.node.position.x = frame.width  * -.5;
+image.shape.node.position.y = frame.height * -.5;
 
 
 
@@ -49,12 +49,12 @@ image.shape.node.local.position.y = frame.height * -.5;
 // the image follow the mouse. There is a general function 
 // belonging to the mutator that eases to values, which we use here.
 image.onStep = function() {
-    image.node.local.position.x = sandboxe.component.mutator.step(image.node.local.position.x, sandboxe.input.mouseX(), .1);
-    image.node.local.position.y = sandboxe.component.mutator.step(image.node.local.position.y, sandboxe.input.mouseY(), .1);
+    image.node.position.x = sandboxe.component.mutator.step(image.node.position.x, sandboxe.input.mouseX(), .1);
+    image.node.position.y = sandboxe.component.mutator.step(image.node.position.y, sandboxe.input.mouseY(), .1);
 
     // To make it more interesting, we will secretly rotate the image based on the
     // difference in position of the Mouse pointer's position.
-    image.node.local.rotation.z += sandboxe.input.mouseYDelta();
+    image.node.rotation.z += sandboxe.input.mouseYDelta();
 }
 
 

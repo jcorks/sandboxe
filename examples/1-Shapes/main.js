@@ -49,8 +49,8 @@ centerX = sandboxe.graphics.getRenderCamera().width  / 2.0;
 // component called a node. Nodes hold psitional, scale, and rotation 
 // information for entities. Note that some components can even have
 // their own nodes, such as the shape2d component.
-circle.node.local.position.x = centerX;
-circle.node.local.position.y = centerY;
+circle.node.position.x = centerX;
+circle.node.position.y = centerY;
 
 
 
@@ -59,9 +59,9 @@ circle.node.local.position.y = centerY;
 // will be called every step of the program. Here, we're going to modify the 
 // rotation.
 circle.onStep = function() {
-    circle.node.local.rotation.x += 0.4;
-    circle.node.local.rotation.y += 0.5;
-    circle.node.local.rotation.z += 0.3;
+    circle.node.rotation.x += 0.4;
+    circle.node.rotation.y += 0.5;
+    circle.node.rotation.z += 0.3;
 }
 
 

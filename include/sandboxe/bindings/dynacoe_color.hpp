@@ -95,7 +95,7 @@ SANDBOXE_NATIVE_DEF(__color_create) {
         t->color = Dynacoe::Color(std::string(arguments[0]));
     } else if (arguments.size() == 3){
         t->color = Dynacoe::Color((float)arguments[0], (float)arguments[1], (float)arguments[2]);
-    } else if (arguments.size() == 2) {
+    } else if (arguments.size() == 4) {
         t->color = Dynacoe::Color((float)arguments[0], (float)arguments[1], (float)arguments[2], (float)arguments[3]);
     }
     context.SetReturnValue(t);

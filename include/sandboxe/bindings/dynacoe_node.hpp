@@ -36,6 +36,67 @@ SANDBOXE_NATIVE_DEF(__node_get_global) {
 
 
 
+
+
+SANDBOXE_NATIVE_DEF(__node_get_reverse) {
+    auto node = (Sandboxe::NodeObject*)source;
+    auto t = node->localTransform;
+    context.SetReturnValue(t->t->reverse);
+}
+
+SANDBOXE_NATIVE_DEF(__node_set_reverse) {
+    auto node = (Sandboxe::NodeObject*)source;
+    auto t = node->localTransform;
+    t->t->reverse = arguments[0];
+}
+
+
+SANDBOXE_NATIVE_DEF(__node_get_position) {
+    auto node = (Sandboxe::NodeObject*)source;
+    auto t = node->localTransform;
+    context.SetReturnValue(t->position);
+}
+
+SANDBOXE_NATIVE_DEF(__node_set_position) {
+    auto node = (Sandboxe::NodeObject*)source;
+    auto t = node->localTransform;
+    t->position->vector = Dynacoe::Vector(std::string(arguments[0]));
+    t->position->delta.Changed(t->position);
+}
+
+
+
+SANDBOXE_NATIVE_DEF(__node_get_rotation) {
+    auto node = (Sandboxe::NodeObject*)source;
+    auto t = node->localTransform;
+    context.SetReturnValue(t->rotation);
+}
+
+SANDBOXE_NATIVE_DEF(__node_set_rotation) {
+    auto node = (Sandboxe::NodeObject*)source;
+    auto t = node->localTransform;
+    t->rotation->vector = Dynacoe::Vector(std::string(arguments[0]));
+    t->rotation->delta.Changed(t->rotation);
+
+}
+
+
+
+SANDBOXE_NATIVE_DEF(__node_get_scale) {
+    auto node = (Sandboxe::NodeObject*)source;
+    auto t = node->localTransform;
+    context.SetReturnValue(t->scale);
+}
+
+SANDBOXE_NATIVE_DEF(__node_set_scale) {
+    auto node = (Sandboxe::NodeObject*)source;
+    auto t = node->localTransform;
+    t->scale->vector = Dynacoe::Vector(std::string(arguments[0]));
+    t->scale->delta.Changed(t->scale);
+}
+
+
+
 void dynacoe_node(std::vector<std::pair<std::string, Sandboxe::Script::Runtime::Function>> & fns) {
     Sandboxe::Script::Runtime::AddType(
         (int)Sandboxe::NativeType::NodeT,
@@ -81,7 +142,13 @@ void dynacoe_node(std::vector<std::pair<std::string, Sandboxe::Script::Runtime::
             //////////////////// imported from component ///////////
             ,
             {"local", {__node_get_local, __node_set_local}},
-            {"global", {__node_get_global, __node_set_global}}
+            {"global", {__node_get_global, __node_set_global}},
+            
+            {"reverse", {__node_get_reverse, __node_set_reverse}},
+            {"position", {__node_get_position, __node_set_position}},
+            {"scale", {__node_get_scale, __node_set_scale}},
+            {"rotation", {__node_get_rotation, __node_set_rotation}},
+
         }
     );
     

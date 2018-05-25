@@ -28,11 +28,11 @@ var translucent = true;
 
 particle.onStep = function() {
     // Lets have the emitter always match the mouse's position  
-    particle.node.local.position.x = sandboxe.input.mouseX();
-    particle.node.local.position.y = sandboxe.input.mouseY();
+    particle.node.position.x = sandboxe.input.mouseX();
+    particle.node.position.y = sandboxe.input.mouseY();
     
     //... and let's have the emitter activate when the user clicks.
-    if (sandboxe.input.getState(sandboxe.input.mouse_left)) {
+    if (sandboxe.input.getState(sandboxe.mouse_left)) {
         particle.emitter.emitParticle(particle.asset);
     }
     
@@ -43,7 +43,7 @@ particle.onStep = function() {
     // blended together. When it's disabled, it tends to give a grainy look, but 
     // will also run faster on some machines. The default when emitting is to use 
     // filtering.
-    if (sandboxe.input.isPressed(sandboxe.input.key_tab)) {
+    if (sandboxe.input.isPressed(sandboxe.key_tab)) {
         particle.emitter.filtered = !particle.emitter.filtered;
         sandboxe.console.info((particle.emitter.filtered ? "Enabled" : "Disabled") + " filtering!\n");
     }
@@ -52,7 +52,7 @@ particle.onStep = function() {
     // In this context, "translucency" is equivalent to additive blending, where transparent colors
     // are added together. The event is layered, transparent images appear lighter in color to more 
     // are drawn in one place. The default when emitting is to draw translucently.
-    if (sandboxe.input.isPressed(sandboxe.input.key_space)) {
+    if (sandboxe.input.isPressed(sandboxe.key_space)) {
         particle.emitter.translucent = !particle.emitter.translucent;
         sandboxe.console.info((particle.emitter.translucent ? "Enabled" : "Disabled") + " translucency!\n");
     }

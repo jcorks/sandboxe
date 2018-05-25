@@ -47,14 +47,14 @@ object.onStep = function() {
     // using the natural spacing determined by the font. This is the 
     // most aesthetically pleasing, but is more work to predict 
     // how much real estate the text will require.
-    if (sandboxe.input.isPressed(sandboxe.input.key_right)) {
+    if (sandboxe.input.isPressed(sandboxe.key_right)) {
         object.text.spacingMode = sandboxe.component.text2d.spacingMode.kerned;
         sandboxe.console.info("Changed spacing mode to: Kerned\n");
     } 
 
     // 'Bitmap' text will draw the text with spacing determined from 
     // just the visual. Rarely useful, but you never know!
-    if (sandboxe.input.isPressed(sandboxe.input.key_left)) {
+    if (sandboxe.input.isPressed(sandboxe.key_left)) {
         object.text.spacingMode = sandboxe.component.text2d.spacingMode.bitmap;
         sandboxe.console.info("Changed spacing mode to: Bitmap\n");
     } 
@@ -63,7 +63,7 @@ object.onStep = function() {
     // regardless of the character. THis is very useful because, in this mode, 
     // you can predict the space usage of the text to be drawn just by 
     // the character count.
-    if (sandboxe.input.isPressed(sandboxe.input.key_up)) {
+    if (sandboxe.input.isPressed(sandboxe.key_up)) {
         object.text.spacingMode = sandboxe.component.text2d.spacingMode.monospace;
         sandboxe.console.info("Changed spacing mode to: Monospace\n");
     } 
