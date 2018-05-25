@@ -472,7 +472,6 @@ var sandboxe = {
         isReleased : __input_is_released,
         mapInput : __input_map_input,
         unmapInput : __input_unmap_input,
-        addListener : __input_add_listener,
         getLastUnicode : __input_get_last_unicode
     },
     

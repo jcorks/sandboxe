@@ -36,7 +36,19 @@ SANDBOXE_NATIVE_DEF(__input_mouse_wheel) {
 }
 
 SANDBOXE_NATIVE_DEF(__input_button_listener_new) {
-    context.SetReturnValue(new Sandboxe::ButtonListenerObject);
+    SANDBOXE_ASSERT__ARG_COUNT(1);
+    auto listener = new Sandboxe::ButtonListenerObject;
+    int input = arguments[0];
+    if (input != 0) {
+        if (input < 93) {
+            Dynacoe::Input::AddListener(listener, (Dynacoe::Keyboard)input);
+        } else if (input < 96) {
+            Dynacoe::Input::AddListener(listener, (Dynacoe::MouseButtons)(input-93));
+        }
+    } else { // else mapped
+        Dynacoe::Input::AddListener(listener, std::string(arguments[0]));            
+    }    
+    context.SetReturnValue(listener);
 }
 
 SANDBOXE_NATIVE_DEF(__input_get_state) {
@@ -147,10 +159,6 @@ SANDBOXE_NATIVE_DEF(__input_add_listener) {
 }
 
 SANDBOXE_NATIVE_DEF(__input_remove_listener) {
-    SANDBOXE_ASSERT__ARG_COUNT(2);
-    SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceT);
-    SANDBOXE_ASSERT__ARG_NATIVE(0, ButtonListenerObject);
-    
     auto b = (Sandboxe::ButtonListenerObject*)(Sandboxe::Script::Runtime::Object*)arguments[0];
     Dynacoe::Input::RemoveListener(b);
 }
@@ -170,6 +178,7 @@ void dynacoe_input(std::vector<std::pair<std::string, Sandboxe::Script::Runtime:
 
         // methods
         {
+            {"remove", __input_remove_listener}
         },
         // properties
         {
@@ -215,8 +224,8 @@ void dynacoe_input(std::vector<std::pair<std::string, Sandboxe::Script::Runtime:
     fns.push_back({"__input_is_released", __input_is_released});
     fns.push_back({"__input_map_input", __input_map_input});
     fns.push_back({"__input_unmap_input", __input_unmap_input});
-    fns.push_back({"__input_add_listener", __input_add_listener});
-    fns.push_back({"__input_remove_listener", __input_remove_listener});
+    //fns.push_back({"__input_add_listener", __input_add_listener});
+    //fns.push_back({"__input_remove_listener", __input_remove_listener});
     fns.push_back({"__input_get_last_unicode", __input_get_last_unicode});
 }
 

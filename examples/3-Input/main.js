@@ -36,32 +36,28 @@ inputExample.addComponent(inputExample.visual);
 
 // There are multiple ways to have sandboxe respond to input. One 
 // such efficient way is to add buttonListeners. buttonListeners 
-// call specified functions onc ehte input is picked up by the system. 
+// call specified functions once the input is picked up by the system. 
 
 // First, create the listener
-listenerLeft = sandboxe.input.buttonListener.create();
+listenerLeft = sandboxe.input.buttonListener.create(sandboxe.input.key_left);
 
 // Populate the onPres, onRelease, and /or onHold properties.
 // Here we only care about onHold
 listenerLeft.onHold = function() {
     inputExample.node.local.position.x -= 2;
 }
-// Then give it directly to the button listener
-sandboxe.input.addListener(listenerLeft, sandboxe.input.key_left);
 
 
 
 
 // Repeat same steps for the right key 
-listenerRight = sandboxe.input.buttonListener.create();
+listenerRight = sandboxe.input.buttonListener.create(sandboxe.input.key_right);
 
 // Populate the onPres, onRelease, and /or onHold properties.
 // Here we only care about onHold
 listenerRight.onHold = function() {
     inputExample.node.local.position.x += 2;
 }
-sandboxe.input.addListener(listenerRight, sandboxe.input.key_right);
-
 
 
 
