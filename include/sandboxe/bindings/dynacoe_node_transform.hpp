@@ -31,7 +31,7 @@ SANDBOXE_NATIVE_DEF(__node_transform_get_position) {
 
 SANDBOXE_NATIVE_DEF(__node_transform_set_position) {
     auto t = (Sandboxe::Node_TransformObject*)source;
-    t->position->vector = Dynacoe::Vector(std::string(arguments[0]));
+    argument_to_vector_object(t->position->vector, arguments[0]);
     t->position->delta.Changed(t->position);
 }
 
@@ -44,7 +44,7 @@ SANDBOXE_NATIVE_DEF(__node_transform_get_rotation) {
 
 SANDBOXE_NATIVE_DEF(__node_transform_set_rotation) {
     auto t = (Sandboxe::Node_TransformObject*)source;
-    t->rotation->vector = Dynacoe::Vector(std::string(arguments[0]));
+    argument_to_vector_object(t->rotation->vector, arguments[0]);
     t->rotation->delta.Changed(t->rotation);
 
 }
@@ -58,7 +58,7 @@ SANDBOXE_NATIVE_DEF(__node_transform_get_scale) {
 
 SANDBOXE_NATIVE_DEF(__node_transform_set_scale) {
     auto t = (Sandboxe::Node_TransformObject*)source;
-    t->scale->vector = Dynacoe::Vector(std::string(arguments[0]));
+    argument_to_vector_object(t->scale->vector, arguments[0]);
     t->scale->delta.Changed(t->scale);
 
 }

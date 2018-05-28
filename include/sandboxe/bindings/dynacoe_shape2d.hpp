@@ -129,7 +129,7 @@ SANDBOXE_NATIVE_DEF(__shape2d_color_get) {
 
 SANDBOXE_NATIVE_DEF(__shape2d_color_set) {
     auto shape = (Sandboxe::Shape2DObject*)source;
-    shape->localColor->color = Dynacoe::Color((std::string)arguments[0]);
+    argument_to_color_object(shape->localColor->color, arguments[0]);
 }
 
 

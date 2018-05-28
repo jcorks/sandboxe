@@ -168,7 +168,6 @@ var sandboxe = {
             },
 
             create : __mutator_create,
-            step : __mutator_step
         },
         
         gui : {
@@ -574,8 +573,11 @@ var sandboxe = {
     pad_z3 : 141,///< Z3 button
     pad_x4 : 142,///< X4 button
     pad_y4 : 143,///< Y4 button
-    pad_z4 : 144 ///< Z4 button
-    
+    pad_z4 : 144, ///< Z4 button
+
+
+    ease : __mutator_step
+
 };
 
 

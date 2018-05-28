@@ -51,7 +51,9 @@ SANDBOXE_NATIVE_DEF(__text2d_color_get) {
 
 SANDBOXE_NATIVE_DEF(__text2d_color_set) {
     auto shape = (Sandboxe::Text2DObject*)source;
-    shape->SetTextColor(Dynacoe::Color((std::string)arguments[0]));
+    Dynacoe::Color color;
+    argument_to_color_object(color, arguments[0]);
+    shape->SetTextColor(color);
 }
 
 

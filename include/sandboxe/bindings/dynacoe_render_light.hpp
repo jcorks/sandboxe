@@ -58,7 +58,7 @@ SANDBOXE_NATIVE_DEF(__render_light_get_color) {
 
 SANDBOXE_NATIVE_DEF(__render_light_set_color) {
     auto light = (Sandboxe::RenderLightObject*)source;
-    light->localColor->color = Dynacoe::Color(std::string(arguments[0]));
+    argument_to_color_object(light->localColor->color, arguments[0]);
 }
 
 SANDBOXE_NATIVE_DEF(__render_light_get_enabled) {
@@ -80,7 +80,7 @@ SANDBOXE_NATIVE_DEF(__render_light_get_position) {
 
 SANDBOXE_NATIVE_DEF(__render_light_set_position) {
     auto light = (Sandboxe::RenderLightObject*)source;
-    light->localPosition->vector = Dynacoe::Vector(std::string(arguments[0]));
+    argument_to_vector_object(light->localPosition->vector, arguments[0]);
 }
 
 

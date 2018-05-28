@@ -24,8 +24,21 @@ namespace Bindings {
 
 
 
-
-
+void argument_to_vector_object(Dynacoe::Vector & dest, const Sandboxe::Script::Runtime::Primitive & arg) {
+    switch(arg.hint) {
+      case Sandboxe::Script::Runtime::Primitive::TypeHint::ObjectReferenceT:; {
+        // trye to get a color object, if possible
+            auto src = dynamic_cast<Sandboxe::VectorObject*>((Sandboxe::Script::Runtime::Object*)arg);
+            if (src) {
+                dest = src->vector;
+            }
+            break;
+        }
+      default:
+        dest = Dynacoe::Vector(std::string(arg));
+        
+    }
+}
 
 // functions 
 

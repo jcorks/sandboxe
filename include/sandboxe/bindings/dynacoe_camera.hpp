@@ -40,7 +40,10 @@ SANDBOXE_NATIVE_DEF(__camera_set_target) {
     SANDBOXE_ASSERT__ARG_COUNT(1);
     auto cam = ((CameraEntityID*)source)->id.IdentifyAs<Sandboxe::Camera>();
     if (!cam) return;
-    cam->Self()->SetTarget(Dynacoe::Vector(std::string(arguments[0])));
+    
+    Dynacoe::Vector vec;
+    argument_to_vector_object(vec, arguments[0]);
+    cam->Self()->SetTarget(vec);
 }
 
 SANDBOXE_NATIVE_DEF(__camera_set_render_resolution) {    
@@ -56,7 +59,9 @@ SANDBOXE_NATIVE_DEF(__camera_transform_screen_to_world) {
     if (!cam) return;
 
     auto out = new Sandboxe::VectorObject();
-    out->vector = cam->Self()->TransformScreenToWorld(Dynacoe::Vector(std::string(arguments[0])), arguments[0]);
+    Dynacoe::Vector vec;
+    argument_to_vector_object(vec, arguments[0]);
+    out->vector = cam->Self()->TransformScreenToWorld(vec, arguments[1]);
     context.SetReturnValue(out);
 }
 
@@ -66,7 +71,9 @@ SANDBOXE_NATIVE_DEF(__camera_transform_world_to_screen) {
     if (!cam) return;
 
     auto out = new Sandboxe::VectorObject();
-    out->vector = cam->Self()->TransformWorldToScreen(Dynacoe::Vector(std::string(arguments[0])));
+    Dynacoe::Vector vec;
+    argument_to_vector_object(vec, arguments[0]);
+    out->vector = cam->Self()->TransformWorldToScreen(vec);
     context.SetReturnValue(out);
 }
 

@@ -48,7 +48,8 @@ enum class NativeType {
     ImageFrameT,
     ParticleEmitter2D_EntityIDT,
     InputBufferT,
-    OutputBufferT
+    OutputBufferT,
+    ModelT
 };
 
 

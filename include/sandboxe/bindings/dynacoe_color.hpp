@@ -23,6 +23,21 @@ namespace Bindings {
 
 // managed properties
 
+void argument_to_color_object(Dynacoe::Color & dest, const Sandboxe::Script::Runtime::Primitive & arg) {
+    switch(arg.hint) {
+      case Sandboxe::Script::Runtime::Primitive::TypeHint::ObjectReferenceT:; {
+        // trye to get a color object, if possible
+            auto src = dynamic_cast<Sandboxe::ColorObject*>((Sandboxe::Script::Runtime::Object*)arg);
+            if (src) {
+                dest = src->color;
+            }
+            break;
+        }
+      default:
+        dest = Dynacoe::Color(std::string(arg));
+        
+    }
+}
 
 
 SANDBOXE_NATIVE_DEF(__color_r_get) {

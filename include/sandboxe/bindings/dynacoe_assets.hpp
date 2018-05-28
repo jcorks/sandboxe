@@ -3,6 +3,8 @@
 #include <sandboxe/native/native.h>
 #include <sandboxe/native/assetID.h>
 #include <sandboxe/native/image.h>
+#include <sandboxe/native/model.h>
+
 /*
     Dynacoe::Assets Bindings
     
@@ -34,7 +36,16 @@ SANDBOXE_NATIVE_DEF(__asset_id_get) {
         auto out = new ImageObject;
         out->id = id->id;
         context.SetReturnValue(out);
+        return;
     }
+
+    if (dynamic_cast<Dynacoe::Model*>(asset)) {
+        auto out = new ModelObject;
+        out->id = id->id;
+        context.SetReturnValue(out);
+        return;
+    }
+
 
     //TODO
     

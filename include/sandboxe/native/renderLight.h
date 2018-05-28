@@ -18,6 +18,10 @@ class RenderLightObject : public Sandboxe::ComponentAdaptor, public Dynacoe::Ren
         state.color = localColor->color;
     }
     
+    void OnDraw() {
+        Dynacoe::RenderLight::OnDraw();
+    }
+    
     void OnGarbageCollection(){}
     
     const char * GetObjectName() const {

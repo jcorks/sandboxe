@@ -29,7 +29,6 @@ namespace Bindings {
 // functions 
 
 SANDBOXE_NATIVE_DEF(__material_set_program) {
-    SANDBOXE_ASSERT__ARG_COUNT(1);
     auto mat = (Sandboxe::MaterialObject *)source;
     
     if (arguments[0].hint == Sandboxe::Script::Runtime::Primitive::TypeHint::ObjectReferenceT) {
@@ -113,19 +112,19 @@ SANDBOXE_NATIVE_DEF(__material_get_user_data) {
 
 SANDBOXE_NATIVE_DEF(__material_set_ambient) {
     auto mat = (Sandboxe::MaterialObject *)source;
-    mat->localAmbient->color = Dynacoe::Color(std::string(arguments[0]));
+    argument_to_color_object(mat->localAmbient->color, arguments[0]);
     mat->localAmbient->delta.Changed(mat->localAmbient);
 }
 
 SANDBOXE_NATIVE_DEF(__material_set_specular) {
     auto mat = (Sandboxe::MaterialObject *)source;
-    mat->localSpecular->color = Dynacoe::Color(std::string(arguments[0]));
+    argument_to_color_object(mat->localSpecular->color, arguments[0]);
     mat->localSpecular->delta.Changed(mat->localSpecular);
 }
 
 SANDBOXE_NATIVE_DEF(__material_set_diffuse) {
     auto mat = (Sandboxe::MaterialObject *)source;
-    mat->localDiffuse->color = Dynacoe::Color(std::string(arguments[0]));
+    argument_to_color_object(mat->localDiffuse->color, arguments[0]);
     mat->localDiffuse->delta.Changed(mat->localDiffuse);
 }
 
@@ -165,7 +164,6 @@ void dynacoe_material(std::vector<std::pair<std::string, Sandboxe::Script::Runti
         (int)Sandboxe::NativeType::MaterialT,
         // methods
         {
-            {"setProgram", __material_set_program},
             {"addTexture", __material_add_texture},
             {"setFramebufferSource", __material_set_framebuffer},
             {"nextTextureFrame", __material_next_texture_frame},
@@ -183,6 +181,7 @@ void dynacoe_material(std::vector<std::pair<std::string, Sandboxe::Script::Runti
             {"specularAmount", {__material_get_specular_amount, __material_set_specular_amount}}, 
             {"diffuseAmount", {__material_get_diffuse_amount, __material_set_diffuse_amount}}, 
             {"shininess", {__material_get_shininess, __material_set_shininess}}, 
+            {"program", {SANDBOXE_NATIVE_EMPTY, __material_set_program}},
 
             {"userData", {__material_get_user_data, __material_set_user_data}}
         }
