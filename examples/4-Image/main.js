@@ -27,9 +27,8 @@ sandboxe.engine.setRoot(image);
 // Immediately after loading the image, we call FormImage to transform
 // the imageAspect into a drawable rectangle showing the loaded image.
 id = sandboxe.assets.load("png", "image.png");
-image.shape = sandboxe.component.shape2d.create();
+image.shape = image.add('shape2d');
 image.shape.formImage(id);
-image.addComponent(image.shape);
 
 
 
@@ -49,8 +48,8 @@ image.shape.node.position.y = frame.height * -.5;
 // the image follow the mouse. There is a general function 
 // belonging to the mutator that eases to values, which we use here.
 image.onStep = function() {
-    image.node.position.x = sandboxe.component.mutator.step(image.node.position.x, sandboxe.input.mouseX(), .1);
-    image.node.position.y = sandboxe.component.mutator.step(image.node.position.y, sandboxe.input.mouseY(), .1);
+    image.node.position.x = sandboxe.ease(image.node.position.x, sandboxe.input.mouseX(), .1);
+    image.node.position.y = sandboxe.ease(image.node.position.y, sandboxe.input.mouseY(), .1);
 
     // To make it more interesting, we will secretly rotate the image based on the
     // difference in position of the Mouse pointer's position.

@@ -12,7 +12,7 @@ sandboxe.view.setMain(window);
 object = sandboxe.entity.create();
 
 // Text is rendered is using the text2d component
-object.text = sandboxe.component.text2d.create();
+object.text = object.add('text2d');
 
 // The font needs to be loaded. By default, sandboxe can open TTF and OTF fonts.
 object.text.font = sandboxe.assets.load('ttf', 'monospace.ttf');
@@ -23,7 +23,6 @@ object.text.fontSize = 24;
 
 object.text.text = 'Try typing!';
 object.text.spacingMode = sandboxe.component.text2d.spacingMode.monospace;
-object.addComponent(object.text);
 
 var text = "";
 object.onStep = function() {
@@ -60,7 +59,7 @@ object.onStep = function() {
     } 
 
     // 'Monospace' text will draw the text with the same spacing 
-    // regardless of the character. THis is very useful because, in this mode, 
+    // regardless of the character. This is very useful because, in this mode, 
     // you can predict the space usage of the text to be drawn just by 
     // the character count.
     if (sandboxe.input.isPressed(sandboxe.key_up)) {

@@ -25,8 +25,7 @@ sandboxe.engine.setRoot(circle);
 // host entities to grant more functionality. After 
 // creation, they need to be attached to make sure the 
 // component gets updated with the entity.
-circle.shape = sandboxe.component.shape2d.create();
-circle.addComponent(circle.shape);
+circle.shape = circle.add('shape2d');
 
 // Color objects can be created from RGB integers, or via
 // a string (either the name, or the ubiquitous rgb/rgba hex string with leading '#')

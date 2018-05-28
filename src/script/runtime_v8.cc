@@ -444,11 +444,14 @@ static v8::Handle<v8::Value> script_include(const v8::Arguments & args) {
     rawStr[data.GetSize()] = 0;
     memcpy(rawStr, data.GetPtr(), data.GetSize());
     
+    includedScripts.insert(*path);
     
     // execute the script
     Sandboxe::Script::Runtime::Execute(rawStr, *path);
         //delete[] rawStr;
         //return v8::ThrowException(v8::String::New((Dynacoe::Chain() << "File " << *path << " could not be accessed.\n").ToString().c_str()));
+    
+    Sandboxe::Script::Runtime::CheckAndHandleErrors();
     
     delete[] rawStr;
     

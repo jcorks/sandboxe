@@ -18,16 +18,15 @@ sandboxe.view.setMain(window);
 // supplied by the user. First, create the entity
 inputExample = sandboxe.entity.create();
 inputExample.name = 'inputExample';
-inputExample.node.local.position.x = 100;
-inputExample.node.local.position.y = 100
+inputExample.node.position.x = 100;
+inputExample.node.position.y = 100
 sandboxe.engine.setRoot(inputExample);
 
 // Then create the square itself and center it.
-inputExample.visual = sandboxe.component.shape2d.create();
+inputExample.visual = inputExample.add('shape2d');
 inputExample.visual.formRectangle(width = 10, height = 10);
-inputExample.visual.node.local.position = '{-5, -5}';
+inputExample.visual.node.position = '{-5, -5}';
 inputExample.visual.color = 'white';
-inputExample.addComponent(inputExample.visual);
 
 
 
@@ -44,7 +43,7 @@ listenerLeft = sandboxe.input.buttonListener.create(sandboxe.key_left);
 // Populate the onPres, onRelease, and /or onHold properties.
 // Here we only care about onHold
 listenerLeft.onHold = function() {
-    inputExample.node.local.position.x -= 2;
+    inputExample.node.position.x -= 2;
 }
 
 
@@ -56,7 +55,7 @@ listenerRight = sandboxe.input.buttonListener.create(sandboxe.key_right);
 // Populate the onPres, onRelease, and /or onHold properties.
 // Here we only care about onHold
 listenerRight.onHold = function() {
-    inputExample.node.local.position.x += 2;
+    inputExample.node.position.x += 2;
 }
 
 
@@ -68,7 +67,7 @@ inputExample.onStep = function() {
     
     // lets make it so that you can drag the box horizontally
     if (sandboxe.input.isHeld(sandboxe.mouse_left)) {
-        inputExample.node.local.position.x = sandboxe.input.mouseX();
+        inputExample.node.position.x = sandboxe.input.mouseX();
     }
 }
 

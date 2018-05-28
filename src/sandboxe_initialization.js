@@ -229,7 +229,7 @@ var sandboxe = {
         create : __shader_create,
         stage : {
             vertexProcessor : 0,
-            FragmentProcessor : 1
+            fragmentProcessor : 1
         },
         status : {
             invalid : 0,
@@ -245,7 +245,11 @@ var sandboxe = {
             normal : 1, 
             uv : 2,   
             userData : 3 
-        }
+        },
+        
+        createCube : __mesh_create_cube,
+        createSquare : __mesh_create_square
+
     },
 
     camera : {

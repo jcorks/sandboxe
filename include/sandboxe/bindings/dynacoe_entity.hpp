@@ -274,6 +274,9 @@ SANDBOXE_NATIVE_DEF(__entity_add_component) {
     }    
 }
 
+
+SANDBOXE_NATIVE_DEF(__entity_add);
+
 SANDBOXE_NATIVE_DEF(__entity_query_component) {
     SANDBOXE_ASSERT__ARG_COUNT(1);
     const Dynacoe::Entity::ID & id = ((EntityObjectID*)source)->id;
@@ -429,6 +432,7 @@ void dynacoe_entity(std::vector<std::pair<std::string, Sandboxe::Script::Runtime
             {"getAllSubEntities", __entity_get_all_sub_entities},
             {"findChildByName", __entity_find_child_by_name},
             {"createChild", __entity_create_child},
+            {"add", __entity_add},
 
             {"stepDuration", __entity_step_duration},
             {"drawDuration", __entity_draw_duration},

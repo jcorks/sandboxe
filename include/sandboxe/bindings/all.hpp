@@ -122,7 +122,61 @@ void ApplyPostBindings() {
 
 }
 
+
  
+}
+}
+
+namespace Sandboxe {
+namespace Bindings {
+SANDBOXE_NATIVE_DEF(__entity_add) {
+    SANDBOXE_ASSERT__ARG_COUNT(1);
+    const Dynacoe::Entity::ID & id = ((EntityObjectID*)source)->id;
+    Dynacoe::Entity * e = id.Identify();    
+    if (!e) return;
+    
+    std::string name = arguments[0];
+    auto updateClass = Dynacoe::Entity::UpdateClass::Before;
+    if (arguments.size() > 1) {
+        updateClass = (Dynacoe::Entity::UpdateClass)(int)arguments[1];
+    }
+    
+    static std::map<std::string, Sandboxe::NativeType> * name2id = nullptr;
+    if (!name2id) {
+        name2id = new std::map<std::string, Sandboxe::NativeType>();
+        (*name2id)["stateControl"] = Sandboxe::NativeType::StateControlT;
+        (*name2id)["scheduler"]    = Sandboxe::NativeType::SchedulerT;
+        (*name2id)["renderMesh"]   = Sandboxe::NativeType::RenderMeshT;
+        (*name2id)["renderLight"]  = Sandboxe::NativeType::RenderLightT;
+        (*name2id)["object2d"]     = Sandboxe::NativeType::Object2DT;
+        (*name2id)["mutator"]      = Sandboxe::NativeType::MutatorT;
+        (*name2id)["gui"]          = Sandboxe::NativeType::GUIT;
+        (*name2id)["dataTable"]    = Sandboxe::NativeType::DataTableT;
+        (*name2id)["text2d"]       = Sandboxe::NativeType::Text2DT;
+        (*name2id)["clock"]        = Sandboxe::NativeType::ClockT;
+        (*name2id)["shape2d"]      = Sandboxe::NativeType::Shape2DT;
+    }
+    
+    Sandboxe::ComponentAdaptor * component = nullptr;
+    switch((*name2id)[name]) {
+      case Sandboxe::NativeType::StateControlT: component = new Sandboxe::StateControlObject; break;
+      case Sandboxe::NativeType::SchedulerT:    component = new Sandboxe::SchedulerObject; break;
+      case Sandboxe::NativeType::RenderMeshT:   component = new Sandboxe::RenderMeshObject; break;
+      case Sandboxe::NativeType::RenderLightT:  component = new Sandboxe::RenderLightObject; break;
+      case Sandboxe::NativeType::Object2DT:     component = new Sandboxe::Object2DObject; break;
+      case Sandboxe::NativeType::MutatorT:      component = new Sandboxe::MutatorObject; break;
+      case Sandboxe::NativeType::GUIT:          component = new Sandboxe::GUIObject; break;
+      case Sandboxe::NativeType::DataTableT:    component = new Sandboxe::DataTableObject; break;
+      case Sandboxe::NativeType::Text2DT:       component = new Sandboxe::Text2DObject; break;
+      case Sandboxe::NativeType::ClockT:        component = new Sandboxe::ClockObject; break;
+      case Sandboxe::NativeType::Shape2DT:      component = new Sandboxe::Shape2DObject; break;
+      default:;
+    }
+    
+    e->AddComponent(component->Native_GetDynacoeComponent(), updateClass);
+    context.SetReturnValue(component);
+    
+}
 }
 }
 

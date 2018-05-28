@@ -6,7 +6,9 @@
 window = sandboxe.view.createDisplay("Sound Example");
 sandboxe.view.setMain(window);
 
-
+// lets make just one entity to hold everything.
+entity = sandboxe.entity.create();
+sandboxe.engine.setRoot(entity);
 
 
 // Load resources
@@ -22,15 +24,15 @@ clangSound = sandboxe.assets.load("wav", "clang.wav");
 // We're also going to draw some visuals, one for each sound 
 // Using the circle function, we are going to make a hexagon to represent each sound
 // 
-kickShape  = sandboxe.component.shape2d.create();
+kickShape  = entity.add('shape2d');
 kickShape.formCircle(radius=50, iters=6);
 kickShape.color = 'orange';
 
-snareShape = sandboxe.component.shape2d.create();
+snareShape = entity.add('shape2d');
 snareShape.formCircle(radius=50, iters=6);
 snareShape.color = 'cyan';
 
-clangShape = sandboxe.component.shape2d.create();
+clangShape = entity.add('shape2d');
 clangShape.formCircle(radius=50, iters=6);
 clangShape.color = 'grey';
 
@@ -48,13 +50,7 @@ clangShape.node.position.x = sandboxe.graphics.getRenderCamera().width   * .5;
 clangShape.node.position.y = sandboxe.graphics.getRenderCamera().height  * .75;
 
 
-// finally lets make just one entity to hold everything.
-// Add the components we made.
-entity = sandboxe.entity.create();
-entity.addComponent(kickShape);
-entity.addComponent(snareShape);
-entity.addComponent(clangShape);
-sandboxe.engine.setRoot(entity);
+
 
 
 
@@ -86,7 +82,7 @@ entity.onStep = function() {
 
 
 
-    // Now, we're going to make some "spice" to make it more interesting.
+    // Now, we're going to add some "spice" to make it more interesting.
     // The goal is to have each visual react to its sound. This example will 
     // expand the shape for the duration of the sample's playback.
     // We check to see if the sample is playing by using the result 
@@ -95,13 +91,13 @@ entity.onStep = function() {
     snareScale = (snareSample && snareSample.valid ? 2.0 : .5);
     clangScale = (clangSample && clangSample.valid ? 2.0 : .5);
     
-    snareShape.node.scale.x = sandboxe.component.mutator.step(snareShape.node.scale.x, snareScale, .1);
+    snareShape.node.scale.x = sandboxe.ease(snareShape.node.scale.x, snareScale, .1);
     snareShape.node.scale.y = snareShape.node.scale.x; 
 
-    kickShape.node.scale.x = sandboxe.component.mutator.step(kickShape.node.scale.x, kickScale, .1);
+    kickShape.node.scale.x = sandboxe.ease(kickShape.node.scale.x, kickScale, .1);
     kickShape.node.scale.y = kickShape.node.scale.x; 
 
-    clangShape.node.scale.x = sandboxe.component.mutator.step(clangShape.node.scale.x, clangScale, .1);
+    clangShape.node.scale.x = sandboxe.ease(clangShape.node.scale.x, clangScale, .1);
     clangShape.node.scale.y = clangShape.node.scale.x; 
 
 }

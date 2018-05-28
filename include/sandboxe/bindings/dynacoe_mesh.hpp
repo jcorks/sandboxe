@@ -167,6 +167,19 @@ SANDBOXE_NATIVE_DEF(__mesh_create) {
     context.SetReturnValue(new Sandboxe::MeshObject);
 }
 
+SANDBOXE_NATIVE_DEF(__mesh_create_cube) {
+    auto mesh = new Sandboxe::MeshObject;
+    mesh->mesh = Dynacoe::Mesh::Basic_Cube();
+    context.SetReturnValue(mesh);
+}
+
+SANDBOXE_NATIVE_DEF(__mesh_create_square) {
+    auto mesh = new Sandboxe::MeshObject;
+    mesh->mesh = Dynacoe::Mesh::Basic_Square();
+    context.SetReturnValue(mesh);
+}
+
+
 
 void dynacoe_mesh(std::vector<std::pair<std::string, Sandboxe::Script::Runtime::Function>> & fns) {
     Sandboxe::Script::Runtime::AddType(
@@ -196,6 +209,9 @@ void dynacoe_mesh(std::vector<std::pair<std::string, Sandboxe::Script::Runtime::
     );
     
     fns.push_back({"__mesh_create", __mesh_create});    
+    fns.push_back({"__mesh_create_cube", __mesh_create_cube});    
+    fns.push_back({"__mesh_create_square", __mesh_create_square});    
+
 }
     
     

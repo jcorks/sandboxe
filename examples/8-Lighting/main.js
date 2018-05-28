@@ -1,17 +1,21 @@
 /*  A example that shows how to work with lighting
     2018, Johnathan Corkery
+ 
+    Since this example is more complicated, let's go over what we want it to 
+    show. This demo will demonstrate a simple scene that has the following things:
+     - A moveable camera 
+     - A ground / floor in 3D space
+     - An object loaded from a model file
+     - A "sky light"
+     - A light in 3D space
+
+    All are annotated below in how they work
+
  */
  
-dark   = sandboxe.color.create(.05, .05, .05, 1);
-dim    = sandboxe.color.create(.4, .4, .4,    1);
-bright = sandboxe.color.create(.8 , .8 , .8,  1);
-
-softBlue = sandboxe.color.create(.2, .35, .47, 1);
- 
-
 
 // First, we want to create our window on the system.
-window = sandboxe.view.createDisplay("Text Example");
+window = sandboxe.view.createDisplay("Lighting Example");
 sandboxe.view.setMain(window);
 
 // We are going to have multiple independent objects in this example, 
@@ -81,7 +85,7 @@ ground = (function(){
     
     // When working wit 3D geometry, we'll need to work with the renderMesh component.
     // It is the 3D counterpart of shape2d and is generaic to all 3d operations.
-    ent.mesh = sandboxe.component.renderMesh.create();
+    ent.mesh = ent.add('renderMesh');
     
     // For renderMesh objects to function, we need to supply 3D geometry.
     // In this example, we are goin gto make an object by hand! We will 
@@ -139,9 +143,7 @@ ground = (function(){
     // 99% of the time, triangles are the most appropriate.
     ent.mesh.primitive = sandboxe.component.renderMesh.polygon.triangle;
 
-    
-    // Since the mesh itself is finished, lets add the component!
-    ent.addComponent(ent.mesh);
+
     
 
     // Well, now that we specified the geometry, we need to tell sandboxe 
@@ -154,15 +156,15 @@ ground = (function(){
     
     // Ambient specifies the base color in absence of light or from ambient 
     // reflection. Usually this should be dark.
-    ent.mesh.material.ambient = dark;
+    ent.mesh.material.ambient = sandboxe.color.create(.05, .05, .05, 1);
     
     // Diffuse light is general light impact from a light at a wide angle.
-    ent.mesh.material.diffuse = dim;
+    ent.mesh.material.diffuse = sandboxe.color.create(.4, .4, .4,    1);;
     
     // Specular light is the "highlight" colors when the eye position is closely 
     // alight with the surface reflection normal. This is where the light is the 
     // brightest.
-    ent.mesh.material.specular = bright;
+    ent.mesh.material.specular = sandboxe.color.create(.8 , .8 , .8,  1);;
     
     // Shininess of the surface. Higher number means more shiny
     ent.mesh.material.shininess = 16;
@@ -235,7 +237,7 @@ skyLight = (function(){
     var out = sandboxe.entity.create();
     
     // Lights are maintained using renderLight components, so lets create one.
-    var directional = sandboxe.component.renderLight.create();
+    var directional = out.add('renderLight');
     
     // This first example will be a directional light, so the type should be set accordingly.
     directional.type = sandboxe.component.renderLight.type.directional;
@@ -246,15 +248,12 @@ skyLight = (function(){
     
     // Every light also can have its own color. This will interact with the 
     // material colors.
-    directional.color = softBlue;
+    directional.color = sandboxe.color.create(.2, .35, .47, 1);
     
     // For a directional light, the "position" is the directional vector 
     // in 3D space. Since positions are X Y Z, this is pointing "down" (negative y)
     // and "back" (negative z)
     directional.position = '{0, -1, -.4}';
-
-    // Since it looks alright, lets add the component to the entity
-    out.addComponent(directional);
     
     // Don;t forget to name this object!!
     out.name = 'Light_SkyLight';
@@ -272,7 +271,7 @@ light = (function(){
     var out = sandboxe.entity.create();
     
     // Like before lets set these properties.
-    var point = sandboxe.component.renderLight.create();
+    var point = out.add('renderLight');
     point.type = sandboxe.component.renderLight.type.point;
     point.intensity = 20;
     
@@ -283,9 +282,6 @@ light = (function(){
     // Lets move this light up and towards the camera
     point.position = '0, 1, 3';
 
-    // Add it to the object
-    out.addComponent(point);
-    
     // Set the name as usual
     out.name = 'Light_PointLight';
     
