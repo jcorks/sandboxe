@@ -9,7 +9,7 @@
  * data to be interpreted later, or read stream-wise. This contrasts with 
  * {@link outputBuffer}, which aims to be the write-only complement to inputBuffer.
  *
- * @example 
+ * @example js
  * // Creates a new inputbuffer from the static helper in sandboxe
  * var myBuffer = sandboxe.inputBuffer.create();
  *

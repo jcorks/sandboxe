@@ -1,6 +1,6 @@
 /**
  * outputBuffers, like {@link inputBuffer}s assist in working with raw binary data 
- * as a basic datastream. NMuch of its functionality mimics inputBuffer, but with 
+ * as a basic datastream. Much of its functionality mimics inputBuffer, but with 
  * write-only equivalents
  *
  * @example
