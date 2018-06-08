@@ -1218,7 +1218,7 @@ var sandboxe = {
          * @param {boolean} lockConsole If true, the console is locked (see isLocked)
          * @function
          */ 
-        lock : __console_lock
+        lock : __console_lock,
         
         
         //var add command 

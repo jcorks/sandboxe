@@ -42,6 +42,11 @@ SANDBOXE_NATIVE_DEF(__sound_play_audio) {
         volume,
         panning
     );
+    
+    out->volume = volume;
+    out->panning = panning;
+    out->channel = ef;
+    out->repeat = false;
     context.SetReturnValue(out);
 }
 

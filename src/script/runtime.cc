@@ -1,4 +1,5 @@
 #include <sandboxe/script/runtime.h>
+#include <cinttypes>
 
 using Sandboxe::Script::Runtime::Primitive;
 using Sandboxe::Script::Runtime::Context;
@@ -19,7 +20,9 @@ Primitive::Primitive(bool in) {
 
 Primitive::Primitive(int in) {
     defined = true;
-    data = (Chain() << in);
+    char buf[256];
+    snprintf(buf, 255, "%i", in);
+    data = std::string(buf);
     hint = TypeHint::IntegerT;
 
 }
@@ -27,25 +30,33 @@ Primitive::Primitive(int in) {
 
 Primitive::Primitive(float in) {
     defined = true;
-    data = (Chain() << in);
+    char buf[256];
+    snprintf(buf, 255, "%f", in);
+    data = std::string(buf);
     hint = TypeHint::FloatT;
 }
 
 Primitive::Primitive(double in) {
     defined = true;
-    data = (Chain() << in);
+    char buf[256];
+    snprintf(buf, 255, "%f", in);
+    data = std::string(buf);
     hint = TypeHint::DoubleT;
 }
 
 Primitive::Primitive(uint32_t in) {
     defined = true;
-    data = (Chain() << in);
+    char buf[256];
+    snprintf(buf, 255, "%" PRIu32, in);
+    data = std::string(buf);
     hint = TypeHint::UInt32T;
 }
 
 Primitive::Primitive(uint64_t in) {
     defined = true;
-    data = (Chain() << in);
+    char buf[256];
+    snprintf(buf, 255, "%" PRIu64, in);
+    data = std::string(buf);
     hint = TypeHint::UInt64T;
 }
 
