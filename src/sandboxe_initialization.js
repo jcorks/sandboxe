@@ -863,7 +863,7 @@ var sandboxe = {
     color : {
         /**
          * Creates a new RGBA color object.
-         * @param {string|number} param If the first parameter is alone, it is interpreted as a string. When the parameter is a string, the color can be initialized in 2 ways. If the string starts with a '#' character, the color is attempted to be instantiated using the typical hex html / css style color formatting. Alpha channel may be included in this hex string. If the string does not start with #, the color is attempted to be initialized by name. All of the X11 standard colors are recognized. if the first parameter is not a string, it is interpreted as a floating point for the red component.
+         * @param {string|number} param If the first parameter is alone, it is interpreted as a string as if calling {@link color.set}. If not alone, it is a decimal for the red component. 
          * @param {number} green green value as a decimal. 0.f to 1.f.
          * @param {number} blue Blue value as a decimal. 0.f to 1.f.
          * @param {number} alpha Alpha value as a decimal. 0.f to 1.f.

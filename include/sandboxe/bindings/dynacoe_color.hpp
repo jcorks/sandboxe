@@ -39,6 +39,12 @@ void argument_to_color_object(Dynacoe::Color & dest, const Sandboxe::Script::Run
     }
 }
 
+SANDBOXE_NATIVE_DEF(__color_set) {
+    SANDBOXE_ASSERT__ARG_COUNT(1);
+    auto t = (Sandboxe::ColorObject*)source;
+    argument_to_color_object(t->color, arguments[0]);
+}
+
 
 SANDBOXE_NATIVE_DEF(__color_r_get) {
     auto t = (Sandboxe::ColorObject*)source;
@@ -124,6 +130,7 @@ void dynacoe_color(std::vector<std::pair<std::string, Sandboxe::Script::Runtime:
         {
             {"toString", __color_to_string},
             {"clone", __color_clone},
+            {"set", __color_set}
         },
         // properties
         {

@@ -5,6 +5,7 @@ using Sandboxe::Script::Runtime::Primitive;
 using Sandboxe::Script::Runtime::Context;
 
 using Dynacoe::Chain;
+static char format_buffer_s[256];
 
 Primitive::Primitive() {
     defined = false;
@@ -20,9 +21,8 @@ Primitive::Primitive(bool in) {
 
 Primitive::Primitive(int in) {
     defined = true;
-    char buf[256];
-    snprintf(buf, 255, "%i", in);
-    data = std::string(buf);
+    snprintf(format_buffer_s, 255, "%i", in);
+    data = std::string(format_buffer_s);
     hint = TypeHint::IntegerT;
 
 }
@@ -30,33 +30,29 @@ Primitive::Primitive(int in) {
 
 Primitive::Primitive(float in) {
     defined = true;
-    char buf[256];
-    snprintf(buf, 255, "%f", in);
-    data = std::string(buf);
+    snprintf(format_buffer_s, 255, "%f", in);
+    data = std::string(format_buffer_s);
     hint = TypeHint::FloatT;
 }
 
 Primitive::Primitive(double in) {
     defined = true;
-    char buf[256];
-    snprintf(buf, 255, "%f", in);
-    data = std::string(buf);
+    snprintf(format_buffer_s, 255, "%f", in);
+    data = std::string(format_buffer_s);
     hint = TypeHint::DoubleT;
 }
 
 Primitive::Primitive(uint32_t in) {
     defined = true;
-    char buf[256];
-    snprintf(buf, 255, "%" PRIu32, in);
-    data = std::string(buf);
+    snprintf(format_buffer_s, 255, "%" PRIu32, in);
+    data = std::string(format_buffer_s);
     hint = TypeHint::UInt32T;
 }
 
 Primitive::Primitive(uint64_t in) {
     defined = true;
-    char buf[256];
-    snprintf(buf, 255, "%" PRIu64, in);
-    data = std::string(buf);
+    snprintf(format_buffer_s, 255, "%" PRIu64, in);
+    data = std::string(format_buffer_s);
     hint = TypeHint::UInt64T;
 }
 
