@@ -12,3 +12,128 @@
  * Entities are arranged in a hierarchical fashion, where the root
  * is assigned using {@link sandboxe.engine.setRoot} 
  */
+
+function entity() {
+
+    /**
+     *
+     */
+    this.draw = function(){};
+
+    /**
+     *
+     */
+    this.step = function(){};
+
+    /**
+     *
+     */
+    this.valid = function(){};
+
+    /**
+     *
+     */
+    this.remove = function(){};
+
+    /**
+     *
+     */
+    this.attach = function(){};
+
+    /**
+     *
+     */
+    this.detach = function(){};
+
+    /**
+     *
+     */
+    this.getNumChildren = function(){};
+
+    /**
+     *
+     */
+    this.contains = function(){};
+
+    /**
+     *
+     */
+    this.getChildren = function(){};
+
+    /**
+     *
+     */
+    this.getAllSubEntities = function(){};
+
+    /**
+     *
+     */
+    this.findChildByName = function(){};
+
+    /**
+     *
+     */
+    this.createChild = function(){};
+
+    /**
+     *
+     */
+    this.add = function(){};
+
+    /**
+     * 
+     */
+    this.stepDuration = function(){};
+
+    /**
+     *
+     */
+    this.drawDuration = function(){};
+
+    /**
+     *
+     */
+    this.sepPriority = function(){};
+
+
+    /**
+     *
+     */
+    this. = function(){};
+
+    /**
+     *
+     */
+    this. = function(){};
+
+    /**
+     *
+     */
+    this. = function(){};
+
+    /**
+     *
+     */
+    this. = function(){};
+
+    /**
+     *
+     */
+    this. = function(){};
+
+    /**
+     *
+     */
+    this. = function(){};
+
+
+
+    /**
+     * @type {Boolean}
+     */
+    this.autoRefresh = 0;
+
+    
+     
+    return this;
+}
