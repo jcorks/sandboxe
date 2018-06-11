@@ -13,7 +13,7 @@
         - Add/Remove * callbacks are now properties "onClose" and "onResize"
         - w/y/width/height are read-only properties
         - Interal - system-dependent bindings have been left out.
-
+        - View manager type symbols have been imported as static methods
 */
 
 namespace Sandboxe {
@@ -139,6 +139,50 @@ SANDBOXE_NATIVE_DEF(__display_get_height) {
     context.SetReturnValue(display->Height());
 }
 
+
+
+SANDBOXE_NATIVE_DEF(__view_manager_create_display) {
+    std::string name = "";
+    int w = 640;
+    int h = 480;
+    if (arguments.size() > 0) {
+        name = (std::string)arguments[0];
+    }
+    if (arguments.size() > 1) {
+        w = arguments[1];
+    }
+    if (arguments.size() > 2) {
+        h = arguments[2];
+    }
+
+    auto out = new Sandboxe::DisplayObject(
+        Dynacoe::ViewManager::New(name, w, h)
+    );
+    context.SetReturnValue(out);
+}
+
+
+SANDBOXE_NATIVE_DEF(__view_manager_destroy_display) {
+    SANDBOXE_ASSERT__ARG_COUNT(1);
+    SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceT);
+    SANDBOXE_ASSERT__ARG_NATIVE(0, DisplayObject);
+    
+    auto disp = (Sandboxe::DisplayObject*)(Sandboxe::Script::Runtime::Object*)arguments[0];
+    
+    Dynacoe::ViewManager::Destroy(disp->id);
+}
+
+SANDBOXE_NATIVE_DEF(__view_manager_set_main) {
+    SANDBOXE_ASSERT__ARG_COUNT(1);
+    SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceT);
+    SANDBOXE_ASSERT__ARG_NATIVE(0, DisplayObject);
+    
+    auto disp = (Sandboxe::DisplayObject*)(Sandboxe::Script::Runtime::Object*)arguments[0];
+    
+    Dynacoe::ViewManager::SetMain(disp->id);
+}
+
+
 void dynacoe_display(std::vector<std::pair<std::string, Sandboxe::Script::Runtime::Function>> & fns) {
     Sandboxe::Script::Runtime::AddType(
         (int) Sandboxe::NativeType::DisplayT,
@@ -170,7 +214,9 @@ void dynacoe_display(std::vector<std::pair<std::string, Sandboxe::Script::Runtim
 
         } 
     );
-    
+    fns.push_back({"__display_create", __view_manager_create_display});
+    fns.push_back({"__display_destroy", __view_manager_destroy_display});
+    fns.push_back({"__display_set_main", __view_manager_set_main});
  
 }
     

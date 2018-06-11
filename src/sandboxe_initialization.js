@@ -216,10 +216,10 @@ var sandboxe = {
     },
 
     /**
-     * View (window/display) management utilities and functions.
+     * Display management utilities and functions.
      * @namespace
      */   
-    view : {
+    display : {
         /**
          * Creates a new display object. See {@link display}.
          *
@@ -229,7 +229,7 @@ var sandboxe = {
          * @returns {display} 
          * @function
          */
-        createDisplay : __view_manager_create_display,
+        create : __view_manager_create_display,
 
         /**
          * Destroys a display object.
@@ -237,10 +237,10 @@ var sandboxe = {
          * @param {display} display Display to remove from the system.
          * @function
          */
-        destroyDisplay : __view_manager_destroy_display,
+        destroy : __view_manager_destroy_display,
 
         /**
-         * Tells sand boxe which display to update and draw to. Once set as a main display,
+         * Tells sandboxe which display to update and draw to. Once set as a main display,
          * this display will receive all update requests from the renderer. In addition,
          * sandboxe will use this display as the source of input from the user on systems 
          * where input comes form the display (i.e. WINAPI or X11).
@@ -249,6 +249,55 @@ var sandboxe = {
          * @function
          */
         setMain : __view_manager_set_main,
+        
+        
+        /**
+         * View policy for {@link display.setViewPolicy}.
+         * @namespace 
+         */
+        viewPolicy : {
+            /**
+             * The display will show the attached framebuffer's contents with no transformation
+             */
+            noPolicy,      
+
+            /**
+             * The display will stretch the attached framebuffer's contents to match the windows dimensions
+             */
+            matchSize, 
+        };
+        
+        
+        /**
+         * The standard functional capabilities of a Display.
+         * @namespace
+         */
+        capability : {
+            /**
+             * The display can be resized.
+             */
+            canResize,
+
+            /**
+             * The display's position can be moved.
+             */
+            canMove,        
+
+            /**
+             * The display's size can consume the entire physical device, often in a special state.
+             */
+            canFullscreen,
+
+            /**
+             * The display can be hidden.
+             */
+            canHide, 
+
+            /**
+             * The display can prevent the user from changing the dimensions of the display.
+             */
+            canLockSize 
+        };
     },
     
     
@@ -1158,26 +1207,84 @@ var sandboxe = {
     },
     
     
-    
+    /**
+     * @namespace 
+     * @description 
+     * Collection of functions to work with the base {@link vector} object.
+     */
     vector : {
+        /**
+         * Creates a new vector object. See {@link vector.set} for syntax.
+         * @returns {vector}
+         * @function
+         */
         create : __vector_create_new
     },
     
+    /**
+     * @namespace 
+     * @description 
+     * Collection of functions to work with the {@link entity} object.
+     */
     entity : {
+        
+        /**
+         * Creates a new entity object, which are the base updatable 
+         * extensible objects of sandboxe.
+         * @returns {entity} A new entity
+         * @function
+         */
         create : __entity_create_default,
+        
+        /**
+         * Returns all entities within sandboxe.
+         * @returns {Array} An array of all the entities.
+         * @function
+         */
         getAll : __entity_get_all,
         
         
+        /**
+         * When entities update, an update class may be chosen for whether a 
+         * child updates before, after, etc. the parent object does.
+         * @namespace
+         */
         updateClass : {
+            /**
+             * Object updates before its parent does.
+             */
             before : 0,
+
+            /**
+             * Object updates after its parent does.
+             */
             ater : 1
         }
     },
 
 
-    
+    /**
+     * @namespace 
+     * @description
+     * Collection of references that work with the script side of sandboxe
+     * 
+     */
     script : {
+        /**
+         * Runs all the logic of the given file as if it were a source file.
+         * This is unconditional.
+         * @param {String} path Path to file.
+         * @function
+         */
         run : __script_include,
+        
+        /**
+         * Similar to {@link sandboxe.script.run} except, a source file is only 
+         * executabed the first time include() is called for that path. On subsequent calls
+         * with the same path argument, no action is taken.
+         * @param {String} path Path to file.
+         * @function
+         */
         include : function(script) {__script_include(script, 1);}
     },
 
