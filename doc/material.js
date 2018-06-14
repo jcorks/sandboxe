@@ -10,7 +10,7 @@
  *
  * 
  */ 
-function image() {
+function material() {
 
     /**
      * Adds a texture to be drawn.
@@ -23,7 +23,8 @@ function image() {
      * the shader programming language. Refer to {@link shader} for more info. Note that using textureSlot.color,
      * .normal, and .shiny are equivalent to calling addTexture() with 0, 1, and 2 respectively as 
      * the texture slot argument.
-     * @param 
+     * @param {Number} slot The texture slot. See {@link sandboxe.material.textureSlot}
+     * @param {asset} image The image to use a texture. Multiple frames are supported and can be iterated through dynamically.
      */
     this.addTexture = function(){};
 
@@ -37,6 +38,7 @@ function image() {
      * To disable this, simply call setFramebufferSource again with a 
      * default entity. If your material uses a custom shader, the shader can access 
      * if through the Dynacoe_SampleFramebuffer function.
+     * @param {camera} Camera 
      */
     this.setFramebufferSource = function(){};
 
@@ -51,17 +53,20 @@ function image() {
 
 
     /**
-     * @type {Number}
+     * The ambient color of the material.
+     * @type {color}
      */
-    this.ambient = 0;
+    this.ambient = {};
 
     /**
-     * @type {Number}
+     * The diffuse color of the material.
+     * @type {color}
      */
-    this.diffuse = 0;
+    this.diffuse = {};
 
-    /**
-     * @type {Number}
+    /** 
+     * The specular color of the material
+     * @type {color}
      */
     this.specular = 0;
 
@@ -69,29 +74,39 @@ function image() {
 
 
     /**
+     * The amount of specular light that should be allowed.
      * @type {Number}
      */
     this.specularAmount = 0;
 
     /**
+     * The amount of diffuse light that should be allowed.
      * @type {Number}
      */
     this.diffuseAmount = 0;
 
     /**
+     * The amount of reflected specular light.
      * @type {Number}
      */
     this.shininess = 0;
 
     /**
-     * @type {Number}
+     * The source logic for the material as a shading program.
+     * This can either be a {@link sandboxe.material.coreProgram} or 
+     * a {@link shader} program object with custom logic.
+     * @type {Number|shader}
      */
     this.program = 0;
 
 
 
     /**
-     * @type {Number}
+     * Data that depends on the drawing mode. In implementations
+     * that support shaders, this can be used as you see fit.
+     * This property should be overwritten to update the user data.
+     * Up to 32 values can be given to the program.
+     * @type {Array}
      */
     this.userData = 0;
 
