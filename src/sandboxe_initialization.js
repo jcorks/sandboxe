@@ -1856,7 +1856,7 @@ var sandboxe = {
     /** 
      * @function 
      * @description
-     * A generic easing function.
+     * A generic easing function. For more complex easing, see {@link mutator}.
      * @param {Number} Current Current value 
      * @param {Number} Destination End value 
      * @param {Number} Progress (Optional) Amount of percentage progression to that value. Default is .5f
