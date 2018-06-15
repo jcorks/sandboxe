@@ -4,10 +4,9 @@
  * 
  * 3D object defined by triangle primitives.
  *
- * A mesh contains 2 components: the Mesh itself and a series of {@link meshObject}s.
+ * A mesh contains 2 components: the Mesh itself and a series of faces (face list).
  * The mesh itself provides the base data: vertex positions, normals,
- * UVs, you name it. A meshObject contains the actual application of that source data, expressing what
- * vertices to use.
+ * UVs, you name it. A face list actually 
  * Using the mesh - meshObject reloationship aptly can allow for flexible
  * control over performance vs. memory cost.
  * 
@@ -47,16 +46,16 @@ function mesh() {
 
 
     /**
-     * Adds a MeshObject to the Mesh. When drawn, the MeshObject's
+     * Adds a faceList to the mesh. When drawn, to the
      * faceList will refer to vertices of this mesh.
-     * @param {meshObject} object The mesh object to add. If no argument is given, an empty mesh object is added.
+     * @param {Array} object The face list to add. If no argument is given, an empty mesh object is added. The array is an array of indices into the mesh's vertices
      */
     this.addObject = function(){};
 
     /**
-     * Retrieves the i'th object requested.
+     * Retrieves the i'th face list requested.
      * @param {Number} i
-     * @returns {meshObject}
+     * @returns {Array}
      */
     this.getObject = function(){};
 
@@ -67,8 +66,8 @@ function mesh() {
     this.removeObject = function(){};
 
     /**
-     * Returns the number of meshObjects that this mesh contains.
-     * @returns {Number} Count of meshObjects.
+     * Returns the number of face lists that this mesh contains.
+     * @returns {Number} Count of face lists.
      */
     this.numObjects = function(){};
 
