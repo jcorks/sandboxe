@@ -4,8 +4,8 @@
 
 
 // First, we want to create our window on the system.
-window = sandboxe.view.createDisplay("circle");
-sandboxe.view.setMain(window);
+window = sandboxe.display.create("circle");
+sandboxe.display.setMain(window);
 
 
 

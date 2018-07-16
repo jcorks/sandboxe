@@ -14,8 +14,8 @@ sandboxe.script.include("game.js");
 
 
 // Creates the window
-window = sandboxe.view.createDisplay("Testing!!");
-sandboxe.view.setMain(window);
+window = sandboxe.display.create("Testing!!");
+sandboxe.display.setMain(window);
 
 
 

@@ -45,45 +45,40 @@ SANDBOXE_NATIVE_DEF(__object2d_set_velocity) {
     o2d->SetVelocity(arguments[0], arguments[1]);
 }
 
-SANDBOXE_NATIVE_DEF(__object2d_set_contact_poly) {
+SANDBOXE_NATIVE_DEF(__object2d_set_collider) {
     auto o2d = (Sandboxe::Object2DObject*)source;    
     auto args = context.GetArrayArgument(0);
     if (!args) {
-        context.ScriptError("Expected array of numbers for contact polygon x,y position pairs.");
+        context.ScriptError("Expected array of numbers for collider polygon x,y position pairs.");
         return; 
     }
 
     std::vector<Dynacoe::Vector> pts;
+    o2d->colliderData.clear();
     for(uint32_t i = 0; i < args->size()/2; ++i) {
         Dynacoe::Vector next;
         next.x = (*args)[i*2];
         next.y = (*args)[i*2+1];
+        pts.push_back(next);
+        o2d->colliderData.push_back(next.x);
+        o2d->colliderData.push_back(next.y);
+
     }
 
-    o2d->ClearAllContacts();
-    o2d->AddContactPolygon(pts);
+    o2d->collider = (pts);
 }
 
-SANDBOXE_NATIVE_DEF(__object2d_set_contact_box) {
-    SANDBOXE_ASSERT__ARG_COUNT(4);
-    auto o2d = (Sandboxe::Object2DObject*)source;    
-
-
-    o2d->ClearAllContacts();
-    o2d->AddContactBox(
-        Dynacoe::Vector(
-            arguments[0],
-            arguments[1]
-        ),
-        arguments[2],
-        arguments[3]
-    );
+SANDBOXE_NATIVE_DEF(__object2d_get_collider) {
+    auto o2d = (Sandboxe::Object2DObject*)source;
+    std::vector<Sandboxe::Script::Runtime::Primitive> out;
+    for(uint32_t i = 0; i < o2d->colliderData.size(); ++i) {
+        out.push_back(o2d->colliderData[i]);        
+    }
+    context.SetReturnArray(out);
 }
 
-SANDBOXE_NATIVE_DEF(__object2d_clear_contact) {
-    auto o2d = (Sandboxe::Object2DObject*)source;    
-    o2d->ClearAllContacts();
-}
+
+
 
 
 //// manged propertiess
@@ -141,14 +136,15 @@ SANDBOXE_NATIVE_DEF(__object2d_get_velocity_y) {
     context.SetReturnValue(o2d->GetVelocityY());
 }
 
-
+SANDBOXE_NATIVE_DEF(__object2d_get_last_collided) {
+    auto o2d = (Sandboxe::Object2DObject*)source;        
+    auto a = o2d->collider.lastCollided.IdentifyAs<Sandboxe::Entity>();
+    if (!a) return;
+    context.SetReturnValue(a);
+}
 /// global functions
 SANDBOXE_NATIVE_DEF(__object2d_create) {
     context.SetReturnValue(new Sandboxe::Object2DObject);
-}
-
-SANDBOXE_NATIVE_DEF(__object2d_draw_colliders) {
-    Dynacoe::Object2D::DrawColliders("yellow");
 }
 
 
@@ -163,10 +159,6 @@ void dynacoe_object2d(std::vector<std::pair<std::string, Sandboxe::Script::Runti
             {"addVelocity", __object2d_add_velocity},
             {"setVelocity", __object2d_set_velocity},
             {"halt", __object2d_halt},
-            {"setContactPoly", __object2d_set_contact_poly},
-            {"setContactBox", __object2d_set_contact_box},
-            {"clearContact", __object2d_clear_contact},
-            
 
             ////////////////////////////////////////////////////////
             //////////////////// imported from component ///////////
@@ -212,6 +204,8 @@ void dynacoe_object2d(std::vector<std::pair<std::string, Sandboxe::Script::Runti
             {"direction", {__object2d_get_direction, SANDBOXE_NATIVE_EMPTY}},
             {"velocityX", {__object2d_get_velocity_x, SANDBOXE_NATIVE_EMPTY}},
             {"velocityY", {__object2d_get_velocity_y, SANDBOXE_NATIVE_EMPTY}},
+            {"collider", {__object2d_get_collider, __object2d_set_collider}},
+            {"lastCollided", {__object2d_get_last_collided, SANDBOXE_NATIVE_EMPTY}}
 
 
 
@@ -221,7 +215,6 @@ void dynacoe_object2d(std::vector<std::pair<std::string, Sandboxe::Script::Runti
     );
     
     fns.push_back({"__object2d_create", __object2d_create});  
-    fns.push_back({"__object2d_draw_colliders", __object2d_draw_colliders});  
 
   
 }

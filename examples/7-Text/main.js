@@ -4,8 +4,8 @@
 
 
 // First, we want to create our window on the system.
-window = sandboxe.view.createDisplay("Text Example");
-sandboxe.view.setMain(window);
+window = sandboxe.display.create("Text Example");
+sandboxe.display.setMain(window);
 
 // We're going to work with a single object this time.
 // Lets prepare our text renderer.

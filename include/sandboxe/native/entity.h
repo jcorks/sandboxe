@@ -28,13 +28,8 @@ class EntityObjectID : public Sandboxe::Script::Runtime::Object {
 
 class Entity : public Dynacoe::Entity {
   public:
-    Entity() {
-        RemoveComponent(&node);
-        realNode = new Sandboxe::NodeObject();
-        //realNode = dynamic_cast<Sandboxe::Node*>(Sandboxe::NativeObject::Get<Sandboxe::ComponentAdaptor>(nodeObject));
-        AddComponent(realNode);
+    Entity() : Dynacoe::Entity(new Sandboxe::NodeObject()) {
         object = nullptr;
-        node.local.scale = Dynacoe::Vector(0, 0, 0);
     }    
     
     ~Entity() {
@@ -69,7 +64,6 @@ class Entity : public Dynacoe::Entity {
         object->CallMethod("onDraw");
     }
 
-    Sandboxe::NodeObject * realNode;
 };
 
 

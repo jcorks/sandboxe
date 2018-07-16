@@ -15,8 +15,8 @@
  
 
 // First, we want to create our window on the system.
-window = sandboxe.view.createDisplay("Lighting Example");
-sandboxe.view.setMain(window);
+window = sandboxe.display.create("Lighting Example");
+sandboxe.display.setMain(window);
 
 // We are going to have multiple independent objects in this example, 
 // so this is a good time to talk more in-depth about the entity hierarchy.

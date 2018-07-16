@@ -369,7 +369,7 @@ SANDBOXE_NATIVE_DEF(__entity_get_node) {
     const Dynacoe::Entity::ID & id = ((EntityObjectID*)source)->id;
     auto * e = id.IdentifyAs<Sandboxe::Entity>();
     if (!e) return;            
-    context.SetReturnValue(e->realNode);
+    context.SetReturnValue(dynamic_cast<Sandboxe::NodeObject*>(&e->node));
 }
 
 SANDBOXE_NATIVE_DEF(__entity_set_node) {}

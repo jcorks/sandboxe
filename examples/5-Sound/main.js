@@ -3,8 +3,8 @@
 
 
 // First, we want to create our window on the system.
-window = sandboxe.view.createDisplay("Sound Example");
-sandboxe.view.setMain(window);
+window = sandboxe.display.create("Sound Example");
+sandboxe.display.setMain(window);
 
 // lets make just one entity to hold everything.
 entity = sandboxe.entity.create();

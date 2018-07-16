@@ -12,24 +12,17 @@ namespace Sandboxe {
 class Text2DObject : public Dynacoe::Text2D, public Sandboxe::ComponentAdaptor {
   public:
     
-    Text2DObject() : Dynacoe::Text2D(), Sandboxe::ComponentAdaptor((int)Sandboxe::NativeType::Text2DT) {
-        
-        localNode = new Sandboxe::NodeObject;
+    Text2DObject() : Dynacoe::Text2D(new Sandboxe::NodeObject), Sandboxe::ComponentAdaptor((int)Sandboxe::NativeType::Text2DT) {
         localFont = new Sandboxe::AssetIDObject;
         fontSize = -1;
         spacingMode = (int)Dynacoe::Text2D::SpacingMode::Kerned;
     }
     
-    Sandboxe::NodeObject * localNode;
     Sandboxe::AssetIDObject * localFont;
     int fontSize;
     int spacingMode;
     
     void OnDraw() {
-        node.local.position = localNode->localTransform->position->vector;
-        node.local.rotation = localNode->localTransform->rotation->vector;
-        node.local.scale = localNode->localTransform->scale->vector;
-        node.local.reverse = localNode->local.reverse;
         Dynacoe::Text2D::OnDraw();
     }
     

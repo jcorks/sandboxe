@@ -72,16 +72,24 @@ createPlayer = function(position, diameter) {
     });
 
     // To have collisions, the object2d object needs to have colliders to register 
-    // when and where collisions can occur. Colliders are invisible.
-    object2d.setContactBox(
-        -diameter/2,
-        -diameter/2,
-         diameter,
-         diameter
-    );
+    // when and where collisions can occur. Colliders are invisible, but have tangible geometry.
+    // You specify each object2d's collider by setting its "collider" property 
+    // as an array of line positions:
+    object2d.collider = [
+
+        0, 0, 
+        diameter, 0,        
+        diameter, diameter,
+        0,  diameter
+
+    ];
     
     // the visual is a circle that is blue
-    shape.formCircle(diameter/2.0, numSides=40);
+    shape.formRectangle(
+        diameter,
+        diameter
+
+    );
     shape.color = 'cyan';
 
 

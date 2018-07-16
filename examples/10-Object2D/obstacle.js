@@ -10,12 +10,14 @@ createObstacle = function(position, diameter) {
     entity.name = "obstacle";
     entity.node.position = position;
     
-    object2d.setContactBox(
-        -diameter/2.0,
-        -diameter/2.0,
-        diameter,
-        diameter    
-    );
+    object2d.collider = [
+        0, 0, 
+        diameter, 0,        
+        diameter, diameter,
+        0,  diameter
+
+
+    ]
 
     // like the player, let its velocity fade out over time using 
     // the friction attributes
@@ -32,7 +34,10 @@ createObstacle = function(position, diameter) {
     });
     
     // Another circle!
-    shape.formCircle(diameter/2.0, numSides=40); 
+    shape.formRectangle(
+        diameter,
+        diameter
+    );
     shape.color = 'black';
     shape.color.g = .3;
 

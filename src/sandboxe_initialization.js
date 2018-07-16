@@ -229,7 +229,7 @@ var sandboxe = {
          * @returns {display} 
          * @function
          */
-        create : __view_manager_create_display,
+        create : __display_create,
 
         /**
          * Destroys a display object.
@@ -237,7 +237,7 @@ var sandboxe = {
          * @param {display} display Display to remove from the system.
          * @function
          */
-        destroy : __view_manager_destroy_display,
+        destroy : __display_destroy,
 
         /**
          * Tells sandboxe which display to update and draw to. Once set as a main display,
@@ -248,7 +248,7 @@ var sandboxe = {
          * @param {display} display Display to set as the main.
          * @function
          */
-        setMain : __view_manager_set_main,
+        setMain : __display_set_main,
         
         
         /**
@@ -259,13 +259,13 @@ var sandboxe = {
             /**
              * The display will show the attached framebuffer's contents with no transformation
              */
-            noPolicy,      
+            noPolicy : 0,      
 
             /**
              * The display will stretch the attached framebuffer's contents to match the windows dimensions
              */
-            matchSize, 
-        };
+            matchSize : 1
+        },
         
         
         /**
@@ -276,28 +276,28 @@ var sandboxe = {
             /**
              * The display can be resized.
              */
-            canResize,
+            canResize : 0,
 
             /**
              * The display's position can be moved.
              */
-            canMove,        
+            canMove : 1,        
 
             /**
              * The display's size can consume the entire physical device, often in a special state.
              */
-            canFullscreen,
+            canFullscreen : 2,
 
             /**
              * The display can be hidden.
              */
-            canHide, 
+            canHide : 3, 
 
             /**
              * The display can prevent the user from changing the dimensions of the display.
              */
-            canLockSize 
-        };
+            canLockSize : 4 
+        }
     },
     
     

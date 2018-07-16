@@ -80,7 +80,7 @@ SANDBOXE_NATIVE_DEF(__render_light_get_position) {
 
 SANDBOXE_NATIVE_DEF(__render_light_set_position) {
     auto light = (Sandboxe::RenderLightObject*)source;
-    argument_to_vector_object(light->localPosition->vector, arguments[0]);
+    argument_to_vector_object(*light->localPosition->vector, arguments[0]);
 }
 
 

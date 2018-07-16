@@ -27,14 +27,14 @@ SANDBOXE_NATIVE_DEF(__text2d_get_char_position) {
     SANDBOXE_ASSERT__ARG_COUNT(1);
     auto shape = (Sandboxe::Text2DObject*)source;
     auto out = new Sandboxe::VectorObject();
-    out->vector = shape->GetCharPosition(arguments[0]);
+    *out->vector = shape->GetCharPosition(arguments[0]);
     context.SetReturnValue(out);
 }
 
 SANDBOXE_NATIVE_DEF(__text2d_get_dimensions) {
     auto shape = (Sandboxe::Text2DObject*)source;
     auto out = new Sandboxe::VectorObject();
-    out->vector = shape->GetDimensions();
+    *out->vector = shape->GetDimensions();
     context.SetReturnValue(out);
 }
 
@@ -138,7 +138,7 @@ SANDBOXE_NATIVE_DEF(__text2d_absolute_set) {
 
 SANDBOXE_NATIVE_DEF(__text2d_node_get) {
     auto shape = (Sandboxe::Text2DObject*)source;
-    context.SetReturnValue(shape->localNode);
+    context.SetReturnValue(dynamic_cast<Sandboxe::NodeObject*>(&shape->node));
 }
 
 SANDBOXE_NATIVE_DEF(__text2d_node_set) {

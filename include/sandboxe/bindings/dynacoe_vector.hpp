@@ -30,7 +30,7 @@ void argument_to_vector_object(Dynacoe::Vector & dest, const Sandboxe::Script::R
         // trye to get a color object, if possible
             auto src = dynamic_cast<Sandboxe::VectorObject*>((Sandboxe::Script::Runtime::Object*)arg);
             if (src) {
-                dest = src->vector;
+                dest = *src->vector;
             }
             break;
         }
@@ -44,12 +44,12 @@ void argument_to_vector_object(Dynacoe::Vector & dest, const Sandboxe::Script::R
 
 SANDBOXE_NATIVE_DEF(__vector_length) {
     Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
-    context.SetReturnValue(v->vector.Length());
+    context.SetReturnValue(v->vector->Length());
 }
 
 SANDBOXE_NATIVE_DEF(__vector_clone) {
     Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
-    auto object = new Sandboxe::VectorObject(v->vector);
+    auto object = new Sandboxe::VectorObject(*v->vector);
     context.SetReturnValue(object); 
 }
 
@@ -58,9 +58,9 @@ SANDBOXE_NATIVE_DEF(__vector_to_string) {
     Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
     vecStringBuffer[0] = 0;
     sprintf(vecStringBuffer, "{%f, %f, %f}",
-        v->vector.x,
-        v->vector.y,
-        v->vector.z
+        v->vector->x,
+        v->vector->y,
+        v->vector->z
     );
 
     context.SetReturnValue(std::string(vecStringBuffer));    
@@ -74,13 +74,13 @@ SANDBOXE_NATIVE_DEF(__vector_distance) {
     Sandboxe::Script::Runtime::Object * obj = arguments[0];
     Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
     Sandboxe::VectorObject * src = (Sandboxe::VectorObject*)obj;
-    context.SetReturnValue(v->vector.Distance(src->vector));
+    context.SetReturnValue(v->vector->Distance(*src->vector));
 }
 
 
 SANDBOXE_NATIVE_DEF(__vector_normalize) {    
     Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
-    v->vector.SetToNormalize();
+    v->vector->SetToNormalize();
     context.SetReturnValue(source);
 }
 
@@ -93,7 +93,7 @@ SANDBOXE_NATIVE_DEF(__vector_dot) {
     Sandboxe::Script::Runtime::Object * obj = arguments[0];
     Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
     Sandboxe::VectorObject * src = (Sandboxe::VectorObject*)obj;
-    context.SetReturnValue(v->vector.Dot(src->vector));
+    context.SetReturnValue(v->vector->Dot(*src->vector));
 }
 
 SANDBOXE_NATIVE_DEF(__vector_cross_2D) {
@@ -105,7 +105,7 @@ SANDBOXE_NATIVE_DEF(__vector_cross_2D) {
     Sandboxe::Script::Runtime::Object * obj = arguments[0];
     Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
     Sandboxe::VectorObject * src = (Sandboxe::VectorObject*)obj;
-    context.SetReturnValue(v->vector.CrossFlat(src->vector));
+    context.SetReturnValue(v->vector->CrossFlat(*src->vector));
 }
 
 SANDBOXE_NATIVE_DEF(__vector_cross) {
@@ -119,7 +119,7 @@ SANDBOXE_NATIVE_DEF(__vector_cross) {
     Sandboxe::VectorObject * src = (Sandboxe::VectorObject*)obj;
     auto object = new Sandboxe::VectorObject();
 
-    v->vector = v->vector.Cross(src->vector);
+    *v->vector = v->vector->Cross(*src->vector);
     v->delta.Changed(v);
 
     context.SetReturnValue(object);
@@ -135,7 +135,7 @@ SANDBOXE_NATIVE_DEF(__vector_rotation_x_diff) {
     Sandboxe::Script::Runtime::Object * obj = arguments[0];
     Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
     Sandboxe::VectorObject * src = (Sandboxe::VectorObject*)obj;
-    context.SetReturnValue(v->vector.RotationXDiff(src->vector));
+    context.SetReturnValue(v->vector->RotationXDiff(*src->vector));
 }
 
 SANDBOXE_NATIVE_DEF(__vector_rotation_x_diff_relative) {
@@ -147,12 +147,12 @@ SANDBOXE_NATIVE_DEF(__vector_rotation_x_diff_relative) {
     Sandboxe::Script::Runtime::Object * obj = arguments[0];
     Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
     Sandboxe::VectorObject * src = (Sandboxe::VectorObject*)obj;
-    context.SetReturnValue(v->vector.RotationXDiffRelative(src->vector));
+    context.SetReturnValue(v->vector->RotationXDiffRelative(*src->vector));
 }
 
 SANDBOXE_NATIVE_DEF(__vector_rotation_x) {    
     Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
-    context.SetReturnValue(v->vector.RotationX());
+    context.SetReturnValue(v->vector->RotationX());
 }
 
 
@@ -166,7 +166,7 @@ SANDBOXE_NATIVE_DEF(__vector_rotation_y_diff) {
     Sandboxe::Script::Runtime::Object * obj = arguments[0];
     Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
     Sandboxe::VectorObject * src = (Sandboxe::VectorObject*)obj;
-    context.SetReturnValue(v->vector.RotationYDiff(src->vector));
+    context.SetReturnValue(v->vector->RotationYDiff(*src->vector));
 }
 
 SANDBOXE_NATIVE_DEF(__vector_rotation_y_diff_relative) {
@@ -178,12 +178,12 @@ SANDBOXE_NATIVE_DEF(__vector_rotation_y_diff_relative) {
     Sandboxe::Script::Runtime::Object * obj = arguments[0];
     Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
     Sandboxe::VectorObject * src = (Sandboxe::VectorObject*)obj;
-    context.SetReturnValue(v->vector.RotationYDiffRelative(src->vector));
+    context.SetReturnValue(v->vector->RotationYDiffRelative(*src->vector));
 }
 
 SANDBOXE_NATIVE_DEF(__vector_rotation_y) {    
     Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
-    context.SetReturnValue(v->vector.RotationY());
+    context.SetReturnValue(v->vector->RotationY());
 }
 
 
@@ -196,7 +196,7 @@ SANDBOXE_NATIVE_DEF(__vector_rotation_z_diff) {
     Sandboxe::Script::Runtime::Object * obj = arguments[0];
     Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
     Sandboxe::VectorObject * src = (Sandboxe::VectorObject*)obj;
-    context.SetReturnValue(v->vector.RotationZDiff(src->vector));
+    context.SetReturnValue(v->vector->RotationZDiff(*src->vector));
 }
 
 SANDBOXE_NATIVE_DEF(__vector_rotation_z_diff_relative) {
@@ -208,12 +208,12 @@ SANDBOXE_NATIVE_DEF(__vector_rotation_z_diff_relative) {
     Sandboxe::Script::Runtime::Object * obj = arguments[0];
     Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
     Sandboxe::VectorObject * src = (Sandboxe::VectorObject*)obj;
-    context.SetReturnValue(v->vector.RotationZDiffRelative(src->vector));
+    context.SetReturnValue(v->vector->RotationZDiffRelative(*src->vector));
 }
 
 SANDBOXE_NATIVE_DEF(__vector_rotation_z) {    
     Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
-    context.SetReturnValue(v->vector.RotationZ());
+    context.SetReturnValue(v->vector->RotationZ());
 }
 
 
@@ -221,7 +221,7 @@ SANDBOXE_NATIVE_DEF(__vector_rotation_z) {
 SANDBOXE_NATIVE_DEF(__vector_rotate_x) {
     SANDBOXE_ASSERT__ARG_COUNT(1);
     Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
-    v->vector = v->vector.RotateX(arguments[0]);
+    *v->vector = v->vector->RotateX(arguments[0]);
     v->delta.Changed(v);
 
     context.SetReturnValue(source);
@@ -230,7 +230,7 @@ SANDBOXE_NATIVE_DEF(__vector_rotate_x) {
 SANDBOXE_NATIVE_DEF(__vector_rotate_y) {
     SANDBOXE_ASSERT__ARG_COUNT(1);
     Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
-    v->vector = v->vector.RotateY(arguments[0]);
+    *v->vector = v->vector->RotateY(arguments[0]);
     v->delta.Changed(v);
 
     context.SetReturnValue(source);
@@ -239,7 +239,7 @@ SANDBOXE_NATIVE_DEF(__vector_rotate_y) {
 SANDBOXE_NATIVE_DEF(__vector_rotate_z) {
     SANDBOXE_ASSERT__ARG_COUNT(1);
     Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
-    v->vector = v->vector.RotateZ(arguments[0]);
+    *v->vector = v->vector->RotateZ(arguments[0]);
     v->delta.Changed(v);
 
     context.SetReturnValue(source);
@@ -257,7 +257,7 @@ SANDBOXE_NATIVE_DEF(__vector_rotate_x_from) {
     Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
     Sandboxe::VectorObject * src = (Sandboxe::VectorObject*)obj;
 
-    v->vector = v->vector.RotateXFrom(src->vector, arguments[1]);
+    *v->vector = v->vector->RotateXFrom(*src->vector, arguments[1]);
     v->delta.Changed(v);
 
     context.SetReturnValue(source);
@@ -273,7 +273,7 @@ SANDBOXE_NATIVE_DEF(__vector_rotate_y_from) {
     Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
     Sandboxe::VectorObject * src = (Sandboxe::VectorObject*)obj;
 
-    v->vector = v->vector.RotateYFrom(src->vector, arguments[1]);
+    *v->vector = v->vector->RotateYFrom(*src->vector, arguments[1]);
     v->delta.Changed(v);
 
     context.SetReturnValue(source);
@@ -290,7 +290,7 @@ SANDBOXE_NATIVE_DEF(__vector_rotate_z_from) {
     Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
     Sandboxe::VectorObject * src = (Sandboxe::VectorObject*)obj;
 
-    v->vector = v->vector.RotateZFrom(src->vector, arguments[1]);
+    *v->vector = v->vector->RotateZFrom(*src->vector, arguments[1]);
     v->delta.Changed(v);
 
     context.SetReturnValue(source);
@@ -302,12 +302,12 @@ SANDBOXE_NATIVE_DEF(__vector_rotate_z_from) {
 
 SANDBOXE_NATIVE_DEF(__vector_x_get) {
     Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
-    context.SetReturnValue(v->vector.x);
+    context.SetReturnValue(v->vector->x);
 }
 
 SANDBOXE_NATIVE_DEF(__vector_x_set) {
     Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
-    v->vector.x = arguments[0];
+    v->vector->x = arguments[0];
     v->delta.Changed(v);
 }
 
@@ -315,12 +315,12 @@ SANDBOXE_NATIVE_DEF(__vector_x_set) {
 
 SANDBOXE_NATIVE_DEF(__vector_y_get) {
     Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
-    context.SetReturnValue(v->vector.y);
+    context.SetReturnValue(v->vector->y);
 }
 
 SANDBOXE_NATIVE_DEF(__vector_y_set) {
     Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
-    v->vector.y = arguments[0];
+    v->vector->y = arguments[0];
     v->delta.Changed(v);
 
 }
@@ -328,12 +328,12 @@ SANDBOXE_NATIVE_DEF(__vector_y_set) {
 
 SANDBOXE_NATIVE_DEF(__vector_z_get) {
     Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
-    context.SetReturnValue(v->vector.z);
+    context.SetReturnValue(v->vector->z);
 }
 
 SANDBOXE_NATIVE_DEF(__vector_z_set) {
     Sandboxe::VectorObject * v = (Sandboxe::VectorObject*)source;
-    v->vector.z = arguments[0];
+    v->vector->z = arguments[0];
     v->delta.Changed(v);
 
 }

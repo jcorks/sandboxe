@@ -5,8 +5,8 @@
  
 
 // First, we want to create our window on the system.
-window = sandboxe.view.createDisplay("Shader Example");
-sandboxe.view.setMain(window);
+window = sandboxe.display.create("Shader Example");
+sandboxe.display.setMain(window);
 
 
 

@@ -5,8 +5,8 @@
 */
 
 // First, we want to create our window on the system.
-window = sandboxe.view.createDisplay("Console Example");
-sandboxe.view.setMain(window);
+window = sandboxe.display.create("Console Example");
+sandboxe.display.setMain(window);
 
 
 

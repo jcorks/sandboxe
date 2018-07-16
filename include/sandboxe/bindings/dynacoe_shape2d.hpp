@@ -162,7 +162,7 @@ SANDBOXE_NATIVE_DEF(__shape2d_absolute_set) {
 
 SANDBOXE_NATIVE_DEF(__shape2d_node_get) {
     auto shape = (Sandboxe::Shape2DObject*)source;
-    context.SetReturnValue(shape->localNode);
+    context.SetReturnValue(dynamic_cast<Sandboxe::NodeObject*>(&shape->node));
 }
 
 SANDBOXE_NATIVE_DEF(__shape2d_node_set) {

@@ -11,12 +11,11 @@ namespace Sandboxe {
 
 class Shape2DObject : public Dynacoe::Shape2D, public Sandboxe::ComponentAdaptor {
   public:
+
     
-    Shape2DObject() : Dynacoe::Shape2D(), Sandboxe::ComponentAdaptor((int)Sandboxe::NativeType::Shape2DT) {
+    Shape2DObject() : Dynacoe::Shape2D(new Sandboxe::NodeObject), Sandboxe::ComponentAdaptor((int)Sandboxe::NativeType::Shape2DT) {
         
         localColor = new Sandboxe::ColorObject;        
-        localNode = new Sandboxe::NodeObject;
-
 
     }
     
@@ -26,10 +25,6 @@ class Shape2DObject : public Dynacoe::Shape2D, public Sandboxe::ComponentAdaptor
     
     void OnDraw() {
         color = localColor->color;
-        node.local.position = localNode->localTransform->position->vector;
-        node.local.rotation = localNode->localTransform->rotation->vector;
-        node.local.scale = localNode->localTransform->scale->vector;
-        node.local.reverse = localNode->local.reverse;
         Dynacoe::Shape2D::OnDraw();
     }
     

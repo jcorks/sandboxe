@@ -3,8 +3,8 @@
 
 
 // First, we want to create our window on the system.
-window = sandboxe.view.createDisplay("Image Example");
-sandboxe.view.setMain(window);
+window = sandboxe.display.create("Image Example");
+sandboxe.display.setMain(window);
 
 
 

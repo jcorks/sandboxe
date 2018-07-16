@@ -61,7 +61,7 @@ SANDBOXE_NATIVE_DEF(__camera_transform_screen_to_world) {
     auto out = new Sandboxe::VectorObject();
     Dynacoe::Vector vec;
     argument_to_vector_object(vec, arguments[0]);
-    out->vector = cam->Self()->TransformScreenToWorld(vec, arguments[1]);
+    *out->vector = cam->Self()->TransformScreenToWorld(vec, arguments[1]);
     context.SetReturnValue(out);
 }
 
@@ -73,7 +73,7 @@ SANDBOXE_NATIVE_DEF(__camera_transform_world_to_screen) {
     auto out = new Sandboxe::VectorObject();
     Dynacoe::Vector vec;
     argument_to_vector_object(vec, arguments[0]);
-    out->vector = cam->Self()->TransformWorldToScreen(vec);
+    *out->vector = cam->Self()->TransformWorldToScreen(vec);
     context.SetReturnValue(out);
 }
 

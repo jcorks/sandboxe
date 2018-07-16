@@ -4,8 +4,8 @@
 
 
 // First, we want to create our window on the system.
-window = sandboxe.view.createDisplay("Particle Example");
-sandboxe.view.setMain(window);
+window = sandboxe.display.create("Particle Example");
+sandboxe.display.setMain(window);
 
 
 particle = sandboxe.entity.create();

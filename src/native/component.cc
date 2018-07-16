@@ -19,5 +19,5 @@ DynacoeEvent(Sandboxe::ComponentAdaptor::NativeHandler) {
     if (sourceRef) delete sourceRef;
     if (selfRef) delete selfRef;
     if (!p.IsDefined()) return true;
-    reutrn (bool)p;
+    return (bool)p;
 }

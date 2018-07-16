@@ -117,7 +117,7 @@ SANDBOXE_NATIVE_DEF(__gui_text_set) {
 
 SANDBOXE_NATIVE_DEF(__gui_node_get) {
     auto gui = (Sandboxe::GUIObject*)source;    
-    context.SetReturnValue(gui->localNode);
+    context.SetReturnValue(dynamic_cast<Sandboxe::NodeObject*>(&gui->node));
 }
 
 

@@ -20,79 +20,59 @@ SANDBOXE_NATIVE_DEF(__node_create) {
     context.SetReturnValue(new Sandboxe::NodeObject);
 }
 
-SANDBOXE_NATIVE_DEF(__node_set_local){}
-SANDBOXE_NATIVE_DEF(__node_set_global){}
-
-
-SANDBOXE_NATIVE_DEF(__node_get_local) {
-    auto node = (Sandboxe::NodeObject*)source;
-    context.SetReturnValue(node->localTransform);
-}
-
-SANDBOXE_NATIVE_DEF(__node_get_global) {
-    auto node = (Sandboxe::NodeObject*)source;
-    context.SetReturnValue(node->globalTransform);
-}
-
-
 
 
 
 SANDBOXE_NATIVE_DEF(__node_get_reverse) {
-    auto node = (Sandboxe::NodeObject*)source;
-    auto t = node->localTransform;
-    context.SetReturnValue(t->t->reverse);
+    auto node = (Sandboxe::NodeObject*)source;    
+    context.SetReturnValue(node->isReverse);
 }
 
 SANDBOXE_NATIVE_DEF(__node_set_reverse) {
     auto node = (Sandboxe::NodeObject*)source;
-    auto t = node->localTransform;
-    t->t->reverse = arguments[0];
+    node->isReverse = (arguments[0]);
+    node->SetReverseTranslation(node->isReverse);
 }
 
 
 SANDBOXE_NATIVE_DEF(__node_get_position) {
     auto node = (Sandboxe::NodeObject*)source;
-    auto t = node->localTransform;
-    context.SetReturnValue(t->position);
+    node->Position(); // flag for update
+    context.SetReturnValue(node->localPosition);
 }
 
 SANDBOXE_NATIVE_DEF(__node_set_position) {
     auto node = (Sandboxe::NodeObject*)source;
-    auto t = node->localTransform;
-    argument_to_vector_object(t->position->vector, arguments[0]);
-    t->position->delta.Changed(t->position);
+    argument_to_vector_object(node->Position(), arguments[0]);    
+    *node->localPosition->vector = node->GetPosition();
 }
 
 
 
 SANDBOXE_NATIVE_DEF(__node_get_rotation) {
     auto node = (Sandboxe::NodeObject*)source;
-    auto t = node->localTransform;
-    context.SetReturnValue(t->rotation);
+    node->Rotation(); // flag for update
+    context.SetReturnValue(node->localRotation);
 }
 
 SANDBOXE_NATIVE_DEF(__node_set_rotation) {
     auto node = (Sandboxe::NodeObject*)source;
-    auto t = node->localTransform;
-    argument_to_vector_object(t->rotation->vector, arguments[0]);
-    t->rotation->delta.Changed(t->rotation);
-
+    argument_to_vector_object(node->Rotation(), arguments[0]);    
+    *node->localRotation->vector = node->GetRotation();
 }
 
 
 
 SANDBOXE_NATIVE_DEF(__node_get_scale) {
     auto node = (Sandboxe::NodeObject*)source;
-    auto t = node->localTransform;
-    context.SetReturnValue(t->scale);
+    node->Scale(); // flag for update
+    context.SetReturnValue(node->localScale);
 }
 
 SANDBOXE_NATIVE_DEF(__node_set_scale) {
     auto node = (Sandboxe::NodeObject*)source;
-    auto t = node->localTransform;
-    argument_to_vector_object(t->scale->vector, arguments[0]);
-    t->scale->delta.Changed(t->scale);
+    argument_to_vector_object(node->Scale(), arguments[0]);    
+    *node->localScale->vector = node->GetScale();
 }
 
 
@@ -141,8 +121,6 @@ void dynacoe_node(std::vector<std::pair<std::string, Sandboxe::Script::Runtime::
             ////////////////////////////////////////////////////////
             //////////////////// imported from component ///////////
             ,
-            {"local", {__node_get_local, __node_set_local}},
-            {"global", {__node_get_global, __node_set_global}},
             
             {"reverse", {__node_get_reverse, __node_set_reverse}},
             {"position", {__node_get_position, __node_set_position}},

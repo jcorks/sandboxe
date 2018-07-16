@@ -17,22 +17,20 @@ class Object2DObject : public Dynacoe::Object2D, public Sandboxe::ComponentAdapt
         SetFrictionY(0.0);
     }
     
-    ~Object2DObject() {
-        
+    ~Object2DObject() {    
     }
+    
+    
     
     double frictionX;
     double frictionY;
+    std::vector<float> colliderData;
 
     void OnGarbageCollection() {
         
     }
     
     void OnStep() {
-        NodeObject * n = GetHostID().Query<NodeObject>();
-        if (n) {
-            n->localTransform->position->vector = GetNextPosition();
-        }
         Object2D::OnStep();
     }
     

@@ -8,7 +8,6 @@
 #include "dynacoe_console.hpp"
 #include "dynacoe_entity.hpp"
 #include "dynacoe_component.hpp"
-#include "dynacoe_node_transform.hpp"
 #include "dynacoe_node.hpp"
 #include "dynacoe_engine.hpp"
 #include "dynacoe_input.hpp"
@@ -52,7 +51,6 @@ std::vector<std::pair<std::string, Runtime::Function>> GatherNativeBindings() {
     Bindings::dynacoe_component(out);
     Bindings::dynacoe_console(out);
     Bindings::dynacoe_entity(out);
-    Bindings::dynacoe_node_transform(out);
     Bindings::dynacoe_node(out);
     Bindings::dynacoe_engine(out);
     Bindings::dynacoe_input(out);
@@ -113,7 +111,7 @@ void ApplyPostBindings() {
     Dynacoe::Graphics::SetCamera2D(*c2d->id.IdentifyAs<Sandboxe::Camera>()->Self());
     Dynacoe::Graphics::SetRenderCamera(*c2d->id.IdentifyAs<Sandboxe::Camera>()->Self());
     
-    c2d->id.IdentifyAs<Sandboxe::Camera>()->Self()->node.local.reverse = true;
+    c2d->id.IdentifyAs<Sandboxe::Camera>()->Self()->node.SetReverseTranslation(true);
     c2d->id.IdentifyAs<Sandboxe::Camera>()->Self()->SetRenderResolution(640, 480);
     Dynacoe::Engine::AttachManager(c2d->id);
     Dynacoe::Engine::AttachManager(c3d->id);
