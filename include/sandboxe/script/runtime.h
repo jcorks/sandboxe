@@ -139,7 +139,11 @@ class Object {
     // Instantiates a new object of the given type
     Object(int typeID);
     Object(NativeRef &);
-    virtual ~Object();   
+    virtual ~Object();
+    
+    // creates a new object based on the current object's value.
+    Object(const Object*);
+
     
     // Returns a property of the object of the given name.
     // If none such property exists, an "Undefined" primitive is returned
@@ -164,10 +168,10 @@ class Object {
     
     // callback, if set, called when the script runtime reference 
     // of the object has been removed
-    virtual void OnGarbageCollection() = 0;
+    virtual void OnGarbageCollection(){};
 
     // Returns the type that the object was instantiated with
-    virtual const char * GetObjectName() const = 0;
+    virtual const char * GetObjectName(){return "Object";}
 
     uint32_t AddNonNativeReference(Object *);
 
