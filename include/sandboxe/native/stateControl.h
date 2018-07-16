@@ -66,6 +66,7 @@ class StateControlObject : public Dynacoe::StateControl, public Sandboxe::Compon
             source, 
             args
         );
+        return true;
     }
     
     
@@ -78,6 +79,7 @@ class StateControlObject : public Dynacoe::StateControl, public Sandboxe::Compon
             source, 
             args
         );
+        return true;
     }
 
     
@@ -90,6 +92,7 @@ class StateControlObject : public Dynacoe::StateControl, public Sandboxe::Compon
             source, 
             args
         );
+        return true;
     }
   public:
     void CreateStateNonNative(

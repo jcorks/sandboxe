@@ -58,7 +58,7 @@ SANDBOXE_NATIVE_DEF(__sound_play_audio) {
 
 class AudioBufferObject : public Sandboxe::Script::Runtime::Object {
   public:
-      
+    virtual ~AudioBufferObject(){}
     AudioBufferObject() : Sandboxe::Script::Runtime::Object((int)Sandboxe::NativeType::AudioBufferT){}
 
     float * data;
@@ -114,7 +114,7 @@ class AudioEffectObject : public Dynacoe::AudioEffect, public Sandboxe::Script::
         fn = obj;
     }
     
-    ~AudioEffectObject() {
+    virtual ~AudioEffectObject() {
         delete bufferObj;
     }
     

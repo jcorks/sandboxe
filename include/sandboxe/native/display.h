@@ -7,6 +7,7 @@ class DisplayObject : public Sandboxe::Script::Runtime::Object {
 
     class NonNativeResizeCallback : public Dynacoe::Display::ResizeCallback {
       public:
+        virtual ~NonNativeResizeCallback(){};
         NonNativeResizeCallback(DisplayObject * d) : parent(d) {}
         DisplayObject * parent;
         void operator()(int nw, int nh) {
@@ -16,6 +17,7 @@ class DisplayObject : public Sandboxe::Script::Runtime::Object {
 
     class NonNativeCloseCallback : public Dynacoe::Display::CloseCallback {
       public:
+        virtual ~NonNativeCloseCallback(){};
         NonNativeCloseCallback(DisplayObject * d) : parent(d) {}
         DisplayObject * parent;
         void operator()() {

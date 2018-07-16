@@ -13,8 +13,8 @@ class GUIObject : public Dynacoe::GUI, public Sandboxe::ComponentAdaptor {
   public:
     
     GUIObject() : Dynacoe::GUI(new Sandboxe::NodeObject), Sandboxe::ComponentAdaptor((int)Sandboxe::NativeType::GUIT) {
-        int width = 8;
-        int height = 8;
+        width = 8;
+        height = 8;
         DefineRegion(8, 8);
     }
     

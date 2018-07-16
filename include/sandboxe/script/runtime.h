@@ -59,7 +59,7 @@ class Primitive {
 
 
 class Context {
-  public: Context() : isArray(false), inputArray(nullptr){}
+  public: Context() : inputArray(nullptr), isArray(false) {}
     ~Context();
     // generates an error from the calling script context.
     // Behavior is implementation dependent
@@ -139,7 +139,7 @@ class Object {
     // Instantiates a new object of the given type
     Object(int typeID);
     Object(NativeRef &);
-    ~Object();   
+    virtual ~Object();   
     
     // Returns a property of the object of the given name.
     // If none such property exists, an "Undefined" primitive is returned

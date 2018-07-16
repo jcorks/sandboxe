@@ -188,6 +188,7 @@ static v8::Handle<v8::Value> sandboxe_primitive_to_v8_value(const Primitive & p)
       case Primitive::TypeHint::UInt64T:  return v8::Number::New(p);
       case Primitive::TypeHint::ObjectReferenceT:  return ((Object*)p)->GetNative()->reference;
       case Primitive::TypeHint::ObjectReferenceNonNativeT:  return ((Object*)p)->GetNative()->reference;
+      default:;
     }
     return v8::String::New(std::string(p).c_str());
 }
@@ -298,11 +299,15 @@ static v8::Handle<v8::Value> sandboxe_v8_native__accessor_get(v8::Local<v8::Stri
     SANDBOXE_SCOPE;
     NativeRef * ref = (NativeRef*) info.This()->GetPointerFromInternalField(0);
     Context context;
-    ref->typeData->natives[*v8::String::Utf8Value(name)].first(
+    std::string into = *v8::String::Utf8Value(name);
+    printf("E_AG %p %s\n", ref->typeData->natives[*v8::String::Utf8Value(name)].first, into.c_str());
+    ref->typeData->natives[into].first(
         ref->parent,
         {},
         context
     );
+    printf("L_AG %p %s\n", ref->typeData->natives[*v8::String::Utf8Value(name)].first, into.c_str());
+
     return sandboxe_context_get_return_value(context);
 }
 
@@ -314,11 +319,14 @@ static void sandboxe_v8_native__accessor_set(v8::Local<v8::String> name, v8::Loc
 
     arguments.push_back(v8_object_to_primitive(&value, context, 0));
     std::string into = *v8::String::Utf8Value(name);
+    printf("E_AS %p %s\n", ref->typeData->natives[into].second, into.c_str());
     ref->typeData->natives[into].second(
         ref->parent,
         arguments,
         context
     );
+    printf("L_AS %p %s\n", ref->typeData->natives[into].second, into.c_str());
+
 }
 
 static v8::Handle<v8::Value> sandboxe_v8_native__invocation(const v8::Arguments & args) {
@@ -330,11 +338,13 @@ static v8::Handle<v8::Value> sandboxe_v8_native__invocation(const v8::Arguments 
 
         
     std::string into = *v8::String::Utf8Value(args.Callee()->GetName());
+    printf("E_NI %p %s\n", ref->typeData->functions[into], into.c_str());
     ref->typeData->functions[into](
         ref->parent,
         arguments,
         context
     );
+    printf("L_NI %p %s\n", ref->typeData->functions[into], into.c_str());
 
 
     return sandboxe_context_get_return_value(context);
@@ -747,16 +757,26 @@ Primitive Object::CallMethod(const std::string & str, const std::vector<Primitiv
         return Primitive();
     }
 
-    v8::Handle<v8::Value> args_conv[args.size()];
-    for(uint32_t i = 0; i < args.size(); ++i) {
-        args_conv[i] = sandboxe_primitive_to_v8_value(args[i]);
+    v8::Handle<v8::Value> result;
+    if (args.size()) {
+        v8::Handle<v8::Value> args_conv[args.size()];
+        for(uint32_t i = 0; i < args.size(); ++i) {
+            args_conv[i] = sandboxe_primitive_to_v8_value(args[i]);
+        }
+        
+        result = fn->CallAsFunction(
+            data->reference,
+            args.size(),
+            &args_conv[0]
+        );
+    } else {
+        result = fn->CallAsFunction(
+            data->reference,
+            0,
+            nullptr
+        );
+
     }
-    
-    v8::Handle<v8::Value> result = fn->CallAsFunction(
-        data->reference,
-        args.size(),
-        &args_conv[0]
-    );
     
     if (!(!result.IsEmpty() && !result->IsUndefined())) return Primitive();
     std::string out = *v8::String::Utf8Value(result) ? std::string(*v8::String::Utf8Value(result)) : "";
