@@ -35,7 +35,7 @@ createPlayer = function(position, diameter) {
     // to add your own events. See the documentation for components.
     object2d.installHook('on-collide', function(o2d, self, other){
 
-
+        
         // Since collisions can happen every frame, we are going to 
         // have the collision logic occur every 100 ms at maximum.
         if (collisionTimer.expired) {
@@ -70,6 +70,7 @@ createPlayer = function(position, diameter) {
             collisionTimer.reset();
         }
     });
+    
 
     // To have collisions, the object2d object needs to have colliders to register 
     // when and where collisions can occur. Colliders are invisible, but have tangible geometry.

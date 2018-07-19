@@ -142,6 +142,12 @@ SANDBOXE_NATIVE_DEF(__object2d_get_last_collided) {
     if (!a) return;
     context.SetReturnValue(a);
 }
+
+SANDBOXE_NATIVE_DEF(__object2d_get_next_position) {
+    auto o2d = (Sandboxe::Object2DObject*)source;        
+    context.SetReturnValue(new Sandboxe::VectorObject(o2d->GetNextPosition()));
+}
+
 /// global functions
 SANDBOXE_NATIVE_DEF(__object2d_create) {
     context.SetReturnValue(new Sandboxe::Object2DObject);
@@ -205,8 +211,8 @@ void dynacoe_object2d(std::vector<std::pair<std::string, Sandboxe::Script::Runti
             {"velocityX", {__object2d_get_velocity_x, SANDBOXE_NATIVE_EMPTY}},
             {"velocityY", {__object2d_get_velocity_y, SANDBOXE_NATIVE_EMPTY}},
             {"collider", {__object2d_get_collider, __object2d_set_collider}},
-            {"lastCollided", {__object2d_get_last_collided, SANDBOXE_NATIVE_EMPTY}}
-
+            {"lastCollided", {__object2d_get_last_collided, SANDBOXE_NATIVE_EMPTY}},
+            {"nextPosition", {__object2d_get_next_position, SANDBOXE_NATIVE_EMPTY}}
 
 
 

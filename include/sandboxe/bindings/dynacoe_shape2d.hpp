@@ -88,9 +88,8 @@ SANDBOXE_NATIVE_DEF(__shape2d_form_triangles) {
     std::vector<Dynacoe::Vector> ptsReal;
     for(uint32_t i = 0; i < pts->size()/3; ++i) {
         ptsReal.push_back({
-            (float)(*pts)[i*3+0],
-            (float)(*pts)[i*3+1],
-            (float)(*pts)[i*3+2]
+            (float)(*pts)[i*2+0],
+            (float)(*pts)[i*2+1]
         });
     }
 
@@ -109,9 +108,8 @@ SANDBOXE_NATIVE_DEF(__shape2d_form_lines) {
     std::vector<Dynacoe::Vector> ptsReal;
     for(uint32_t i = 0; i < pts->size()/2; ++i) {
         ptsReal.push_back({
-            (float)(*pts)[i*3+0],
-            (float)(*pts)[i*3+1],
-            (float)(*pts)[i*3+2]
+            (float)(*pts)[i*2+0],
+            (float)(*pts)[i*2+1]
         });
     }
 

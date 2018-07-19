@@ -26,6 +26,7 @@ createObstacle = function(position, diameter) {
     
     // To make collisions more impactful, any collision briefly changes the 
     // color to a light pink
+    
     object2d.installHook("on-collide", function() {
         shape.color.r = 1.0;
         shape.color.b = 1.0;

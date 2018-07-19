@@ -536,6 +536,26 @@ var sandboxe = {
                 bitmap : 2
             }
         },
+        
+        
+        
+        /**
+         * Functions and types general to 2D rendering objects. See {@link text2d} and {@link shape2d}.
+         *
+         * @namespace 
+         */        
+        render2d : {
+            /**
+             * Flags for rendering modes
+             * @namespace
+             */
+            renderMode : {
+                /** This is the default. Colors are interpreted as you would normally expect with the alpha channle being expressed as a transparency value.*/
+                normal : 0,
+                /** Translucency is a way of expressing transparency. When a rasterization is translucent, the vertices colors are added to whatever is drawn underneath it. This is referred to in some places as additive blending. */
+                translucent : 1,
+            }
+        },
 
         /**
          * Functions and types general to clock objects. See {@link clock}
