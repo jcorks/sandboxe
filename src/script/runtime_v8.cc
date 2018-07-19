@@ -288,13 +288,13 @@ static v8::Handle<v8::Value> sandboxe_v8_native__accessor_get(v8::Local<v8::Stri
     NativeRef * ref = (NativeRef*) info.This()->GetPointerFromInternalField(0);
     Context context;
     std::string into = *v8::String::Utf8Value(name);
-    //printf("E_AG %p %s\n", ref->typeData->natives[*v8::String::Utf8Value(name)].first, into.c_str());
+    printf("E_AG %p %s\n", ref->typeData->natives[*v8::String::Utf8Value(name)].first, into.c_str());
     ref->typeData->natives[into].first(
         ref->parent,
         {},
         context
     );
-    //printf("L_AG %p %s\n", ref->typeData->natives[*v8::String::Utf8Value(name)].first, into.c_str());
+    printf("L_AG %p %s\n", ref->typeData->natives[*v8::String::Utf8Value(name)].first, into.c_str());
 
     return sandboxe_context_get_return_value(context);
 }
@@ -307,13 +307,13 @@ static void sandboxe_v8_native__accessor_set(v8::Local<v8::String> name, v8::Loc
 
     arguments.push_back(v8_object_to_primitive(&value, context, 0));
     std::string into = *v8::String::Utf8Value(name);
-    //printf("E_AS %p %s\n", ref->typeData->natives[into].second, into.c_str());
+    printf("E_AS %p %s\n", ref->typeData->natives[into].second, into.c_str());
     ref->typeData->natives[into].second(
         ref->parent,
         arguments,
         context
     );
-    //printf("L_AS %p %s\n", ref->typeData->natives[into].second, into.c_str());
+    printf("L_AS %p %s\n", ref->typeData->natives[into].second, into.c_str());
 
 }
 
@@ -326,13 +326,13 @@ static v8::Handle<v8::Value> sandboxe_v8_native__invocation(const v8::Arguments 
 
         
     std::string into = *v8::String::Utf8Value(args.Callee()->GetName());
-    //printf("E_NI %p %s\n", ref->typeData->functions[into], into.c_str());
+    printf("E_NI %p %s\n", ref->typeData->functions[into], into.c_str());
     ref->typeData->functions[into](
         ref->parent,
         arguments,
         context
     );
-    //printf("L_NI %p %s\n", ref->typeData->functions[into], into.c_str());
+    printf("L_NI %p %s\n", ref->typeData->functions[into], into.c_str());
 
 
     return sandboxe_context_get_return_value(context);
@@ -687,7 +687,7 @@ void Object::Set(const std::string & name, const Primitive & d) {
 
 
 void NativeRef::ForceNative() {
-
+    assert(isNative);
     if (!isNative) {
         SANDBOXE_SCOPE;
 
@@ -697,11 +697,11 @@ void NativeRef::ForceNative() {
         isNative = true;
         typeData = nullptr;
 
-        // set a ref to the type info
-        obj->SetPointerInInternalField(0, this);
 
         //objects.push_back(data);
         reference = v8::Persistent<v8::Object>::New(obj);
+        // set a ref to the type info
+        reference->SetPointerInInternalField(0, this);
         reference.MakeWeak(this, sandboxe_v8_object_garbage_collect);
 
         std::cout << this << "is now native" << std::endl;

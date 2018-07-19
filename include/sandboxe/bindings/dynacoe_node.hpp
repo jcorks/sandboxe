@@ -22,6 +22,20 @@ SANDBOXE_NATIVE_DEF(__node_create) {
 
 
 
+SANDBOXE_NATIVE_DEF(__node_transform) {
+    SANDBOXE_ASSERT__ARG_COUNT(1);
+    SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceT);
+    SANDBOXE_ASSERT__ARG_NATIVE(0, VectorObject);
+    
+    Sandboxe::Script::Runtime::Object * obj = arguments[0];
+    Sandboxe::VectorObject * src = (Sandboxe::VectorObject*)obj;
+    auto node = (Sandboxe::NodeObject*)source;    
+
+    context.SetReturnValue(new Sandboxe::VectorObject(
+        node->GetGlobalTransform().Transform(*src->vector)
+    ));
+}
+
 
 SANDBOXE_NATIVE_DEF(__node_get_reverse) {
     auto node = (Sandboxe::NodeObject*)source;    
@@ -81,7 +95,7 @@ void dynacoe_node(std::vector<std::pair<std::string, Sandboxe::Script::Runtime::
     Sandboxe::Script::Runtime::AddType(
         (int)Sandboxe::NativeType::NodeT,
         {
-            
+            {"transform", __node_transform},
             ////////////////////////////////////////////////////////
             //////////////////// imported from component ///////////
             {"step", __component_step},

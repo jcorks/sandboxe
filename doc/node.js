@@ -11,6 +11,12 @@
  */ 
 function node() {
 
+    /**
+     * Transforms the given vector as if it were a positional child of this node.
+     * @param {vector}
+     * @returns {vector} 
+     */
+    this.transform = function(){};
 
 
     /**

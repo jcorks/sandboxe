@@ -9,8 +9,7 @@
 function renderLight() {
 
     /**
-     * Resets the timer with the time it should expire in milliseconds.
-     * @param {Number} time If specified, sets the new duration for the timer. If excluded, the timer has no time limit.
+     * Resets the lights properties back to the default state.
      */
     this.reset = function(){};
 
