@@ -106,7 +106,10 @@ void Empty(Sandboxe::Script::Runtime::Object * source, const std::vector<Sandbox
 // initializes the scripting context
 // Optional argument to bind native functions to the global context
 // by name
-void Initialize(const std::vector<std::pair<std::string, Function>> & globalFunctions = {});
+void Initialize();
+
+// begins the main loop
+void Start();
 
 // executes raw script code. Result is returned
 std::string Execute(const std::string & code, const std::string & name = "<Sandboxe>");

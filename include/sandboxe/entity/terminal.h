@@ -13,7 +13,7 @@ class Terminal : public Dynacoe::Entity {
     
     
     void ReportError(const std::string & str) {
-        Dynacoe::Console::Error() << "Sandboxe Error:\n" << str << "\n";
+        Dynacoe::Console::Error() << "Sandboxe Error: " << str << "\n";
         
     }
     

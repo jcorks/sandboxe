@@ -2,7 +2,6 @@
 #include <sandboxe/trunk.h>
 #include <sandboxe/script/runtime.h>
 #include <sandboxe/script/garbageCollector.h>
-#include <sandboxe/bindings/all.hpp>
 
 
 std::string initialization_source = 
@@ -14,12 +13,9 @@ int main(int argc, char ** argv) {
 
     Sandboxe::Trunk::Initialize(argv[0]);
 
-    Sandboxe::Script::Runtime::Initialize(
-        Sandboxe::Script::GatherNativeBindings()
-    );
+    Sandboxe::Script::Runtime::Initialize();
     
-    // remainign logic initialization for bindings
-    Sandboxe::Script::ApplyPostBindings();
+
 
     Dynacoe::Engine::AttachManager(Dynacoe::Entity::Create<Sandboxe::GarbageCollector>());
 
@@ -53,8 +49,8 @@ int main(int argc, char ** argv) {
     Sandboxe::Script::Runtime::Load("main.js");
 
 
+    Sandboxe::Script::Runtime::Start();
 
-    Dynacoe::Engine::Run();
 
     return 0;
 

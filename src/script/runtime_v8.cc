@@ -6,7 +6,7 @@
 #include <sandboxe/trunk.h>
 #include <cassert>
 #include <v8.h>
-
+#include <sandboxe/bindings/all.hpp>
 #include <map>
 
 using Sandboxe::Script::Runtime::Function;
@@ -90,7 +90,10 @@ std::vector<Type *> types;
 // reports exceptions 
 static void script_exception_handler(v8::TryCatch * tcatch) {
     v8::HandleScope scopeMonitor;
+    if (tcatch->Exception().IsEmpty()) return;
+
     v8::String::Utf8Value exception(tcatch->Exception());
+
 
 
     Sandboxe::Script::Terminal * term = global->terminal.IdentifyAs<Sandboxe::Script::Terminal>();
@@ -186,6 +189,7 @@ static Object * sandboxe_object_reference_temporary_from_v8_value(const v8::Hand
     NativeRef * ref = new NativeRef;
     ref->isNative = false;
     ref->typeData = nullptr;
+    ref->parent = nullptr;
     ref->reference = v8::Persistent<v8::Object>::New(val->ToObject());
     
     Object * temp = new Object(*ref);
@@ -464,7 +468,7 @@ static v8::Handle<v8::Value> script_include(const v8::Arguments & args) {
 
 
 
-void Sandboxe::Script::Runtime::Initialize(const std::vector<std::pair<std::string, Function>> & fns) {
+void Sandboxe::Script::Runtime::Initialize() {
     v8::HandleScope top;
     global = new SandboxeContextModel;
     global->terminal = Dynacoe::Entity::Create<Sandboxe::Script::Terminal>();
@@ -477,7 +481,7 @@ void Sandboxe::Script::Runtime::Initialize(const std::vector<std::pair<std::stri
     base->Set(v8::String::New("__debug_isFunction"), v8::FunctionTemplate::New(debug_is_function)); 
     base->Set(v8::String::New("__debug_isNative"), v8::FunctionTemplate::New(debug_is_native)); 
 
-
+    const std::vector<std::pair<std::string, Function>> & fns = Sandboxe::Script::GatherNativeBindings();
     if (fns.size()) {
         
         std::string str;
@@ -508,11 +512,15 @@ void Sandboxe::Script::Runtime::Initialize(const std::vector<std::pair<std::stri
     Sandboxe::Script::Shell::Initialize();
     
 
-    
+    Sandboxe::Script::ApplyPostBindings();
     
     
 }
 
+void Sandboxe::Script::Runtime::Start() {
+    SANDBOXE_SCOPE;
+    Dynacoe::Engine::Run();
+}
 
 std::string Sandboxe::Script::Runtime::Execute(const std::string & source, const std::string & name) {
     v8::HandleScope scopeMonitor;
@@ -622,7 +630,6 @@ static void sandboxe_v8_object_garbage_collect(v8::Persistent<v8::Value> src, vo
 
 
 Object::Object(int typeID) {
-    SANDBOXE_SCOPE;
     data = new NativeRef;
     data->isNative = true;
     data->typeData = types[typeID];
@@ -659,7 +666,6 @@ Object::~Object() {
 }
 
 Primitive Object::Get(const std::string & name) {
-    SANDBOXE_SCOPE;
     if (data->reference.IsEmpty()) {
         v8::ThrowException(v8::String::New("sandboxe script object: Get() failed; reference is dead"));
         return Primitive();
@@ -673,7 +679,6 @@ Primitive Object::Get(const std::string & name) {
 }
 
 void Object::Set(const std::string & name, const Primitive & d) {
-    SANDBOXE_SCOPE;
     if (data->reference.IsEmpty()) {
          v8::ThrowException(v8::String::New("sandboxe script object: Set() failed; reference is dead"));
     }
@@ -687,9 +692,8 @@ void Object::Set(const std::string & name, const Primitive & d) {
 
 
 void NativeRef::ForceNative() {
-    assert(isNative);
+    assert(!isNative);
     if (!isNative) {
-        SANDBOXE_SCOPE;
 
         v8::Handle<v8::Object> obj = reference; // non-native data
 
@@ -726,7 +730,7 @@ uint32_t Object::AddNonNativeReference(Object * d) {
     return out;
 }
 void Object::UpdateNonNativeReference(Object * d, uint32_t index) {
-    if (d->IsNative()) return;
+    //if (d->IsNative()) return;
     d->data->ForceNative();
     while(data->nonNatives.size() <= index) data->nonNatives.push_back(nullptr);
     data->nonNatives[index] = d;
@@ -751,7 +755,6 @@ Object * Object::GetNonNativeReference(uint32_t index) const {
 
 
 Primitive Object::CallMethod(const std::string & str, const std::vector<Primitive> & args) {
-    SANDBOXE_SCOPE;
     
     v8::Handle<v8::Object> fn;
     
