@@ -284,59 +284,61 @@ static v8::Handle<v8::Value> sandboxe_context_get_return_value(const Context & c
 ////////////////////////////////////////////////////////
 /// native functions
 ///////////////////////////////////////////////////////
-
+uint32_t ITERP = 0;
 
 
 static v8::Handle<v8::Value> sandboxe_v8_native__accessor_get(v8::Local<v8::String> name, const v8::AccessorInfo & info) {
-    SANDBOXE_SCOPE;
+    //SANDBOXE_SCOPE;
     NativeRef * ref = (NativeRef*) info.This()->GetPointerFromInternalField(0);
     Context context;
     std::string into = *v8::String::Utf8Value(name);
-    printf("E_AG %p %s\n", ref->typeData->natives[*v8::String::Utf8Value(name)].first, into.c_str());
+    printf("E_AG (%u) %p %s\n", ITERP, ref->typeData->natives[*v8::String::Utf8Value(name)].first, into.c_str());
     ref->typeData->natives[into].first(
         ref->parent,
         {},
         context
     );
-    printf("L_AG %p %s\n", ref->typeData->natives[*v8::String::Utf8Value(name)].first, into.c_str());
-
+    printf("L_AG (%u) %p %s\n", ITERP++, ref->typeData->natives[*v8::String::Utf8Value(name)].first, into.c_str());
+    fflush(stdout);
     return sandboxe_context_get_return_value(context);
 }
 
 static void sandboxe_v8_native__accessor_set(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo & info) {
-    SANDBOXE_SCOPE;
+    //SANDBOXE_SCOPE;
     NativeRef * ref = (NativeRef*) info.This()->GetPointerFromInternalField(0);
     std::vector<Primitive> arguments;
     Context context;
 
     arguments.push_back(v8_object_to_primitive(&value, context, 0));
     std::string into = *v8::String::Utf8Value(name);
-    printf("E_AS %p %s\n", ref->typeData->natives[into].second, into.c_str());
+    printf("E_AS (%u) %p %s\n", ITERP, ref->typeData->natives[into].second, into.c_str());
     ref->typeData->natives[into].second(
         ref->parent,
         arguments,
         context
     );
-    printf("L_AS %p %s\n", ref->typeData->natives[into].second, into.c_str());
+    printf("L_AS (%u) %p %s\n", ITERP++, ref->typeData->natives[into].second, into.c_str());
+    fflush(stdout);
 
 }
 
 static v8::Handle<v8::Value> sandboxe_v8_native__invocation(const v8::Arguments & args) {
     // arguments should have reference to original object;
-    SANDBOXE_SCOPE;
+    //SANDBOXE_SCOPE;
     NativeRef * ref = (NativeRef*) args.Holder()->GetPointerFromInternalField(0);
     Context context;
     std::vector<Primitive> arguments = v8_arguments_to_sandboxe_primitive_array(args, context);
 
         
     std::string into = *v8::String::Utf8Value(args.Callee()->GetName());
-    printf("E_NI %p %s\n", ref->typeData->functions[into], into.c_str());
+    printf("E_NI (%u) %p %s\n", ITERP, ref->typeData->functions[into], into.c_str());
     ref->typeData->functions[into](
         ref->parent,
         arguments,
         context
     );
-    printf("L_NI %p %s\n", ref->typeData->functions[into], into.c_str());
+    printf("L_NI (%u)%p %s\n", ITERP++, ref->typeData->functions[into], into.c_str());
+    fflush(stdout);
 
 
     return sandboxe_context_get_return_value(context);
@@ -345,15 +347,16 @@ static v8::Handle<v8::Value> sandboxe_v8_native__invocation(const v8::Arguments 
 
 // globals functions defined at initialization
 static v8::Handle<v8::Value> sandboxe_v8_native__global_incovation(const v8::Arguments & args) {
-    SANDBOXE_SCOPE;
+    //SANDBOXE_SCOPE;
     Function f = (Function)(Dynacoe::Chain() << *v8::String::Utf8Value(args.Data())).AsUInt64();
 
     Sandboxe::Script::Runtime::Context context;
     std::vector<Primitive> arguments = v8_arguments_to_sandboxe_primitive_array(args, context);
     
     // gather native objects if applicable
+    printf("E_GI (%u) %p\n", ITERP, f);
     f(nullptr, arguments, context);
-
+    printf("L_GI (%u) %p\n", ITERP, f);
     return sandboxe_context_get_return_value(context);
 
 
@@ -377,7 +380,7 @@ static v8::Handle<v8::Value> sandboxe_v8_native__global_incovation(const v8::Arg
 static std::set<std::string> includedScripts; 
 
 static v8::Handle<v8::Value> debug_is_native(const v8::Arguments & args) {
-    v8::HandleScope scopeMonitor;
+    //v8::HandleScope scopeMonitor;
     if (args.Length() < 1) {
         return v8::Undefined();
     }
@@ -386,7 +389,7 @@ static v8::Handle<v8::Value> debug_is_native(const v8::Arguments & args) {
 }
 
 static v8::Handle<v8::Value> debug_is_function(const v8::Arguments & args) {
-    v8::HandleScope scopeMonitor;
+    //v8::HandleScope scopeMonitor;
     if (args.Length() < 1) {
         return v8::Undefined();
     }
@@ -395,7 +398,7 @@ static v8::Handle<v8::Value> debug_is_function(const v8::Arguments & args) {
 }
 
 static v8::Handle<v8::Value> debug_get_properties(const v8::Arguments & args) {
-    v8::HandleScope scopeMonitor;
+    //v8::HandleScope scopeMonitor;
     if (args.Length() < 1) {
         return v8::Undefined();
     }
@@ -406,7 +409,7 @@ static v8::Handle<v8::Value> debug_get_properties(const v8::Arguments & args) {
 }
 
 static v8::Handle<v8::Value> script_include(const v8::Arguments & args) {
-    v8::HandleScope scopeMonitor;
+    //v8::HandleScope scopeMonitor;
     if (args.Length() < 1) {
         return v8::ThrowException(v8::String::New((Dynacoe::Chain() << "Exactly one arg, dummy\n").ToString().c_str()));
     }
@@ -517,13 +520,49 @@ void Sandboxe::Script::Runtime::Initialize() {
     
 }
 
+
+std::string initialization_source = 
+#include "../sandboxe_initialization.js"
+;
+#include <sandboxe/script/garbageCollector.h>
 void Sandboxe::Script::Runtime::Start() {
     SANDBOXE_SCOPE;
+    Dynacoe::Engine::AttachManager(Dynacoe::Entity::Create<Sandboxe::GarbageCollector>());
+
+    // finally, load in base logic for sandboxe bindings
+    {
+        std::vector<uint8_t> initData(
+            (uint8_t*)&initialization_source[0],
+            ((uint8_t*)&initialization_source[0]) + initialization_source.size()
+        );
+        Sandboxe::Trunk::AddItem("sandboxe_initialization", initData);
+    }
+    
+    Sandboxe::Script::Runtime::Load("sandboxe_initialization");
+    Dynacoe::Console::OverlayMessageMode(Dynacoe::Console::MessageMode::Disabled);
+    Dynacoe::Console::Info() 
+        << "                         ____                  \n"
+        << "   _________ _____  ____/ / /_  ____  _  _____ \n"
+        << "  / ___/ __ `/ __ \\/ __  / __ \\/ __ \\| |/_/ _ \\\n"
+        << " (__  ) /_/ / / / / /_/ / /_/ / /_/ />  </  __/\n"
+        << "/____/\\__,_/_/ /_/\\__,_/_.___/\\____/_/|_|\\___/ \n"
+        << "Johnathan Corkery, 2018 (coebeef.net/sandboxe)\n\n"
+        << "Backend status:\n\n";
+
+    Dynacoe::Console::OverlayMessageMode(Dynacoe::Console::MessageMode::Standard);
+
+
+
+    
+    
+    
+    Sandboxe::Script::Runtime::Load("main.js");
+    
     Dynacoe::Engine::Run();
 }
 
 std::string Sandboxe::Script::Runtime::Execute(const std::string & source, const std::string & name) {
-    v8::HandleScope scopeMonitor;
+    //v8::HandleScope scopeMonitor;
     v8::Handle<v8::String> sourceHandle = v8::String::New(source.c_str());
     v8::Handle<v8::String> nameHandle = v8::String::New(name.c_str());
 
@@ -645,7 +684,7 @@ Object::Object(int typeID) {
 
     //objects.push_back(data);
     data->reference = v8::Persistent<v8::Object>::New(obj);
-    data->reference.MakeWeak(data, sandboxe_v8_object_garbage_collect);
+    //data->reference.MakeWeak(data, sandboxe_v8_object_garbage_collect);
 }
 
 
@@ -706,8 +745,8 @@ void NativeRef::ForceNative() {
         reference = v8::Persistent<v8::Object>::New(obj);
         // set a ref to the type info
         reference->SetPointerInInternalField(0, this);
-        reference.MakeWeak(this, sandboxe_v8_object_garbage_collect);
-
+        //reference.MakeWeak(this, sandboxe_v8_object_garbage_collect);
+        reference.MarkIndependent();
         std::cout << this << "is now native" << std::endl;
     }
 }
@@ -822,7 +861,9 @@ void Context::ScriptError(const std::string & str) {
 void Sandboxe::Script::Runtime::PerformGarbageCollection() {
     for(uint32_t i = 0; i < temporary.size(); ++i) {
         if (!temporary[i]) continue;
-        delete temporary[i];
+        
+        // making weak 
+        //temporary[i]->GetNative()->reference.MakeWeak(temporary[i]->GetNative(), sandboxe_v8_object_garbage_collect);
         temporary[i] = nullptr;
     }
     temporary.clear();
