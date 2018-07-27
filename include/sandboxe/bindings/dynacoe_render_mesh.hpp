@@ -93,10 +93,7 @@ SANDBOXE_NATIVE_DEF(__render_mesh_node_get) {
 }
 
 
-/// global functions
-SANDBOXE_NATIVE_DEF(__render_mesh_create) {
-    context.SetReturnValue(new Sandboxe::RenderMeshObject);
-}
+
 
 
 void dynacoe_render_mesh(std::vector<std::pair<std::string, Sandboxe::Script::Runtime::Function>> & fns) {
@@ -155,8 +152,7 @@ void dynacoe_render_mesh(std::vector<std::pair<std::string, Sandboxe::Script::Ru
         }
         
     );
-    
-    fns.push_back({"__render_mesh_create", __render_mesh_create});    
+     
 }
     
     

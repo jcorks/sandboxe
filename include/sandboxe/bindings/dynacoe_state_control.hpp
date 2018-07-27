@@ -47,11 +47,6 @@ SANDBOXE_NATIVE_DEF(__state_control_halt) {
 
 
 
-/// global functions
-SANDBOXE_NATIVE_DEF(__state_control_create) {
-    context.SetReturnValue(new Sandboxe::StateControlObject);
-}
-
 
 
 // managed properties
@@ -125,8 +120,7 @@ void dynacoe_state_control(std::vector<std::pair<std::string, Sandboxe::Script::
 
         }
     );
-    
-    fns.push_back({"__state_control_create", __state_control_create});   
+ 
 }
     
     

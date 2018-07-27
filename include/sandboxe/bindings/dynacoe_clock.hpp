@@ -45,10 +45,7 @@ SANDBOXE_NATIVE_DEF(__clock_resume) {
 }
 
 
-/// global functions
-SANDBOXE_NATIVE_DEF(__clock_create) {
-    context.SetReturnValue(new Sandboxe::ClockObject);
-}
+
 
 
 
@@ -144,7 +141,6 @@ void dynacoe_clock(std::vector<std::pair<std::string, Sandboxe::Script::Runtime:
         }
     );
     
-    fns.push_back({"__clock_create", __clock_create});   
 }
     
     

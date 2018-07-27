@@ -13,14 +13,13 @@ class Shape2DObject : public Dynacoe::Shape2D, public Sandboxe::ComponentAdaptor
   public:
 
     TransformObject * transform;
-    Shape2DObject() : Dynacoe::Shape2D(new Sandboxe::NodeObject), Sandboxe::ComponentAdaptor((int)Sandboxe::NativeType::Shape2DT) {
-        transfrom = new TransformObject;
+    Shape2DObject() : Sandboxe::ComponentAdaptor((int)Sandboxe::NativeType::Shape2DT) {
+        transform = new TransformObject;
         localColor = new Sandboxe::ColorObject;        
         ReplaceTransform(&transform->transformReal);
     }
     
     Sandboxe::ColorObject * localColor;
-    Sandboxe::NodeObject * localNode;
 
     
     void OnDraw() {

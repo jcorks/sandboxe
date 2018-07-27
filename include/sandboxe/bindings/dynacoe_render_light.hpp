@@ -27,12 +27,6 @@ namespace Bindings {
 
 
 
-/// global functions
-SANDBOXE_NATIVE_DEF(__render_light_create) {
-    context.SetReturnValue(new Sandboxe::RenderLightObject);
-}
-
-
 SANDBOXE_NATIVE_DEF(__render_light_reset) {
     auto light = (Sandboxe::RenderLightObject*)source;
     light->Clear();
@@ -152,7 +146,6 @@ void dynacoe_render_light(std::vector<std::pair<std::string, Sandboxe::Script::R
         }
     );
     
-    fns.push_back({"__render_light_create", __render_light_create});    
 }
     
     

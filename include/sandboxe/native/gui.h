@@ -12,7 +12,7 @@ namespace Sandboxe {
 class GUIObject : public Dynacoe::GUI, public Sandboxe::ComponentAdaptor {
   public:
     TransformObject * transform;
-    GUIObject() : Dynacoe::GUI(new Sandboxe::NodeObject), Sandboxe::ComponentAdaptor((int)Sandboxe::NativeType::GUIT) {
+    GUIObject() : Sandboxe::ComponentAdaptor((int)Sandboxe::NativeType::GUIT) {
         width = 8;
         height = 8;
         DefineRegion(8, 8);

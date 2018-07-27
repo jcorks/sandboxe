@@ -72,7 +72,7 @@ class ComponentAdaptor : public Sandboxe::Script::Runtime::Object {
 class Component : public Dynacoe::Component, public Sandboxe::ComponentAdaptor {
   public:
     
-    Component(const std::string & tag, const std::string & info_) :
+    Component(const std::string & tag = "Component", const std::string & info_ = "") :
       Sandboxe::ComponentAdaptor((int)Sandboxe::NativeType::ComponentT),
       Dynacoe::Component(tag),
       info(info_)

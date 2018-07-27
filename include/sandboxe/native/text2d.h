@@ -12,7 +12,7 @@ namespace Sandboxe {
 class Text2DObject : public Dynacoe::Text2D, public Sandboxe::ComponentAdaptor {
   public:
     TransformObject * transform;
-    Text2DObject() : Dynacoe::Text2D(new Sandboxe::NodeObject), Sandboxe::ComponentAdaptor((int)Sandboxe::NativeType::Text2DT) {
+    Text2DObject() : Sandboxe::ComponentAdaptor((int)Sandboxe::NativeType::Text2DT) {
         localFont = new Sandboxe::AssetIDObject;
         fontSize = -1;
         spacingMode = (int)Dynacoe::Text2D::SpacingMode::Kerned;

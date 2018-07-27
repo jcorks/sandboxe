@@ -9,6 +9,7 @@
 namespace Sandboxe {
 
 enum ComponentType {
+    COMPONENT_TYPE__COMPONENT,
     COMPONENT_TYPE__CLOCK,
     COMPONENT_TYPE__DATA_TABLE,
     COMPONENT_TYPE__GUI,
@@ -17,7 +18,6 @@ enum ComponentType {
     COMPONENT_TYPE__RENDERLIGHT,
     COMPONENT_TYPE__RENDERMESH,
     COMPONENT_TYPE__SCHEDULER,
-    COMPONENT_TYPE__SEQUENCER,
     COMPONENT_TYPE__SHAPE2D,
     COMPONENT_TYPE__STATE_CONTROL,
     COMPONENT_TYPE__TEXT2D    
@@ -52,12 +52,7 @@ class Entity : public Dynacoe::Entity {
     }    
     
     ~Entity() {
-        auto comps = GetComponents();
-        for(uint32_t i = 0; i < comps.size(); ++i) {
-            RemoveComponent(comps[i]);
-        }
-        delete transform;
-        
+        delete transform;        
     }
     EntityObjectID * object;
 

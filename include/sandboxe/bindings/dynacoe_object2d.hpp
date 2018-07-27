@@ -148,10 +148,6 @@ SANDBOXE_NATIVE_DEF(__object2d_get_next_position) {
     context.SetReturnValue(new Sandboxe::VectorObject(o2d->GetNextPosition()));
 }
 
-/// global functions
-SANDBOXE_NATIVE_DEF(__object2d_create) {
-    context.SetReturnValue(new Sandboxe::Object2DObject);
-}
 
 
 
@@ -220,7 +216,7 @@ void dynacoe_object2d(std::vector<std::pair<std::string, Sandboxe::Script::Runti
         
     );
     
-    fns.push_back({"__object2d_create", __object2d_create});  
+
 
   
 }

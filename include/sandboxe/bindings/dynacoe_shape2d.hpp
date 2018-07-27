@@ -169,10 +169,6 @@ SANDBOXE_NATIVE_DEF(__shape2d_node_set) {
 
 
 
-/// global functions
-SANDBOXE_NATIVE_DEF(__shape2d_create) {
-    context.SetReturnValue(new Sandboxe::Shape2DObject);
-}
 
 
 void dynacoe_shape2d(std::vector<std::pair<std::string, Sandboxe::Script::Runtime::Function>> & fns) {
@@ -234,8 +230,7 @@ void dynacoe_shape2d(std::vector<std::pair<std::string, Sandboxe::Script::Runtim
         }
         
     );
-    
-    fns.push_back({"__shape2d_create", __shape2d_create});    
+
 }
     
     

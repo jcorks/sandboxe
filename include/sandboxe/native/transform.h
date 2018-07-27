@@ -4,27 +4,27 @@
 
 #include <sandboxe/native/component.h>
 #include <sandboxe/native/vector.h>
-
+#include <Dynacoe/Util/Transform.h>
 
 namespace Sandboxe {
 
 
 class TransformObject : public Sandboxe::Script::Runtime::Object {
   public:
-    Transform transformReal;
+    Dynacoe::Transform transformReal;
 
     static void OnPosition(VectorObject * object, void * data) {
-        TransformObject * t;
+        TransformObject * t = (TransformObject*)data;
         t->transformReal.GetPosition();
     }
 
     static void OnRotation(VectorObject * object, void * data) {
-        TransformObject * t;
+        TransformObject * t = (TransformObject*)data;
         t->transformReal.GetRotation();
     }
 
     static void OnScale(VectorObject * object, void * data) {
-        TransformObject * t;
+        TransformObject * t = (TransformObject*)data;
         t->transformReal.GetScale();
     }
 

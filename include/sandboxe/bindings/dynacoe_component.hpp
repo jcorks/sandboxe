@@ -183,11 +183,7 @@ SANDBOXE_NATIVE_DEF(__component_get_host) {
 
 
 
-//// global functions 
-SANDBOXE_NATIVE_DEF(__component_create) {
-    SANDBOXE_ASSERT__ARG_COUNT(2);
-    context.SetReturnValue(new Sandboxe::Component(arguments[0], arguments[1]));
-}
+
 
 
 void dynacoe_component(std::vector<std::pair<std::string, Sandboxe::Script::Runtime::Function>> & fns) {
@@ -225,8 +221,7 @@ void dynacoe_component(std::vector<std::pair<std::string, Sandboxe::Script::Runt
             {"host", {__component_get_host, __component_set_host}}
         }
     );
-    
-    fns.push_back({"__component_create", __component_create});
+
 }
 
 

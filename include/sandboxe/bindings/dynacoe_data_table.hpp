@@ -107,10 +107,7 @@ SANDBOXE_NATIVE_DEF(__data_table_read_state) {
 
 
 
-/// global functions
-SANDBOXE_NATIVE_DEF(__data_table_create) {
-    context.SetReturnValue(new Sandboxe::DataTableObject);
-}
+
 
 
 void dynacoe_data_table(std::vector<std::pair<std::string, Sandboxe::Script::Runtime::Function>> & fns) {
@@ -177,7 +174,6 @@ void dynacoe_data_table(std::vector<std::pair<std::string, Sandboxe::Script::Run
         
     );
     
-    fns.push_back({"__data_table_create", __data_table_create});    
 }
     
     

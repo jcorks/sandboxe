@@ -111,9 +111,7 @@ SANDBOXE_NATIVE_DEF(__mutator_get_duration) {
 
 
 /// global functions
-SANDBOXE_NATIVE_DEF(__mutator_create) {
-    context.SetReturnValue(new Sandboxe::MutatorObject);
-}
+
 
 SANDBOXE_NATIVE_DEF(__mutator_step) {
     switch(arguments.size()) {
@@ -196,7 +194,6 @@ void dynacoe_mutator(std::vector<std::pair<std::string, Sandboxe::Script::Runtim
         
     );
     
-    fns.push_back({"__mutator_create", __mutator_create});  
     fns.push_back({"__mutator_step", __mutator_step});
 
   

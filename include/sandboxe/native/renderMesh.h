@@ -14,9 +14,9 @@ class RenderMeshObject : public Dynacoe::RenderMesh, public Sandboxe::ComponentA
   public:
     TransformObject * transform;
     
-    RenderMeshObject() : Dynacoe::RenderMesh(new Sandboxe::NodeObject), Sandboxe::ComponentAdaptor((int)Sandboxe::NativeType::RenderMeshT) {
+    RenderMeshObject() :Sandboxe::ComponentAdaptor((int)Sandboxe::NativeType::RenderMeshT) {
         localMaterial = new Sandboxe::MaterialObject;        
-        transfrom = new TransformObject;
+        transform = new TransformObject;
         ReplaceTransform(&transform->transformReal);
     }
     

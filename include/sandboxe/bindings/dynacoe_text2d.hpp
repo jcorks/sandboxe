@@ -147,11 +147,6 @@ SANDBOXE_NATIVE_DEF(__text2d_node_set) {
 
 
 
-/// global functions
-SANDBOXE_NATIVE_DEF(__text2d_create) {
-    context.SetReturnValue(new Sandboxe::Text2DObject);
-}
-
 
 void dynacoe_text2d(std::vector<std::pair<std::string, Sandboxe::Script::Runtime::Function>> & fns) {
     Sandboxe::Script::Runtime::AddType(
@@ -212,8 +207,7 @@ void dynacoe_text2d(std::vector<std::pair<std::string, Sandboxe::Script::Runtime
         }
         
     );
-    
-    fns.push_back({"__text2d_create", __text2d_create});    
+   
 }
     
     

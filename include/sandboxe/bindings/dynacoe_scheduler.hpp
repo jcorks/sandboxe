@@ -66,12 +66,6 @@ SANDBOXE_NATIVE_DEF(__scheduler_resume) {
 
 
 
-/// global functions
-SANDBOXE_NATIVE_DEF(__scheduler_create) {
-    context.SetReturnValue(new Sandboxe::SchedulerObject);
-}
-
-
 
 // managed properties
 
@@ -143,8 +137,7 @@ void dynacoe_scheduler(std::vector<std::pair<std::string, Sandboxe::Script::Runt
 
         }
     );
-    
-    fns.push_back({"__scheduler_create", __scheduler_create});   
+     
 }
     
     

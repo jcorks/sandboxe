@@ -306,45 +306,52 @@ var sandboxe = {
      * @namespace
      */   
     component : {
-        /**
-         * Creates an emtpy component which can be customized through event handling and update functions.
-         *
-         * @returns {component}
-         * @function
-         */
-        create : __component_create,
 
         /**
-         * Functions and types general to stateControl objects. See {@link stateControl}
-         *
          * @namespace 
+         * @description 
+         * Component type do be passed to the addComponent function.
          */
-        stateControl : {
-            /**
-             * Creates a stateControl component, which provides state machine utilities specific to each 
-             * host entity. 
-             *
-             * @returns {stateControl}
-             * @function
-             */        
-            create : __state_control_create
+        type : {
+            /**  Adds a generic component object to the entity. See {@link component} */
+            object : 0,
+         
+            /**  Adds a clock/timer component to the entity. See {@link clock}*/
+            clock : 1,
+
+            /**  Adds a data storage object to the entity. See {@link dataTable}*/
+            dataTable : 2,
+
+            /**  Adds a gui-helper object to the entity. See {@link gui}*/
+            gui : 3,
+
+            /**  Adds an easing function object to the entity. See {@link mutator}*/
+            mutator : 4,
+
+            /**  Adds a 2D collision and movement helper to the entity. See {@link object2d} */
+            object2d : 5,
+
+            /**  Adds a 3D lighting component to the entity. See {@link renderLight}*/
+            renderLight : 6,
+
+            /**  Adds a 3D mesh renderer component to the entity. See {@link renderMesh}*/
+            renderMesh : 7,
+
+            /**  Adds a timed function manager component to the entity. See {@link scheduler}*/
+            scheduler : 8,
+
+            /**  Adds a 2D rendering component to the entity. See {@link shape2d}*/
+            shape2d : 9,
+
+            /**  Adds a state machine to the entity. See {@link stateControl}*/
+            stateControl : 10,
+
+            /**  Adds a 2D text rendering component to the entity. {See @link text2d}*/
+            text2d : 11
+
+
         },
 
-        /**
-         * Functions and types general to scheduler objects. See {@link scheduler}
-         *
-         * @namespace 
-         */
-        scheduler : {
-            /**
-             * Creates a scheduler component, which can be used to control autonomous time events.
-             *
-             *
-             * @returns {scheduler}
-             * @function
-             */
-            create : __scheduler_create
-        },
 
         /**
          * Functions and types general to renderMesh objects. See {@link renderMesh}
@@ -352,14 +359,6 @@ var sandboxe = {
          * @namespace 
          */
         renderMesh : {
-            /**
-             * Creates a renderMesh component, which can be used to render 3D geometry.
-             * 
-             * @returns {renderMesh}
-             * @function
-             */
-            create : __render_mesh_create,
-            
             /**
              * Primitives to use when rendering 3d vertices.
              * @namespace 
@@ -379,13 +378,6 @@ var sandboxe = {
          * @namespace 
          */
         renderLight : {
-            /**
-             * Creates a renderLight component, which can be used to model 3D geometry lights.
-             * 
-             * @returns {renderLight}
-             * @function
-             */
-            create : __render_light_create,
 
             /**
              * Enumerator of different types of lights.
@@ -408,20 +400,7 @@ var sandboxe = {
             }
         },
         
-        /**
-         * Functions and types general to object2d objects. See {@link object2d}
-         *
-         * @namespace 
-         */
-        object2d : {
-            /**
-             * Creates an object component, which can be used to give 2d objects complex movement attributes.
-             * 
-             * @returns {object2d}
-             * @function
-             */
-            create : __object2d_create,
-        },
+
 
         /**
          * Functions and types general to mutator objects. See {@link mutator}
@@ -460,13 +439,6 @@ var sandboxe = {
                 randomDistribution : 7
             },
 
-            /**
-             * Creates a mutator component, which can be used to complex mathematical functions useful for animations.
-             * 
-             * @returns {mutator}
-             * @function
-             */
-            create : __mutator_create,
         },
         
         /**
@@ -475,14 +447,6 @@ var sandboxe = {
          * @namespace 
          */
         gui : {
-            /**
-             * Creates a gui component, which can be used to make UI objects.
-             *
-             * @returns {gui}
-             * @function
-             */
-            create : __gui_create,
-
             /**
              * Ungrabs the input for the gui that currently owns input
              * @function
@@ -495,20 +459,7 @@ var sandboxe = {
              */
             unfocus : __gui_unfocus
         },
-        /**
-         * Functions and types general to dataTable objects. See {@link dataTable}
-         *
-         * @namespace 
-         */
-        dataTable : {
-            /**
-             * Creates a dataTable object, which can be used to store, manipulate, and import binary data.
-             *
-             * @returns {dataTable}
-             * @function
-             */
-            create : __data_table_create
-        },
+
 
         /**
          * Functions and types general to text2d objects. See {@link text2d}
@@ -516,13 +467,7 @@ var sandboxe = {
          * @namespace 
          */        
         text2d : {
-            /**
-             * Creates a text2d object, which can be used to display text within the entity world space.
-             *
-             * @returns {text2d}
-             * @function
-             */
-            create : __text2d_create,
+
             /**
              * Flags for spacing modes to be used with text2d objects.
              * @namespace
@@ -557,35 +502,7 @@ var sandboxe = {
             }
         },
 
-        /**
-         * Functions and types general to clock objects. See {@link clock}
-         *
-         * @namespace 
-         */                
-        clock : {
-            /**
-             * Creates a clock object, which can be used to keep track of timing-based events on a basic level.
-             *
-             * @returns {clock}
-             * @function
-             */
-            create : __clock_create
-        },
-        
-        /**
-         * Functions and types general to shape2d objects. See {@link shape2d}
-         *
-         * @namespace 
-         */                
-        shape2d : {
-            /**
-             * Creates a shape2d component, which can be used to render 2d shapes.
-             *
-             * @returns {shape2d}
-             * @function
-             */
-            create : __shape2d_create
-        },
+
     },
 
     
@@ -1279,7 +1196,10 @@ var sandboxe = {
              * Object updates after its parent does.
              */
             ater : 1
-        }
+        },
+
+
+
     },
 
 

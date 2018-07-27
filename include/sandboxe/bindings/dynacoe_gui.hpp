@@ -125,9 +125,6 @@ SANDBOXE_NATIVE_DEF(__gui_node_get) {
 
 
 /// global functions
-SANDBOXE_NATIVE_DEF(__gui_create) {
-    context.SetReturnValue(new Sandboxe::GUIObject);
-}
 
 SANDBOXE_NATIVE_DEF(__gui_ungrab_input) {
     Dynacoe::GUI::UngrabInput();
@@ -196,7 +193,6 @@ void dynacoe_gui(std::vector<std::pair<std::string, Sandboxe::Script::Runtime::F
         
     );
     
-    fns.push_back({"__gui_create", __gui_create});  
     fns.push_back({"__gui_ungrab_input", __gui_ungrab_input});
     fns.push_back({"__gui_unfocus", __gui_unfocus});
 

@@ -3,20 +3,19 @@
 namespace Sandboxe {
 class GarbageCollector : public Dynacoe::Entity {
   public:
-    Dynacoe::Clock clock;
+    Dynacoe::Clock * clock;
 
     static DynacoeEvent(GarbageTime) {
         Sandboxe::GarbageCollector * gc = self.IdentifyAs<Sandboxe::GarbageCollector>();
         Sandboxe::Script::Runtime::PerformGarbageCollection();
-        gc->clock.Reset();
+        gc->clock->Reset();
         return false;
     }
     
     GarbageCollector() {
-        AddComponent(&clock);
-        RemoveComponent(&node);
-        clock.Set(300);
-        clock.InstallHook("clock-expire", GarbageTime);
+        clock = AddComponent<Dynacoe::Clock>();
+        clock->Set(300);
+        clock->InstallHook("clock-expire", GarbageTime);
         
     }
     
