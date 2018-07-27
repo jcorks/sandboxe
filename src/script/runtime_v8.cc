@@ -227,7 +227,7 @@ static std::vector<Primitive> v8_array_to_sandboxe_primitive_array(v8::Handle<v8
     return arguments;
 }
 
-static Primitive v8_object_to_primitive(const v8::Local<v8::Value> * source, Sandboxe::Script::Runtime::Context & context, uint32_t argIndex) {
+static Primitive v8_object_to_primitive(const v8::Persistent<v8::Value> * source, Sandboxe::Script::Runtime::Context & context, uint32_t argIndex) {
     // collect native objects 
     if ((*source)->IsObject()) {
         v8::Handle<v8::Object> object = (*source)->ToObject();
@@ -257,8 +257,9 @@ static Primitive v8_object_to_primitive(const v8::Local<v8::Value> * source, San
 static std::vector<Primitive> v8_arguments_to_sandboxe_primitive_array(const v8::Arguments & args, Sandboxe::Script::Runtime::Context & context) {
     std::vector<Primitive> arguments;
     for(uint32_t i = 0; i < args.Length(); ++i) {
-        auto arg = args[i];
-        arguments.push_back(v8_object_to_primitive(&arg, context, i));
+        v8::Persistent<v8::Value> per = v8::Persistent<v8::Value>::New(args[i]);
+        arguments.push_back(v8_object_to_primitive(&per, context, i));
+        per.Dispose();
     }
     return arguments;
 }
@@ -308,8 +309,9 @@ static void sandboxe_v8_native__accessor_set(v8::Local<v8::String> name, v8::Loc
     NativeRef * ref = (NativeRef*) info.This()->GetPointerFromInternalField(0);
     std::vector<Primitive> arguments;
     Context context;
-
-    arguments.push_back(v8_object_to_primitive(&value, context, 0));
+    v8::Persistent<v8::Value> per = v8::Persistent<v8::Value>::New(value);
+    
+    arguments.push_back(v8_object_to_primitive(&per, context, 0));
     std::string into = *v8::String::Utf8Value(name);
     printf("E_AS (%u) %p %s\n", ITERP, ref->typeData->natives[into].second, into.c_str());
     ref->typeData->natives[into].second(
@@ -319,7 +321,8 @@ static void sandboxe_v8_native__accessor_set(v8::Local<v8::String> name, v8::Loc
     );
     printf("L_AS (%u) %p %s\n", ITERP++, ref->typeData->natives[into].second, into.c_str());
     fflush(stdout);
-
+    
+    per.Dispose();
 }
 
 static v8::Handle<v8::Value> sandboxe_v8_native__invocation(const v8::Arguments & args) {

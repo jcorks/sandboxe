@@ -159,7 +159,7 @@ SANDBOXE_NATIVE_DEF(__input_add_listener) {
 }
 
 SANDBOXE_NATIVE_DEF(__input_remove_listener) {
-    auto b = (Sandboxe::ButtonListenerObject*)(Sandboxe::Script::Runtime::Object*)arguments[0];
+    auto b = (Sandboxe::ButtonListenerObject*)(Sandboxe::Script::Runtime::Object*)source;
     Dynacoe::Input::RemoveListener(b);
 }
 

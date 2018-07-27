@@ -1,1 +1,1 @@
--L../v8-import/ -lv8 -lpthread -lWs2_32 -lWinmm
+-lv8 -lpthread

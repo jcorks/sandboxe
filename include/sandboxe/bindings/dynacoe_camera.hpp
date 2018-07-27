@@ -4,7 +4,6 @@
 #include <sandboxe/native/native.h>
 #include <sandboxe/native/camera.h>
 #include <sandboxe/native/component.h>
-#include <sandboxe/native/node.h>
 
 /*
     Dynacoe::Camera class bindings.

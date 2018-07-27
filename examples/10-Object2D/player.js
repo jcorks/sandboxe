@@ -119,6 +119,14 @@ createPlayer = function(position, diameter) {
     }
 
 
+    entity.onRemove = function() {
+        listenerDown.remove();
+        listenerUp.remove();
+        listenerLeft.remove();
+        listenerRight.remove();
+
+    }
+
     // public:
     entity.shape = shape;
     entity.object2d = object2d;    

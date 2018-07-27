@@ -2,7 +2,6 @@
 #define h_dynacoe_sandboxe_Object2D_included
 
 
-#include <sandboxe/native/node.h>
 
 namespace Sandboxe {
 

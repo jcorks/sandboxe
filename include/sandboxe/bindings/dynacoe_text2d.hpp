@@ -138,7 +138,7 @@ SANDBOXE_NATIVE_DEF(__text2d_absolute_set) {
 
 SANDBOXE_NATIVE_DEF(__text2d_node_get) {
     auto shape = (Sandboxe::Text2DObject*)source;
-    context.SetReturnValue(dynamic_cast<Sandboxe::NodeObject*>(&shape->node));
+    context.SetReturnValue(shape->transform);
 }
 
 SANDBOXE_NATIVE_DEF(__text2d_node_set) {

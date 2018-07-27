@@ -89,7 +89,7 @@ SANDBOXE_NATIVE_DEF(__render_mesh_set_material) {
 
 SANDBOXE_NATIVE_DEF(__render_mesh_node_get) {
     auto mesh = (Sandboxe::RenderMeshObject*)source;
-    context.SetReturnValue((Sandboxe::NodeObject*)&mesh->node);
+    context.SetReturnValue(mesh->transform);
 }
 
 

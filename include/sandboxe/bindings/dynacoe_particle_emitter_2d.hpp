@@ -4,7 +4,6 @@
 #include <sandboxe/native/native.h>
 #include <sandboxe/native/particleEmitter2d.h>
 #include <sandboxe/native/component.h>
-#include <sandboxe/native/node.h>
 
 /*
     Dynacoe::ParticleEmitter2D class bindings.

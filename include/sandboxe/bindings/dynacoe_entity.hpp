@@ -4,7 +4,7 @@
 #include <sandboxe/native/native.h>
 #include <sandboxe/native/entity.h>
 #include <sandboxe/native/component.h>
-#include <sandboxe/native/node.h>
+#include <sandboxe/native/transform.h>
 
 /*
     Dynacoe::Entity class bindings.
@@ -258,17 +258,34 @@ SANDBOXE_NATIVE_DEF(__entity_add_component) {
     Dynacoe::Entity * e = id.Identify();    
     if (!e) return;
 
-
     if (arguments.size() < 1) {
         SANDBOXE_ASSERT__ARG_COUNT(2);        
     }
+
+    Dynacoe::Entity::UpdateClass when = Dynacoe::Entity::UpdateClass::Before;
+    if (arguments.size() >= 2) {
+        when = (Dynacoe::Entity::UpdateClass)(int)arguments[1];
+    }
+    //SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceT);
+    //SANDBOXE_ASSERT__ARG_NATIVE(0, ComponentAdaptor);
+    //auto component = dynamic_cast<Sandboxe::ComponentAdaptor *>((Sandboxe::Script::Runtime::Object*)arguments[0]);
+
+    Sandboxe::ComponentAdaptor * out = nullptr;
+    Sandboxe::ComponentType type = (Sandboxe::ComponentType)(int)arguments[0]);
+    switch(type) {
+      case COMPONENT_TYPE__CLOCK:      out = e->AddComponent<Sandboxe::ClockObject>(when); break;
+      case COMPONENT_TYPE__DATA_TABLE: out = e->AddComponent<Sandboxe::DataTableObject>(when); break;
+      case COMPONENT_TYPE__GUI:        out = e->AddComponent<Sandboxe::GUIObject>(when); break;
+      case COMPONENT_TYPE__MUTATOR:    out = e->AddComponent<Sandboxe::MutatorObject>(when); break;
+      case COMPONENT_TYPE__OBJECT2D:   out = e->AddComponent<Sandboxe::Object2DObject>(when); break;
+      case COMPONENT_TYPE__RENDERLIGHT:out = e->AddComponent<Sandboxe::RenderLightObject>(when); break;
+      case COMPONENT_TYPE__RENDERMESH :out = e->AddComponent<Sandboxe::RenderMeshObject>(when); break;
+      case COMPONENT_TYPE__SCHEDULER:  out = e->AddComponent<Sandboxe::SchedulerObject>(when); break;
+    }
     
-    SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceT);
-    SANDBOXE_ASSERT__ARG_NATIVE(0, ComponentAdaptor);
-    auto component = dynamic_cast<Sandboxe::ComponentAdaptor *>((Sandboxe::Script::Runtime::Object*)arguments[0]);
 
     if (arguments.size() >= 2) {
-        e->AddComponent(component->Native_GetDynacoeComponent(), (Dynacoe::Entity::UpdateClass)(int)arguments[1]);
+        e->AddComponent(component->Native_GetDynacoeComponent(), ]);
     } else {        
         e->AddComponent(component->Native_GetDynacoeComponent());
     }    
@@ -369,7 +386,7 @@ SANDBOXE_NATIVE_DEF(__entity_get_node) {
     const Dynacoe::Entity::ID & id = ((EntityObjectID*)source)->id;
     auto * e = id.IdentifyAs<Sandboxe::Entity>();
     if (!e) return;            
-    context.SetReturnValue(dynamic_cast<Sandboxe::NodeObject*>(&e->node));
+    context.SetReturnValue(e->transform);
 }
 
 SANDBOXE_NATIVE_DEF(__entity_set_node) {}

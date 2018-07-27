@@ -3,7 +3,7 @@
 
 
 #include <sandboxe/native/component.h>
-#include <sandboxe/native/node.h>
+#include <sandboxe/native/transform.h>
 
 
 namespace Sandboxe {
@@ -12,11 +12,11 @@ namespace Sandboxe {
 class Shape2DObject : public Dynacoe::Shape2D, public Sandboxe::ComponentAdaptor {
   public:
 
-    
+    TransformObject * transform;
     Shape2DObject() : Dynacoe::Shape2D(new Sandboxe::NodeObject), Sandboxe::ComponentAdaptor((int)Sandboxe::NativeType::Shape2DT) {
-        
+        transfrom = new TransformObject;
         localColor = new Sandboxe::ColorObject;        
-
+        ReplaceTransform(&transform->transformReal);
     }
     
     Sandboxe::ColorObject * localColor;
