@@ -14,9 +14,9 @@ createPlayer = function(position, diameter) {
     // To prepare, we are going to add the components right away.
     // clock provides timing utilities and object2d provides 
     // advanced 2d movement and interactions.
-    var object2d       = entity.add('object2d');    
-    var collisionTimer = entity.add('clock');
-    var shape          = entity.add('shape2d');
+    var object2d       = entity.addComponent(sandboxe.component.type.object2d);    
+    var collisionTimer = entity.addComponent(sandboxe.component.type.clock);
+    var shape          = entity.addComponent(sandboxe.component.type.shape2d);
 
     entity.name = "player";
     entity.node.position = position;

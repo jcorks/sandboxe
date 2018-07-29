@@ -12,7 +12,7 @@ sandboxe.display.setMain(window);
 object = sandboxe.entity.create();
 
 // Text is rendered is using the text2d component
-object.text = object.add('text2d');
+object.text = object.addComponent(sandboxe.component.type.text2d);
 
 // The font needs to be loaded. By default, sandboxe can open TTF and OTF fonts.
 object.text.font = sandboxe.assets.load('ttf', 'monospace.ttf');

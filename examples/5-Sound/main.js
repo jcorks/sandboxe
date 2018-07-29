@@ -24,15 +24,15 @@ clangSound = sandboxe.assets.load("wav", "clang.wav");
 // We're also going to draw some visuals, one for each sound 
 // Using the circle function, we are going to make a hexagon to represent each sound
 // 
-kickShape  = entity.add('shape2d');
+kickShape  = entity.addComponent(sandboxe.component.type.shape2d);
 kickShape.formCircle(radius=50, iters=6);
 kickShape.color = 'orange';
 
-snareShape = entity.add('shape2d');
+snareShape = entity.addComponent(sandboxe.component.type.shape2d);
 snareShape.formCircle(radius=50, iters=6);
 snareShape.color = 'cyan';
 
-clangShape = entity.add('shape2d');
+clangShape = entity.addComponent(sandboxe.component.type.shape2d);
 clangShape.formCircle(radius=50, iters=6);
 clangShape.color = 'grey';
 

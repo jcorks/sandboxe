@@ -93,7 +93,7 @@ function shape2d() {
 
     /**
      * The transform of the shape component.
-     * @type {node}
+     * @type {transform}
      */
     this.node = {};
     

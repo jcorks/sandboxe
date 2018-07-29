@@ -27,7 +27,7 @@ sandboxe.engine.setRoot(image);
 // Immediately after loading the image, we call FormImage to transform
 // the imageAspect into a drawable rectangle showing the loaded image.
 id = sandboxe.assets.load("png", "image.png");
-image.shape = image.add('shape2d');
+image.shape = image.addComponent(sandboxe.component.type.shape2d);
 image.shape.formImage(id);
 
 

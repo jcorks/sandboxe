@@ -85,7 +85,7 @@ ground = (function(){
     
     // When working wit 3D geometry, we'll need to work with the renderMesh component.
     // It is the 3D counterpart of shape2d and is generaic to all 3d operations.
-    ent.mesh = ent.add('renderMesh');
+    ent.mesh = ent.addComponent(sandboxe.component.type.renderMesh);
     
     // For renderMesh objects to function, we need to supply 3D geometry.
     // In this example, we are goin gto make an object by hand! We will 

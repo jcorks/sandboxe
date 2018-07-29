@@ -24,9 +24,9 @@ class Camera : public Sandboxe::Entity {
     
     void OnStep() {
         auto i = realCamera.Identify();
-        i->node.Position() = node.GetPosition();
-        i->node.Scale() = node.GetScale();
-        i->node.Rotation() = node.GetRotation();
+        i->Node().Position() = Node().GetPosition();
+        i->Node().Scale() = Node().GetScale();
+        i->Node().Rotation() = Node().GetRotation();
         realCamera.Identify()->Step();
         object->CallMethod("onStep");
     }

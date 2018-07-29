@@ -83,7 +83,7 @@ function gui() {
 
     /**
      * The local node of this component.
-     * @type {node}
+     * @type {transform}
      */
     this.node = {};
 

@@ -8,18 +8,33 @@ namespace Sandboxe {
 namespace Bindings {
 
 
+bool sandboxe_component_check(Sandboxe::ComponentAdaptor * component, Sandboxe::Script::Runtime::Context * context) {
+	if (!component->Native_GetHostID().Valid()) {
+		context->ScriptError(
+			Dynacoe::Chain() <<
+			
+				"Component used when host doesnt exist!! This normally denotes an internal error, or trying to use a component after its entity has been destroyed.\n"
+		
+		);
+		return false;
+	}
+	return true;
+}
+
 
 
 // native functions 
 
 SANDBOXE_NATIVE_DEF(__component_draw) {
     auto component = dynamic_cast<Sandboxe::ComponentAdaptor *>(source);
+    if (!sandboxe_component_check(component, &context)) return;
     component->Native_Draw();
 }
 
 SANDBOXE_NATIVE_DEF(__component_step) {
     auto component = dynamic_cast<Sandboxe::ComponentAdaptor *>(source);
-    component->Native_Step();
+    if (!sandboxe_component_check(component, &context)) return;
+	component->Native_Step();
 }
 
 

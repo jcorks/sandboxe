@@ -18,7 +18,7 @@ example = (function(){
     var ent = sandboxe.entity.create();
 
     // Since we're workign with 3D, lets add a mesh renderer
-    ent.renderer = ent.add('renderMesh');
+    ent.renderer = ent.addComponent(sandboxe.component.type.renderMesh);
     
     // In the previous example, we added our own meshes, one 
     // from scratch, and one from a file. Here, we will use a 

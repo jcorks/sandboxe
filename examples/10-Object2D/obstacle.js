@@ -4,8 +4,8 @@
 // Creates an obstacle object that can get hit around by the player
 createObstacle = function(position, diameter) {
     var entity   = sandboxe.entity.create();
-    var object2d = entity.add('object2d');
-    var shape    = entity.add('shape2d');
+    var object2d = entity.addComponent(sandboxe.component.type.object2d);
+    var shape    = entity.addComponent(sandboxe.component.type.shape2d);
     
     entity.name = "obstacle";
     entity.node.position = position;

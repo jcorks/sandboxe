@@ -15,17 +15,17 @@ class TransformObject : public Sandboxe::Script::Runtime::Object {
 
     static void OnPosition(VectorObject * object, void * data) {
         TransformObject * t = (TransformObject*)data;
-        t->transformReal.GetPosition();
+        t->transformReal.Position();
     }
 
     static void OnRotation(VectorObject * object, void * data) {
         TransformObject * t = (TransformObject*)data;
-        t->transformReal.GetRotation();
+        t->transformReal.Rotation();
     }
 
     static void OnScale(VectorObject * object, void * data) {
         TransformObject * t = (TransformObject*)data;
-        t->transformReal.GetScale();
+        t->transformReal.Scale();
     }
 
     

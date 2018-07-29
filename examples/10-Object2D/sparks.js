@@ -13,8 +13,8 @@ createSparks = function(around, direction, force) {
         
         // This object just has a shape and an object2d
         var entity = sandboxe.entity.create();
-        var shape  = entity.add('shape2d');
-        var o2d    = entity.add('object2d');
+        var shape  = entity.addComponent(sandboxe.component.type.shape2d);
+        var o2d    = entity.addComponent(sandboxe.component.type.object2d);
 
 
         // we also set the original location to be the given "around" 

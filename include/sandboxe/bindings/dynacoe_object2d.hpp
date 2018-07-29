@@ -35,7 +35,8 @@ namespace Bindings {
 
 SANDBOXE_NATIVE_DEF(__object2d_add_velocity) {
     SANDBOXE_ASSERT__ARG_COUNT(2);
-    auto o2d = (Sandboxe::Object2DObject*)source;    
+    auto o2d = (Sandboxe::Object2DObject*)source; 
+	assert(o2d->GetHostID().Valid());
     o2d->AddVelocity(arguments[0], arguments[1]);
 }
 

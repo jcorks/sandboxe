@@ -94,31 +94,11 @@ function entity() {
     this.createChild = function(){};
 
     /**
-     * Convenience function to create a new component and 
-     * attach it to this entity. Instead of creating the entity with 
-     * their respective static creation functions, it's possible to 
-     * use this function to directly create the built-in components 
-     * using their name. </br>
-     * List of known components: </br>
-     * "stateControl" &#9;- {@link sandboxe.stateControl.create} </bre>
-     * "scheduler" &#9;- {@link sandboxe.scheduler.create} </bre>
-     * "renderMesh" &#9;- {@link sandboxe.renderMesh.create} </bre>
-     * "renderLight" &#9;- {@link sandboxe.renderLight.create} </bre>
-     * "object2d" &#9;- {@link sandboxe.object2d.create} </bre>
-     * "mutator" &#9;- {@link sandboxe.mutator.create} </bre>
-     * "gui" &#9;- {@link sandboxe.gui.create} </bre>
-     * "dataTable" &#9;- {@link sandboxe.dataTable.create} </bre>
-     * "text2d" &#9;- {@link sandboxe.text2d.create} </bre>
-     * "clock" &#9;- {@link sandboxe.clock.create} </bre>
-     * "shape2d" &#9;- {@link sandboxe.shape2d.create} </bre>
-     *
-     *
-     *
-     *
-     * @param {String} componentName standard name of a component to create.
+     * Creates a new component as part of this entity.
+     * @param {Number} type The component type to use. See {@link sandboxe.component.type} 
      * @returns {component} The component created.
      */
-    this.add = function(){};
+    this.addComponent = function(){};
 
     /**
      * Returns the last recorded amount of milliseconds it took the
@@ -177,11 +157,6 @@ function entity() {
      */
     this.hasParent = function(){};
 
-    /**
-     * Adds a component to this entity.
-     * @param {component} 
-     */
-    this.addComponent = function(){};
 
     /**
      * Returns whether or not there is currently an attached component of the
@@ -242,10 +217,7 @@ function entity() {
     /**
      * The Node of the Entity, holding info such as the position and rotation.
      *
-     * By default, every Entity has a Node Component attached to it.
-     * If your Entity does not require a Node, you can simply call
-     * detach(&node) to not update any node logic so save CPU cycles.
-     * @type {node}
+     * @type {transform}
      */
     this.node = 0;
 
