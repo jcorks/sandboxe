@@ -70,6 +70,8 @@ class Entity : public Dynacoe::Entity {
         object->CallMethod("onPreStep");
     }
     void OnStep() {
+        assert(GetID().Valid());
+        printf("%s %d\n", GetName().c_str(), (int)GetID().Valid());
         object->CallMethod("onStep");
     }
     void OnPreDraw() {

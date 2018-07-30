@@ -1,7 +1,7 @@
 ./src/main.cc
 ./src/script/shell.cc
 ./src/script/runtime.cc
-./src/script/runtime_v8.cc
+./src/script/v8/runtime_v8_old.cc
 ./src/trunk.cc
 
 ./src/native/component.cc

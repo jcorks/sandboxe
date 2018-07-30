@@ -13,14 +13,13 @@ using Sandboxe::Script::Runtime::Function;
 using Sandboxe::Script::Runtime::Object;
 using Sandboxe::Script::Runtime::Primitive;
 using Sandboxe::Script::Runtime::Context;
-using Sandboxe::Script::Runtime::NativeRef;
+using Sandboxe::Script::Runtime::Object_Internal;
 
 
 
 struct SandboxeContextModel {
     v8::Persistent<v8::Context> context;
     v8::TryCatch exceptionHandler;
-    v8::Handle<v8::Object> sandboxeJS;
     Object * contextObject;
     Dynacoe::Entity::ID terminal;
     std::map<std::string, Function> functions;
@@ -44,14 +43,14 @@ struct Type {
 
 
 // Native reference to a Runtime::Object
-struct NativeRef {
+struct Object_Internal {
     // v8 handle representing this object.
     v8::Persistent<v8::Object> reference;
     
     // Pointer to the type of this object
     Type * typeData;
     
-    // Object reference that owns this NativeRef
+    // Object reference that owns this Object_Internal
     Object * parent;
     
     
@@ -76,7 +75,7 @@ static SandboxeContextModel * global = nullptr;
 
 // Table of all objects. Since v8 doesnt seem to send events for object cleanup,
 // this has to be cleaned out every now and then
-std::vector<NativeRef*> objects;
+std::vector<Object_Internal*> objects;
 std::vector<Object*> temporary;
 
 // Table of all types. 
@@ -186,11 +185,12 @@ static v8::Handle<v8::Value> sandboxe_primitive_to_v8_value(const Primitive & p)
 }
 
 static Object * sandboxe_object_reference_temporary_from_v8_value(const v8::Handle<v8::Value> & val) {
-    NativeRef * ref = new NativeRef;
+    Object_Internal * ref = new Object_Internal;
     ref->isNative = false;
     ref->typeData = nullptr;
     ref->parent = nullptr;
     ref->reference = v8::Persistent<v8::Object>::New(val->ToObject());
+    ref->reference.MarkIndependent();
     
     Object * temp = new Object(*ref);
 
@@ -210,7 +210,7 @@ static std::vector<Primitive> v8_array_to_sandboxe_primitive_array(v8::Handle<v8
             if (object->InternalFieldCount()) { //< - Native object
                 arguments.push_back(
                     (
-                        (NativeRef*)object->GetPointerFromInternalField(0)
+                        (Object_Internal*)object->GetPointerFromInternalField(0)
                     )->parent
                 );            
             } else if (item->IsFunction()) { //<- non-native object
@@ -230,11 +230,11 @@ static std::vector<Primitive> v8_array_to_sandboxe_primitive_array(v8::Handle<v8
 static Primitive v8_object_to_primitive(const v8::Persistent<v8::Value> * source, Sandboxe::Script::Runtime::Context & context, uint32_t argIndex) {
     // collect native objects 
     if ((*source)->IsObject()) {
-        v8::Handle<v8::Object> object = (*source)->ToObject();
+        v8::Handle<v8::Object> object = (*source)->ToObject()->Clone();
         if (object->InternalFieldCount()) { //< - Native object
             return
                 (
-                    (NativeRef*)object->GetPointerFromInternalField(0)
+                    (Object_Internal*)object->GetPointerFromInternalField(0)
                 )->parent;
             
         } else if (object->IsFunction()) { //<- non-native object
@@ -290,7 +290,7 @@ uint32_t ITERP = 0;
 
 static v8::Handle<v8::Value> sandboxe_v8_native__accessor_get(v8::Local<v8::String> name, const v8::AccessorInfo & info) {
     //SANDBOXE_SCOPE;
-    NativeRef * ref = (NativeRef*) info.This()->GetPointerFromInternalField(0);
+    Object_Internal * ref = (Object_Internal*) info.This()->GetPointerFromInternalField(0);
     Context context;
     std::string into = *v8::String::Utf8Value(name);
     printf("E_AG (%u) %p %s\n", ITERP, ref->typeData->natives[*v8::String::Utf8Value(name)].first, into.c_str());
@@ -306,7 +306,7 @@ static v8::Handle<v8::Value> sandboxe_v8_native__accessor_get(v8::Local<v8::Stri
 
 static void sandboxe_v8_native__accessor_set(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo & info) {
     //SANDBOXE_SCOPE;
-    NativeRef * ref = (NativeRef*) info.This()->GetPointerFromInternalField(0);
+    Object_Internal * ref = (Object_Internal*) info.This()->GetPointerFromInternalField(0);
     std::vector<Primitive> arguments;
     Context context;
     v8::Persistent<v8::Value> per = v8::Persistent<v8::Value>::New(value);
@@ -328,7 +328,7 @@ static void sandboxe_v8_native__accessor_set(v8::Local<v8::String> name, v8::Loc
 static v8::Handle<v8::Value> sandboxe_v8_native__invocation(const v8::Arguments & args) {
     // arguments should have reference to original object;
     //SANDBOXE_SCOPE;
-    NativeRef * ref = (NativeRef*) args.Holder()->GetPointerFromInternalField(0);
+    Object_Internal * ref = (Object_Internal*) args.Holder()->GetPointerFromInternalField(0);
     Context context;
     std::vector<Primitive> arguments = v8_arguments_to_sandboxe_primitive_array(args, context);
 
@@ -350,7 +350,7 @@ static v8::Handle<v8::Value> sandboxe_v8_native__invocation(const v8::Arguments 
 
 // globals functions defined at initialization
 static v8::Handle<v8::Value> sandboxe_v8_native__global_incovation(const v8::Arguments & args) {
-    //SANDBOXE_SCOPE;
+    SANDBOXE_SCOPE;
     Function f = (Function)(Dynacoe::Chain() << *v8::String::Utf8Value(args.Data())).AsUInt64();
 
     Sandboxe::Script::Runtime::Context context;
@@ -525,11 +525,12 @@ void Sandboxe::Script::Runtime::Initialize() {
 
 
 std::string initialization_source = 
-#include "../sandboxe_initialization.js"
+#include "../../sandboxe_initialization.js"
 ;
 #include <sandboxe/script/garbageCollector.h>
 void Sandboxe::Script::Runtime::Start() {
     SANDBOXE_SCOPE;
+    v8::Context::Scope scope(global->context);
     Dynacoe::Engine::AttachManager(Dynacoe::Entity::Create<Sandboxe::GarbageCollector>());
 
     // finally, load in base logic for sandboxe bindings
@@ -662,7 +663,7 @@ void Sandboxe::Script::Runtime::AddType(int typeID,
 
 
 static void sandboxe_v8_object_garbage_collect(v8::Persistent<v8::Value> src, void * data) {
-    NativeRef * object = (NativeRef*)src->ToObject()->GetPointerFromInternalField(0);
+    Object_Internal * object = (Object_Internal*)src->ToObject()->GetPointerFromInternalField(0);
     object->parent->OnGarbageCollection();
     Dynacoe::Console::Info() << "Removing" << (uint64_t)data << "\n";
     delete object->parent;
@@ -672,7 +673,7 @@ static void sandboxe_v8_object_garbage_collect(v8::Persistent<v8::Value> src, vo
 
 
 Object::Object(int typeID) {
-    data = new NativeRef;
+    data = new Object_Internal;
     data->isNative = true;
     data->typeData = types[typeID];
     if (data->typeData == nullptr) {
@@ -692,7 +693,7 @@ Object::Object(int typeID) {
 
 
 // non-native object
-Object::Object(NativeRef & inData) {
+Object::Object(Object_Internal & inData) {
     data = &inData;
     // set a ref to the type info
     data->reference->SetPointerInInternalField(0, data);
@@ -733,7 +734,7 @@ void Object::Set(const std::string & name, const Primitive & d) {
 }
 
 
-void NativeRef::ForceNative() {
+void Object_Internal::ForceNative() {
     assert(!isNative);
     if (!isNative) {
 
@@ -797,24 +798,32 @@ Object * Object::GetNonNativeReference(uint32_t index) const {
 
 
 Primitive Object::CallMethod(const std::string & str, const std::vector<Primitive> & args) {
+    v8::HandleScope scope;
+    v8::Persistent<v8::Object> fn;
     
-    v8::Handle<v8::Object> fn;
-    
+ 
+
     if (str.size()) {
         v8::Handle<v8::Value> pre = data->reference->Get(v8::String::New(str.c_str()));
         if (!(!pre.IsEmpty() && pre->IsObject())) {
             // throw error?
             return Primitive();
         }
-        fn = pre->ToObject();
+        fn = v8::Persistent<v8::Object>::New(pre->ToObject());
 
     } else {
-        fn = data->reference;
+        fn = v8::Persistent<v8::Object>::New(data->reference->ToObject());
     }
     
-    if (!fn->IsCallable()) {
+    if (!fn->IsCallable() || fn.IsEmpty()) {
         return Primitive();
     }
+    if (fn->IsUndefined()) return Primitive();
+
+
+    v8::String::Utf8Value fnName(fn->ToString());
+    printf("FUNCTION CALLMETHOD %s \n", *fnName);
+    fflush(stdout);
 
     v8::Handle<v8::Value> result;
     if (args.size()) {
@@ -856,7 +865,7 @@ int Object::GetTypeID() const {
 
 
 
-void Context::ScriptError(const std::string & str) {
+void Sandboxe::Script::Runtime::ScriptError(const std::string & str) {
     v8::ThrowException(v8::String::New(str.c_str()));
 }
 

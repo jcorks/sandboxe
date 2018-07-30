@@ -50,7 +50,7 @@ SANDBOXE_NATIVE_DEF(__object2d_set_collider) {
     auto o2d = (Sandboxe::Object2DObject*)source;    
     auto args = context.GetArrayArgument(0);
     if (!args) {
-        context.ScriptError("Expected array of numbers for collider polygon x,y position pairs.");
+        Sandboxe::Script::Runtime::ScriptError("Expected array of numbers for collider polygon x,y position pairs.");
         return; 
     }
 

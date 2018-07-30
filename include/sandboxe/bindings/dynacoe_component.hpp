@@ -10,7 +10,7 @@ namespace Bindings {
 
 bool sandboxe_component_check(Sandboxe::ComponentAdaptor * component, Sandboxe::Script::Runtime::Context * context) {
 	if (!component->Native_GetHostID().Valid()) {
-		context->ScriptError(
+		Sandboxe::Script::Runtime::ScriptError(
 			Dynacoe::Chain() <<
 			
 				"Component used when host doesnt exist!! This normally denotes an internal error, or trying to use a component after its entity has been destroyed.\n"

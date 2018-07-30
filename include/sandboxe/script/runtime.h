@@ -9,7 +9,7 @@ namespace Script {
 namespace Runtime {
 
 class Object;
-struct NativeRef;
+
 
 // easy type primitive data type.
 // Used for all IO when working with the runtime
@@ -61,9 +61,7 @@ class Primitive {
 class Context {
   public: Context() : inputArray(nullptr), isArray(false) {}
     ~Context();
-    // generates an error from the calling script context.
-    // Behavior is implementation dependent
-    void ScriptError(const std::string & str);
+
     
     // Gets the n'th argument as an array, if it exists.
     std::vector<Primitive> * GetArrayArgument(uint32_t argument);
@@ -96,6 +94,7 @@ class Context {
     int isArray;
 };
 
+
 // Represents a native function. Native functions usually 
 // represent native code to be run when a script runs a function
 typedef void (*Function)(Object *, const std::vector<Primitive> & arguments, Context & context);
@@ -103,9 +102,16 @@ typedef void (*Function)(Object *, const std::vector<Primitive> & arguments, Con
 #define SANDBOXE_NATIVE_EMPTY Sandboxe::Script::Runtime::Empty
 void Empty(Sandboxe::Script::Runtime::Object * source, const std::vector<Sandboxe::Script::Runtime::Primitive> & arguments, Sandboxe::Script::Runtime::Context & context);
 
+
+
+
+
+///// BEGIN LANGUAGE-DEPENDENT BEHAVIOR
+
+
+
 // initializes the scripting context
-// Optional argument to bind native functions to the global context
-// by name
+// 
 void Initialize();
 
 // begins the main loop
@@ -116,7 +122,10 @@ std::string Execute(const std::string & code, const std::string & name = "<Sandb
 
 // Loads a script file
 void Load(const std::string & path);
-    
+
+// generates an error from the calling script context.
+// Behavior is implementation dependent
+void ScriptError(const std::string & str);
 
 
 
@@ -137,11 +146,12 @@ void AddType  (int typeID,
 
 
 // A 2-way runtime object
+struct Object_Internal;
 class Object {
   public: 
     // Instantiates a new object of the given type
     Object(int typeID);
-    Object(NativeRef &);
+    Object(Object_Internal &);
     virtual ~Object();
     
     // creates a new object based on the current object's value.
@@ -163,7 +173,7 @@ class Object {
     // have restricted functionality.
     bool IsNative() const;
     
-    NativeRef * GetNative() {return data;}
+    Object_Internal * GetNative() {return data;}
     
     int GetTypeID() const;
 
@@ -179,12 +189,12 @@ class Object {
     uint32_t AddNonNativeReference(Object *);
 
     // Sets data associated with the object only retrievable 
-    // through GetNonNativeReference();
+    // through GetNonObject_Internalerence();
     // If the given object is native, no action is taken
     void UpdateNonNativeReference(Object *, uint32_t index = 0);
 
     // Sets data associated with the object only retrievable 
-    // through GetNonNativeReference();
+    // through GetNonObject_Internalerence();
     Object * GetNonNativeReference(uint32_t index = 0) const;
 
 
@@ -193,7 +203,7 @@ class Object {
 
         
   private:
-    NativeRef * data;
+    Object_Internal * data;
     
 };
 
