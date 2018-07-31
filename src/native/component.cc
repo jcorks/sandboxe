@@ -9,8 +9,8 @@ DynacoeEvent(Sandboxe::ComponentAdaptor::NativeHandler) {
 
 
 
-    printf("__NH_START| %s\n", 
-                 ((Sandboxe::Script::Runtime::Object*)functionData)->GetObjectName());
+    //printf("__NH_START| %s\n", 
+    //             ((Sandboxe::Script::Runtime::Object*)functionData)->GetObjectName());
     auto p = ((Sandboxe::Script::Runtime::Object*)functionData)->CallMethod(
       "", 
       {
@@ -19,7 +19,7 @@ DynacoeEvent(Sandboxe::ComponentAdaptor::NativeHandler) {
           sourceRef ? Script::Runtime::Primitive((Sandboxe::Script::Runtime::Object*)sourceRef) : Script::Runtime::Primitive(),
       }
     ); 
-    printf("__NH_END\n");
+    //printf("__NH_END\n");
     
     if (sourceRef) delete sourceRef;
     if (selfRef) delete selfRef;

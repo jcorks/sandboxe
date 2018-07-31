@@ -19,7 +19,7 @@ using Sandboxe::Script::Runtime::Object_Internal;
 
 struct SandboxeContextModel {
     v8::Persistent<v8::Context> context;
-    v8::TryCatch exceptionHandler;
+    v8::TryCatch * exceptionHandler;
     Object * contextObject;
     Dynacoe::Entity::ID terminal;
     std::map<std::string, Function> functions;
@@ -293,14 +293,14 @@ static v8::Handle<v8::Value> sandboxe_v8_native__accessor_get(v8::Local<v8::Stri
     Object_Internal * ref = (Object_Internal*) info.This()->GetPointerFromInternalField(0);
     Context context;
     std::string into = *v8::String::Utf8Value(name);
-    printf("E_AG (%u) %p %s\n", ITERP, ref->typeData->natives[*v8::String::Utf8Value(name)].first, into.c_str());
+    //printf("E_AG (%u) %p %s\n", ITERP, ref->typeData->natives[*v8::String::Utf8Value(name)].first, into.c_str());
     ref->typeData->natives[into].first(
         ref->parent,
         {},
         context
     );
-    printf("L_AG (%u) %p %s\n", ITERP++, ref->typeData->natives[*v8::String::Utf8Value(name)].first, into.c_str());
-    fflush(stdout);
+    //printf("L_AG (%u) %p %s\n", ITERP++, ref->typeData->natives[*v8::String::Utf8Value(name)].first, into.c_str());
+    //fflush(stdout);
     return sandboxe_context_get_return_value(context);
 }
 
@@ -313,14 +313,14 @@ static void sandboxe_v8_native__accessor_set(v8::Local<v8::String> name, v8::Loc
     
     arguments.push_back(v8_object_to_primitive(&per, context, 0));
     std::string into = *v8::String::Utf8Value(name);
-    printf("E_AS (%u) %p %s\n", ITERP, ref->typeData->natives[into].second, into.c_str());
+    //printf("E_AS (%u) %p %s\n", ITERP, ref->typeData->natives[into].second, into.c_str());
     ref->typeData->natives[into].second(
         ref->parent,
         arguments,
         context
     );
-    printf("L_AS (%u) %p %s\n", ITERP++, ref->typeData->natives[into].second, into.c_str());
-    fflush(stdout);
+    //printf("L_AS (%u) %p %s\n", ITERP++, ref->typeData->natives[into].second, into.c_str());
+    //fflush(stdout);
     
     per.Dispose();
 }
@@ -334,14 +334,14 @@ static v8::Handle<v8::Value> sandboxe_v8_native__invocation(const v8::Arguments 
 
         
     std::string into = *v8::String::Utf8Value(args.Callee()->GetName());
-    printf("E_NI (%u) %p %s\n", ITERP, ref->typeData->functions[into], into.c_str());
+    //printf("E_NI (%u) %p %s\n", ITERP, ref->typeData->functions[into], into.c_str());
     ref->typeData->functions[into](
         ref->parent,
         arguments,
         context
     );
-    printf("L_NI (%u)%p %s\n", ITERP++, ref->typeData->functions[into], into.c_str());
-    fflush(stdout);
+    //printf("L_NI (%u)%p %s\n", ITERP++, ref->typeData->functions[into], into.c_str());
+    //fflush(stdout);
 
 
     return sandboxe_context_get_return_value(context);
@@ -357,9 +357,9 @@ static v8::Handle<v8::Value> sandboxe_v8_native__global_incovation(const v8::Arg
     std::vector<Primitive> arguments = v8_arguments_to_sandboxe_primitive_array(args, context);
     
     // gather native objects if applicable
-    printf("E_GI (%u) %p\n", ITERP, f);
+    //printf("E_GI (%u) %p\n", ITERP, f);
     f(nullptr, arguments, context);
-    printf("L_GI (%u) %p\n", ITERP, f);
+    //printf("L_GI (%u) %p\n", ITERP, f);
     return sandboxe_context_get_return_value(context);
 
 
@@ -433,7 +433,7 @@ static v8::Handle<v8::Value> script_include(const v8::Arguments & args) {
     
     Dynacoe::AssetID id;
     if (Sandboxe::Trunk::ItemExists(*path)) {
-        Dynacoe::Console::Info() << "Loading " << *path << " from trunk\n";
+        //Dynacoe::Console::Info() << "Loading " << *path << " from trunk\n";
         id = Dynacoe::Assets::LoadFromBuffer(
             "", 
             *path, 
@@ -459,7 +459,7 @@ static v8::Handle<v8::Value> script_include(const v8::Arguments & args) {
         //delete[] rawStr;
         //return v8::ThrowException(v8::String::New((Dynacoe::Chain() << "File " << *path << " could not be accessed.\n").ToString().c_str()));
     
-    Sandboxe::Script::Runtime::CheckAndHandleErrors();
+
     
     delete[] rawStr;
     
@@ -511,7 +511,6 @@ void Sandboxe::Script::Runtime::Initialize() {
     //assert(!global->context.IsEmpty());
     global->context->Enter();
 
-    Dynacoe::Console::Info() << "v8 version " << v8::V8::GetVersion() << "\n";
     
 
     // innitialize dynacoe shell extension
@@ -531,6 +530,8 @@ std::string initialization_source =
 void Sandboxe::Script::Runtime::Start() {
     SANDBOXE_SCOPE;
     v8::Context::Scope scope(global->context);
+    v8::TryCatch exceptionHandler;
+    global->exceptionHandler = &exceptionHandler;
     Dynacoe::Engine::AttachManager(Dynacoe::Entity::Create<Sandboxe::GarbageCollector>());
 
     // finally, load in base logic for sandboxe bindings
@@ -584,7 +585,7 @@ std::string Sandboxe::Script::Runtime::Execute(const std::string & source, const
     }
     
     v8::String::Utf8Value resultStr(result);
-
+    Sandboxe::Script::Runtime::CheckAndHandleErrors();
     return std::string(*resultStr ? *resultStr : "<undefined>");
 }
 
@@ -821,9 +822,9 @@ Primitive Object::CallMethod(const std::string & str, const std::vector<Primitiv
     if (fn->IsUndefined()) return Primitive();
 
 
-    v8::String::Utf8Value fnName(fn->ToString());
-    printf("FUNCTION CALLMETHOD %s \n", *fnName);
-    fflush(stdout);
+    //v8::String::Utf8Value fnName(fn->ToString());
+    //printf("FUNCTION CALLMETHOD %s \n", *fnName);
+    //fflush(stdout);
 
     v8::Handle<v8::Value> result;
     if (args.size()) {
@@ -889,9 +890,9 @@ void Sandboxe::Script::Runtime::PerformGarbageCollection() {
 
 
 void Sandboxe::Script::Runtime::CheckAndHandleErrors() {
-    if (global->exceptionHandler.HasCaught()) {
-        script_exception_handler(&global->exceptionHandler);
-        global->exceptionHandler.Reset();
+    if (global->exceptionHandler->HasCaught()) {
+        script_exception_handler(global->exceptionHandler);
+        global->exceptionHandler->Reset();
     }
 }
 
