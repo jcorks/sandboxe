@@ -45,87 +45,43 @@ class StateControlObject : public Dynacoe::StateControl, public Sandboxe::Compon
     
   private:
     
-    struct StateLoopNative {
-        StateLoopNative() :
-            step(nullptr),
-            draw(nullptr),
-            init(nullptr){}
-            
-        Sandboxe::Script::Runtime::Object * step;
-        Sandboxe::Script::Runtime::Object * draw;
-        Sandboxe::Script::Runtime::Object * init;
-    };
-    std::vector<StateLoopNative*> loops;
+
+    std::vector<Sandboxe::Script::Runtime::Object *> loops;
     
     static DynacoeEvent(NativeHandler_Step) {
-        auto loop = (StateLoopNative*)functionData;
-        Sandboxe::Component::NativeHandler(
-            loop->step,
-            component,
-            self,
-            source, 
-            args
-        );
+        auto loop = (Sandboxe::Script::Runtime::Object *)functionData;
+        loop->CallMethod("onStep");
         return true;
     }
     
     
     static DynacoeEvent(NativeHandler_Draw) {
-        auto loop = (StateLoopNative*)functionData;
-        Sandboxe::Component::NativeHandler(
-            loop->draw,
-            component,
-            self,
-            source, 
-            args
-        );
+        auto loop = (Sandboxe::Script::Runtime::Object *)functionData;
+        loop->CallMethod("onDraw");
         return true;
     }
 
     
     static DynacoeEvent(NativeHandler_Init) {
-        auto loop = (StateLoopNative*)functionData;
-        Sandboxe::Component::NativeHandler(
-            loop->init,
-            component,
-            self,
-            source, 
-            args
-        );
+        auto loop = (Sandboxe::Script::Runtime::Object *)functionData;
+        loop->CallMethod("onInit");
         return true;
     }
   public:
     void CreateStateNonNative(
       const Sandboxe::Script::Runtime::Primitive & tag,
-      const std::vector<Sandboxe::Script::Runtime::Primitive> & fns
+      const Sandboxe::Script::Runtime::Primitive & fnBlock
     ) {
-        StateLoopNative * loop = new StateLoopNative();
-        loops.push_back(loop);
-        
-        auto step = fns.size() >= 1 ? fns[0] : Sandboxe::Script::Runtime::Primitive();
-        auto draw = fns.size() >= 2 ? fns[1] : Sandboxe::Script::Runtime::Primitive();
-        auto init = fns.size() >= 3 ? fns[2] : Sandboxe::Script::Runtime::Primitive();
-        
-        if (step.IsDefined()) {
-            AddNonNativeReference(step);
-        }
-        if (draw.IsDefined()) {
-            AddNonNativeReference(draw);
-        }
-        if (init.IsDefined()) {
-            AddNonNativeReference(init);
-        }
-        
-        
-        loop->step = step;
-        loop->draw = draw;
-        loop->init = init;
-        
+        Sandboxe::Script::Runtime::Object * obj = fnBlock;
+        loops.push_back(obj);
+
+        AddNonNativeReference(obj);        
+                
         Dynacoe::StateControl::StateLoop loopReal;
-        loopReal.Step = step.IsDefined() ? NativeHandler_Step : nullptr;
-        loopReal.Draw = draw.IsDefined() ? NativeHandler_Draw : nullptr;
-        loopReal.Init = init.IsDefined() ? NativeHandler_Init : nullptr;
-        loopReal.data = loop;
+        loopReal.Step = NativeHandler_Step;
+        loopReal.Draw = NativeHandler_Draw;
+        loopReal.Init = NativeHandler_Init;
+        loopReal.data = obj;
         
         
         

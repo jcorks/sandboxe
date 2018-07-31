@@ -20,11 +20,9 @@ namespace Bindings {
 // member functions 
 SANDBOXE_NATIVE_DEF(__state_control_create_state) {
     SANDBOXE_ASSERT__ARG_COUNT(2);
+    SANDBOXE_ASSERT__ARG_TYPE(1, ObjectReferenceNonNativeT);    
     auto state = (Sandboxe::StateControlObject*)source;
-    auto stateLoop = context.GetArrayArgument(1);
-    if (!stateLoop) return;
-    
-    state->CreateStateNonNative(arguments[0], *stateLoop);    
+    state->CreateStateNonNative(arguments[0], arguments[1]);    
 }
 
 SANDBOXE_NATIVE_DEF(__state_control_remove_state) {

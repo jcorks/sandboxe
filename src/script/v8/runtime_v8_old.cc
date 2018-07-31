@@ -237,17 +237,18 @@ static Primitive v8_object_to_primitive(const v8::Persistent<v8::Value> * source
                     (Object_Internal*)object->GetPointerFromInternalField(0)
                 )->parent;
             
-        } else if (object->IsFunction()) { //<- non-native object
+        } else if (object->IsString()) { //<- non-native object
+            return *v8::String::Utf8Value(object) ? Primitive(std::string(*v8::String::Utf8Value(object))) : Primitive();
 
-            return sandboxe_object_reference_temporary_from_v8_value(object);
             
         } else if (object->IsArray()) {
             // blank for the slot in the normal argument input.
             // user functions need to know to check the array argument if they want an array.
             context.SetArrayArgument(argIndex, v8_array_to_sandboxe_primitive_array(object));
             return Primitive();
-        } else {    
-            return *v8::String::Utf8Value(object) ? Primitive(std::string(*v8::String::Utf8Value(object))) : Primitive();
+        } else {
+            return sandboxe_object_reference_temporary_from_v8_value(object);
+    
         }
     } else {
         return *v8::String::Utf8Value(*source) ? Primitive(std::string(*v8::String::Utf8Value(*source))) : Primitive();

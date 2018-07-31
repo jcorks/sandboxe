@@ -35,7 +35,7 @@ function stateControl() {
      * 
      *
      * @param {String} name Name of the state.
-     * @param {Array} functions An array of functions. The first function is the step state function, called when step()ing and within this state. Next is the draw function, called for each draw() in this state. Third and last is the init function, called when first entering this state.
+     * @param {Object} stateLoop An container of functions. If defined, the onStep() function will be called called when step()ing and within this state. Next, if onDraw() is defined, it will be called for each draw() in this state. Finally if the onInit() function is defined, it will be called when first entering this state.
      */
     this.createState = function(){};
 
