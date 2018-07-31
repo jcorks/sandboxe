@@ -19,8 +19,9 @@ function mutator() {
 
     /**
      * Removes all mutations.
+     * @param {Number} startValue The value to start the mutator at before mutations take place.
      */
-    this.clear = function(){};
+    this.clear = function(startValue){};
 
     /**
      * Adds a new mutation.

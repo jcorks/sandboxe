@@ -153,7 +153,7 @@ void dynacoe_text2d(std::vector<std::pair<std::string, Sandboxe::Script::Runtime
         (int)Sandboxe::NativeType::Text2DT,
         {
             {"getCharPosition", __text2d_get_char_position},
-            {"getDimensions", __text2d_get_char_position},
+            {"getDimensions", __text2d_get_dimensions},
 
             
             ////////////////////////////////////////////////////////
