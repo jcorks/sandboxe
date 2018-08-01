@@ -245,7 +245,7 @@ static Primitive v8_object_to_primitive(const v8::Persistent<v8::Value> * source
             // blank for the slot in the normal argument input.
             // user functions need to know to check the array argument if they want an array.
             context.SetArrayArgument(argIndex, v8_array_to_sandboxe_primitive_array(object));
-            return Primitive();
+            return sandboxe_object_reference_temporary_from_v8_value(object);
         } else {
             return sandboxe_object_reference_temporary_from_v8_value(object);
     
@@ -329,12 +329,13 @@ static void sandboxe_v8_native__accessor_set(v8::Local<v8::String> name, v8::Loc
 static v8::Handle<v8::Value> sandboxe_v8_native__invocation(const v8::Arguments & args) {
     // arguments should have reference to original object;
     //SANDBOXE_SCOPE;
+    std::string into = *v8::String::Utf8Value(args.Callee()->GetName());
     Object_Internal * ref = (Object_Internal*) args.Holder()->GetPointerFromInternalField(0);
     Context context;
     std::vector<Primitive> arguments = v8_arguments_to_sandboxe_primitive_array(args, context);
 
         
-    std::string into = *v8::String::Utf8Value(args.Callee()->GetName());
+
     //printf("E_NI (%u) %p %s\n", ITERP, ref->typeData->functions[into], into.c_str());
     ref->typeData->functions[into](
         ref->parent,
