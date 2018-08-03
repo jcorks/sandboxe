@@ -4,6 +4,7 @@
 #include <Dynacoe/Library.h>
 #include <Dynacoe/RawData.h>
 #include <sandboxe/trunk.h>
+#include <stack>
 #include <cassert>
 #include <v8.h>
 #include <sandboxe/bindings/all.hpp>
@@ -17,13 +18,18 @@ using Sandboxe::Script::Runtime::Object_Internal;
 
 
 
+class ObjectHeap;
 struct SandboxeContextModel {
     v8::Persistent<v8::Context> context;
+    ObjectHeap * storage;
     v8::TryCatch * exceptionHandler;
     Object * contextObject;
     Dynacoe::Entity::ID terminal;
     std::map<std::string, Function> functions;
+
 };
+
+
 
 
 // stored type information for objects
@@ -44,8 +50,6 @@ struct Type {
 
 // Native reference to a Runtime::Object
 struct Object_Internal {
-    // v8 handle representing this object.
-    v8::Persistent<v8::Object> reference;
     
     // Pointer to the type of this object
     Type * typeData;
@@ -60,8 +64,23 @@ struct Object_Internal {
     // nonNative objects set with SetNonNativeReference
     std::vector<Object *> nonNatives;
 
+    // where the v8 object is hld in the global container
+    uint32_t heapAddress;
+
+    //observes when to cleanup the model. Is empty until forced to be weak
+    v8::Persistent<v8::Value> cleanupHandle;
+
+
+
+    // gets the v8 object for this object
+    v8::Handle<v8::Value> GetV8Object();
     
+    // force the obejct to be native so that it wont be cleaned up as a temporary value
     void ForceNative();
+
+    // removes all sandboxe hard-references to the object so that the garbage 
+    // collector may clean it
+    void ForceWeak();
 };
 
 
@@ -80,6 +99,53 @@ std::vector<Object*> temporary;
 
 // Table of all types. 
 std::vector<Type *> types;
+
+
+
+
+class ObjectHeap {
+  public:
+    ObjectHeap() {
+        heap = v8::Persistent<v8::Object>::New(v8::Object::New());
+        heap.MarkIndependent();
+        global->context->Global()->Set(v8::String::New("SANDBOXE_ObjectHeap"), heap, v8::PropertyAttribute::DontDelete);
+        index = 1;
+
+        
+    }
+
+    uint32_t Add(v8::Handle<v8::Value> val) {
+        uint32_t next;
+        if (dead.empty()) {
+            next = index++;
+        } else {
+            next = dead.top(); dead.pop();
+        }
+        heap->Set(next, val);
+        return next;
+    }
+
+    void Remove(uint32_t i) {
+        heap->Set(i, v8::Null());
+        dead.push(i);
+    }
+
+    v8::Handle<v8::Value> Get(uint32_t i) {
+        if (i == 0) return v8::Null();
+        return heap->Get(i);
+    }
+
+    uint32_t GetSize() const {
+        return index - dead.size();
+    }
+
+  private:
+    uint32_t index;
+    std::stack<uint32_t> dead;
+    v8::Persistent<v8::Object> heap;
+};
+
+
 
 
 
@@ -177,8 +243,8 @@ static v8::Handle<v8::Value> sandboxe_primitive_to_v8_value(const Primitive & p)
       case Primitive::TypeHint::DoubleT:  return v8::Number::New(p);
       case Primitive::TypeHint::UInt32T:  return v8::Uint32::New(p);
       case Primitive::TypeHint::UInt64T:  return v8::Number::New(p);
-      case Primitive::TypeHint::ObjectReferenceT:  return ((Object*)p)->GetNative()->reference;
-      case Primitive::TypeHint::ObjectReferenceNonNativeT:  return ((Object*)p)->GetNative()->reference;
+      case Primitive::TypeHint::ObjectReferenceT:  return ((Object*)p)->GetNative()->GetV8Object();
+      case Primitive::TypeHint::ObjectReferenceNonNativeT:  return ((Object*)p)->GetNative()->GetV8Object();
       default:;
     }
     return v8::String::New(std::string(p).c_str());
@@ -189,9 +255,9 @@ static Object * sandboxe_object_reference_temporary_from_v8_value(const v8::Hand
     ref->isNative = false;
     ref->typeData = nullptr;
     ref->parent = nullptr;
-    ref->reference = v8::Persistent<v8::Object>::New(val->ToObject());
-    ref->reference.MarkIndependent();
-    
+    ref->heapAddress = global->storage->Add(val);    
+    global->storage->Get(ref->heapAddress)->ToObject()->SetPointerInInternalField(0, ref);
+
     Object * temp = new Object(*ref);
 
     // gets cleaned up next cycle
@@ -277,7 +343,7 @@ static v8::Handle<v8::Value> sandboxe_context_get_return_value(const Context & c
         }
         return array;
     } else if (context.GetReturnValue().hint == Primitive::TypeHint::ObjectReferenceT) {
-        return ((Object*)context.GetReturnValue())->GetNative()->reference;
+        return ((Object*)context.GetReturnValue())->GetNative()->GetV8Object();
     }
     return sandboxe_primitive_to_v8_value(context.GetReturnValue());
     
@@ -513,7 +579,9 @@ void Sandboxe::Script::Runtime::Initialize() {
     //assert(!global->context.IsEmpty());
     global->context->Enter();
 
-    
+
+    // setup global storage unit
+    global->storage = new ObjectHeap();    
 
     // innitialize dynacoe shell extension
     Sandboxe::Script::Shell::Initialize();
@@ -690,17 +758,13 @@ Object::Object(int typeID) {
     obj->SetPointerInInternalField(0, data);
 
     //objects.push_back(data);
-    data->reference = v8::Persistent<v8::Object>::New(obj);
-    //data->reference.MakeWeak(data, sandboxe_v8_object_garbage_collect);
+    data->heapAddress = global->storage->Add(obj);
 }
 
 
 // non-native object
 Object::Object(Object_Internal & inData) {
     data = &inData;
-    // set a ref to the type info
-    data->reference->SetPointerInInternalField(0, data);
-    data->typeData = nullptr;
 }
 
 
@@ -712,11 +776,12 @@ Object::~Object() {
 }
 
 Primitive Object::Get(const std::string & name) {
-    if (data->reference.IsEmpty()) {
+    v8::Handle<v8::Object> src = GetNative()->GetV8Object()->ToObject();
+    if (src.IsEmpty()) {
         v8::ThrowException(v8::String::New("sandboxe script object: Get() failed; reference is dead"));
         return Primitive();
     }
-    v8::Handle<v8::Value> obj = data->reference->Get(v8::String::New(name.c_str()));
+    v8::Handle<v8::Value> obj = src->Get(v8::String::New(name.c_str()));
     if (obj->IsObject() && (obj->IsFunction() || obj->IsArray())) {
         return sandboxe_object_reference_temporary_from_v8_value(obj);
     }
@@ -725,10 +790,11 @@ Primitive Object::Get(const std::string & name) {
 }
 
 void Object::Set(const std::string & name, const Primitive & d) {
-    if (data->reference.IsEmpty()) {
+    v8::Handle<v8::Object> obj = GetNative()->GetV8Object()->ToObject();
+    if (obj.IsEmpty()) {
          v8::ThrowException(v8::String::New("sandboxe script object: Set() failed; reference is dead"));
     }
-    data->reference->Set(
+    obj->Set(
         v8::String::New(name.c_str()),
         sandboxe_primitive_to_v8_value(d)
             
@@ -741,21 +807,28 @@ void Object_Internal::ForceNative() {
     assert(!isNative);
     if (!isNative) {
 
-        v8::Handle<v8::Object> obj = reference; // non-native data
+        //v8::Handle<v8::Object> obj = reference; // non-native data
+
+        global->storage->Get(heapAddress)->ToObject()->SetPointerInInternalField(0, this);
 
         // transform into native reference
         isNative = true;
         typeData = nullptr;
 
-
-        //objects.push_back(data);
-        reference = v8::Persistent<v8::Object>::New(obj);
-        // set a ref to the type info
-        reference->SetPointerInInternalField(0, this);
-        //reference.MakeWeak(this, sandboxe_v8_object_garbage_collect);
-        reference.MarkIndependent();
         std::cout << this << "is now native" << std::endl;
     }
+}
+
+void Object_Internal::ForceWeak() {    
+    cleanupHandle = v8::Persistent<v8::Value>::New(global->storage->Get(heapAddress));
+    cleanupHandle.MakeWeak(this, sandboxe_v8_object_garbage_collect);
+    global->storage->Remove(heapAddress);
+    heapAddress = 0;
+    printf("%p is now ready for garbage collection\n", this);
+}
+
+v8::Handle<v8::Value> Object_Internal::GetV8Object() {
+    return global->storage->Get(heapAddress); 
 }
 
 
@@ -802,20 +875,20 @@ Object * Object::GetNonNativeReference(uint32_t index) const {
 
 Primitive Object::CallMethod(const std::string & str, const std::vector<Primitive> & args) {
     v8::HandleScope scope;
-    v8::Persistent<v8::Object> fn;
-    
+    v8::Handle<v8::Object> fn;
+    v8::Handle<v8::Object> thisv8 = global->storage->Get(data->heapAddress)->ToObject();   
  
 
     if (str.size()) {
-        v8::Handle<v8::Value> pre = data->reference->Get(v8::String::New(str.c_str()));
+        v8::Handle<v8::Value> pre = thisv8->ToObject()->Get(v8::String::New(str.c_str()));
         if (!(!pre.IsEmpty() && pre->IsObject())) {
             // throw error?
             return Primitive();
         }
-        fn = v8::Persistent<v8::Object>::New(pre->ToObject());
+        fn = pre->ToObject();
 
     } else {
-        fn = v8::Persistent<v8::Object>::New(data->reference->ToObject());
+        fn = thisv8->ToObject();
     }
     
     if (!fn->IsCallable() || fn.IsEmpty()) {
@@ -836,13 +909,13 @@ Primitive Object::CallMethod(const std::string & str, const std::vector<Primitiv
         }
         
         result = fn->CallAsFunction(
-            data->reference,
+            thisv8,
             args.size(),
             &args_conv[0]
         );
     } else {
         result = fn->CallAsFunction(
-            data->reference,
+            thisv8,
             0,
             nullptr
         );
@@ -878,15 +951,13 @@ void Sandboxe::Script::Runtime::PerformGarbageCollection() {
         if (!temporary[i]) continue;
         
         // making weak 
-        //temporary[i]->GetNative()->reference.MakeWeak(temporary[i]->GetNative(), sandboxe_v8_object_garbage_collect);
+        temporary[i]->GetNative()->ForceWeak();
         temporary[i] = nullptr;
+        
     }
     temporary.clear();
 
     
-    // TODO:
-    // cleanup schemes
-    // reorganizations
 
 }
 
