@@ -10,6 +10,7 @@
 #include <sandboxe/bindings/all.hpp>
 #include <map>
 
+
 using Sandboxe::Script::Runtime::Function;
 using Sandboxe::Script::Runtime::Object;
 using Sandboxe::Script::Runtime::Primitive;
@@ -68,12 +69,12 @@ struct Object_Internal {
     uint32_t heapAddress;
 
     //observes when to cleanup the model. Is empty until forced to be weak
-    v8::Persistent<v8::Value> cleanupHandle;
+    //v8::Persistent<v8::Value> cleanupHandle;
 
 
 
     // gets the v8 object for this object
-    v8::Handle<v8::Value> GetV8Object();
+    v8::Local<v8::Value> GetV8Object();
     
     // force the obejct to be native so that it wont be cleaned up as a temporary value
     void ForceNative();
@@ -81,13 +82,15 @@ struct Object_Internal {
     // removes all sandboxe hard-references to the object so that the garbage 
     // collector may clean it
     void ForceWeak();
+    
+    static std::vector<Object*> temporary;
 };
 
+std::vector<Object*> Object_Internal::temporary;
 
 
 
 // Define to specific where scopes start and end
-#define SANDBOXE_SCOPE v8::HandleScope v8_handleScope
 
 
 static SandboxeContextModel * global = nullptr;
@@ -95,55 +98,16 @@ static SandboxeContextModel * global = nullptr;
 // Table of all objects. Since v8 doesnt seem to send events for object cleanup,
 // this has to be cleaned out every now and then
 std::vector<Object_Internal*> objects;
-std::vector<Object*> temporary;
+
 
 // Table of all types. 
 std::vector<Type *> types;
 
 
 
+#include "runtime_v8_object_heap.hpp"
 
-class ObjectHeap {
-  public:
-    ObjectHeap() {
-        heap = v8::Persistent<v8::Object>::New(v8::Object::New());
-        heap.MarkIndependent();
-        global->context->Global()->Set(v8::String::New("SANDBOXE_ObjectHeap"), heap, v8::PropertyAttribute::DontDelete);
-        index = 1;
 
-        
-    }
-
-    uint32_t Add(v8::Handle<v8::Value> val) {
-        uint32_t next;
-        if (dead.empty()) {
-            next = index++;
-        } else {
-            next = dead.top(); dead.pop();
-        }
-        heap->Set(next, val);
-        return next;
-    }
-
-    void Remove(uint32_t i) {
-        heap->Set(i, v8::Null());
-        dead.push(i);
-    }
-
-    v8::Handle<v8::Value> Get(uint32_t i) {
-        if (i == 0) return v8::Null();
-        return heap->Get(i);
-    }
-
-    uint32_t GetSize() const {
-        return index - dead.size();
-    }
-
-  private:
-    uint32_t index;
-    std::stack<uint32_t> dead;
-    v8::Persistent<v8::Object> heap;
-};
 
 
 
@@ -152,6 +116,18 @@ class ObjectHeap {
 //////////////////////////////////////
 /// Native helpers
 /////////////////////////////////
+
+static std::string v8_to_string(v8::Local<v8::Value> o) {
+    v8::String::Utf8Value str(o);
+    return *str;
+}
+
+static std::string v8_to_string(v8::Local<v8::Object> o) {
+    v8::String::Utf8Value str(o);
+    return *str;
+}
+
+
 // reports exceptions 
 static void script_exception_handler(v8::TryCatch * tcatch) {
     v8::HandleScope scopeMonitor;
@@ -234,118 +210,44 @@ static void script_exception_handler(v8::TryCatch * tcatch) {
 }
 
 
-static v8::Handle<v8::Value> sandboxe_primitive_to_v8_value(const Primitive & p) {
-    if (!p.IsDefined()) return v8::Undefined();
+static v8::Local<v8::Value> sandboxe_primitive_to_v8_value(const Primitive & p) {
+    v8::HandleScope scope;
+    if (!p.IsDefined()) return scope.Close(v8::Local<v8::Value>::New(v8::Undefined()));
     switch(p.hint) {
-      case Primitive::TypeHint::BooleanT: return v8::Boolean::New(p);
-      case Primitive::TypeHint::IntegerT: return v8::Integer::New(p);
+      case Primitive::TypeHint::BooleanT: return scope.Close(v8::Boolean::New(p));
+      case Primitive::TypeHint::IntegerT: return scope.Close(v8::Integer::New(p));
       case Primitive::TypeHint::FloatT:   
-      case Primitive::TypeHint::DoubleT:  return v8::Number::New(p);
-      case Primitive::TypeHint::UInt32T:  return v8::Uint32::New(p);
-      case Primitive::TypeHint::UInt64T:  return v8::Number::New(p);
-      case Primitive::TypeHint::ObjectReferenceT:  return ((Object*)p)->GetNative()->GetV8Object();
-      case Primitive::TypeHint::ObjectReferenceNonNativeT:  return ((Object*)p)->GetNative()->GetV8Object();
+      case Primitive::TypeHint::DoubleT:  return scope.Close(v8::Number::New(p));
+      case Primitive::TypeHint::UInt32T:  return scope.Close(v8::Uint32::New(p));
+      case Primitive::TypeHint::UInt64T:  return scope.Close(v8::Number::New(p));
+      case Primitive::TypeHint::ObjectReferenceT:  return scope.Close(((Object*)p)->GetNative()->GetV8Object());
+      case Primitive::TypeHint::ObjectReferenceNonNativeT:  return scope.Close(((Object*)p)->GetNative()->GetV8Object());
       default:;
     }
     return v8::String::New(std::string(p).c_str());
 }
 
-static Object * sandboxe_object_reference_temporary_from_v8_value(const v8::Handle<v8::Value> & val) {
-    Object_Internal * ref = new Object_Internal;
-    ref->isNative = false;
-    ref->typeData = nullptr;
-    ref->parent = nullptr;
-    ref->heapAddress = global->storage->Add(val);    
-    global->storage->Get(ref->heapAddress)->ToObject()->SetPointerInInternalField(0, ref);
-
-    Object * temp = new Object(*ref);
-
-    // gets cleaned up next cycle
-    temporary.push_back(temp);
-    return temp;
-}
-
-static std::vector<Primitive> v8_array_to_sandboxe_primitive_array(v8::Handle<v8::Object> array) {
-    std::vector<Primitive> arguments;
-    uint32_t len = v8::Array::Cast(*array)->Length();
-    for(uint32_t i = 0; i < len; ++i) {
-        auto item = array->Get(i);
-        // collect native objects 
-        if (item->IsObject()) {
-            v8::Handle<v8::Object> object = item->ToObject();
-            if (object->InternalFieldCount()) { //< - Native object
-                arguments.push_back(
-                    (
-                        (Object_Internal*)object->GetPointerFromInternalField(0)
-                    )->parent
-                );            
-            } else if (item->IsFunction()) { //<- non-native object
-
-                arguments.push_back(sandboxe_object_reference_temporary_from_v8_value(item));
-                
-            } else {
-                arguments.push_back(*v8::String::Utf8Value(item) ? Primitive(std::string(*v8::String::Utf8Value(item))) : Primitive());
-            }
-        } else {
-            arguments.push_back(*v8::String::Utf8Value(item) ? Primitive(std::string(*v8::String::Utf8Value(item))) : Primitive());
-        }
-    }
-    return arguments;
-}
-
-static Primitive v8_object_to_primitive(const v8::Persistent<v8::Value> * source, Sandboxe::Script::Runtime::Context & context, uint32_t argIndex) {
-    // collect native objects 
-    if ((*source)->IsObject()) {
-        v8::Handle<v8::Object> object = (*source)->ToObject()->Clone();
-        if (object->InternalFieldCount()) { //< - Native object
-            return
-                (
-                    (Object_Internal*)object->GetPointerFromInternalField(0)
-                )->parent;
-            
-        } else if (object->IsString()) { //<- non-native object
-            return *v8::String::Utf8Value(object) ? Primitive(std::string(*v8::String::Utf8Value(object))) : Primitive();
-
-            
-        } else if (object->IsArray()) {
-            // blank for the slot in the normal argument input.
-            // user functions need to know to check the array argument if they want an array.
-            context.SetArrayArgument(argIndex, v8_array_to_sandboxe_primitive_array(object));
-            return sandboxe_object_reference_temporary_from_v8_value(object);
-        } else {
-            return sandboxe_object_reference_temporary_from_v8_value(object);
-    
-        }
-    } else {
-        return *v8::String::Utf8Value(*source) ? Primitive(std::string(*v8::String::Utf8Value(*source))) : Primitive();
-    }
-}
-
-static std::vector<Primitive> v8_arguments_to_sandboxe_primitive_array(const v8::Arguments & args, Sandboxe::Script::Runtime::Context & context) {
-    std::vector<Primitive> arguments;
-    for(uint32_t i = 0; i < args.Length(); ++i) {
-        v8::Persistent<v8::Value> per = v8::Persistent<v8::Value>::New(args[i]);
-        arguments.push_back(v8_object_to_primitive(&per, context, i));
-        per.Dispose();
-    }
-    return arguments;
-}
 
 
-static v8::Handle<v8::Value> sandboxe_context_get_return_value(const Context & context) {
+
+
+
+
+static v8::Local<v8::Value> sandboxe_context_get_return_value(const Context & context) {
+    v8::HandleScope scope;
     // if the native call wants to return a new scripting object, do so
     if (context.ReturnsArray()) {
         auto outputArray = context.GetReturnArray();
         /// ARRAY PLS
-        v8::Handle<v8::Array> array = v8::Array::New(outputArray.size());
+        v8::Local<v8::Array> array = v8::Array::New(outputArray.size());
         for(uint32_t i = 0; i < outputArray.size(); ++i) {
             array->Set(i, sandboxe_primitive_to_v8_value(outputArray[i]));
         }
-        return array;
+        return scope.Close(array);
     } else if (context.GetReturnValue().hint == Primitive::TypeHint::ObjectReferenceT) {
-        return ((Object*)context.GetReturnValue())->GetNative()->GetV8Object();
+        return scope.Close(((Object*)context.GetReturnValue())->GetNative()->GetV8Object());
     }
-    return sandboxe_primitive_to_v8_value(context.GetReturnValue());
+    return scope.Close(sandboxe_primitive_to_v8_value(context.GetReturnValue()));
     
 }
 
@@ -356,7 +258,7 @@ uint32_t ITERP = 0;
 
 
 static v8::Handle<v8::Value> sandboxe_v8_native__accessor_get(v8::Local<v8::String> name, const v8::AccessorInfo & info) {
-    //SANDBOXE_SCOPE;
+    v8::HandleScope v8_handleScope;
     Object_Internal * ref = (Object_Internal*) info.This()->GetPointerFromInternalField(0);
     Context context;
     std::string into = *v8::String::Utf8Value(name);
@@ -368,17 +270,24 @@ static v8::Handle<v8::Value> sandboxe_v8_native__accessor_get(v8::Local<v8::Stri
     );
     //printf("L_AG (%u) %p %s\n", ITERP++, ref->typeData->natives[*v8::String::Utf8Value(name)].first, into.c_str());
     //fflush(stdout);
-    return sandboxe_context_get_return_value(context);
+    //printf("%d handles closed\n", v8_handleScope.NumberOfHandles());
+
+    return v8_handleScope.Close(sandboxe_context_get_return_value(context));
 }
 
 static void sandboxe_v8_native__accessor_set(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo & info) {
-    //SANDBOXE_SCOPE;
+    v8::HandleScope v8_handleScope;
     Object_Internal * ref = (Object_Internal*) info.This()->GetPointerFromInternalField(0);
     std::vector<Primitive> arguments;
     Context context;
-    v8::Persistent<v8::Value> per = v8::Persistent<v8::Value>::New(value);
+
+    uint32_t temp = global->storage->Add(value);
+    arguments.push_back(global->storage->GetAsPrimitive(temp));
+    if (global->storage->Get(temp)->IsArray()) {
+        context.SetArrayArgument(0, global->storage->GetAsPrimitiveArray(temp));
+
+    }
     
-    arguments.push_back(v8_object_to_primitive(&per, context, 0));
     std::string into = *v8::String::Utf8Value(name);
     //printf("E_AS (%u) %p %s\n", ITERP, ref->typeData->natives[into].second, into.c_str());
     ref->typeData->natives[into].second(
@@ -386,20 +295,38 @@ static void sandboxe_v8_native__accessor_set(v8::Local<v8::String> name, v8::Loc
         arguments,
         context
     );
+    
+    global->storage->Remove(temp);
     //printf("L_AS (%u) %p %s\n", ITERP++, ref->typeData->natives[into].second, into.c_str());
     //fflush(stdout);
-    
-    per.Dispose();
-}
+    //printf("%d handles closed\n", v8_handleScope.NumberOfHandles());
 
+}
+static v8::Local<v8::Value> tRef;
 static v8::Handle<v8::Value> sandboxe_v8_native__invocation(const v8::Arguments & args) {
     // arguments should have reference to original object;
-    //SANDBOXE_SCOPE;
+    static uint32_t p = 0;
+    p++;
+    if (p == 151) {
+        printf("here\n");
+    }
+    v8::HandleScope v8_handleScope;
+    
+    auto objects = global->storage->PushArguments(args);
+    
     std::string into = *v8::String::Utf8Value(args.Callee()->GetName());
     Object_Internal * ref = (Object_Internal*) args.Holder()->GetPointerFromInternalField(0);
     Context context;
-    std::vector<Primitive> arguments = v8_arguments_to_sandboxe_primitive_array(args, context);
 
+    std::vector<Sandboxe::Script::Runtime::Primitive> arguments;
+    for(uint32_t i = 0; i < objects.size(); ++i) {
+        auto prim = global->storage->GetAsPrimitive(objects[i]);
+        // set array if applicable
+        if (global->storage->Get(objects[i])->IsArray()) {
+            context.SetArrayArgument(i,global->storage->GetAsPrimitiveArray(objects[i]));
+        }
+        arguments.push_back(prim);
+    }
         
 
     //printf("E_NI (%u) %p %s\n", ITERP, ref->typeData->functions[into], into.c_str());
@@ -410,25 +337,40 @@ static v8::Handle<v8::Value> sandboxe_v8_native__invocation(const v8::Arguments 
     );
     //printf("L_NI (%u)%p %s\n", ITERP++, ref->typeData->functions[into], into.c_str());
     //fflush(stdout);
+    global->storage->PopArguments(objects);
 
-
-    return sandboxe_context_get_return_value(context);
+    //printf("%d handles closed\n", v8_handleScope.NumberOfHandles());
+    return v8_handleScope.Close(sandboxe_context_get_return_value(context));
 
 }
 
 // globals functions defined at initialization
 static v8::Handle<v8::Value> sandboxe_v8_native__global_incovation(const v8::Arguments & args) {
-    SANDBOXE_SCOPE;
+    v8::HandleScope v8_handleScope;
+    auto objects = global->storage->PushArguments(args);
+    
     Function f = (Function)(Dynacoe::Chain() << *v8::String::Utf8Value(args.Data())).AsUInt64();
 
     Sandboxe::Script::Runtime::Context context;
-    std::vector<Primitive> arguments = v8_arguments_to_sandboxe_primitive_array(args, context);
+    std::vector<Sandboxe::Script::Runtime::Primitive> arguments;
+    for(uint32_t i = 0; i < objects.size(); ++i) {
+        auto prim = global->storage->GetAsPrimitive(objects[i]);
+        // set array if applicable
+        if (global->storage->Get(objects[i])->IsArray()) {
+            context.SetArrayArgument(i, global->storage->GetAsPrimitiveArray(objects[i]));
+        }
+
+        arguments.push_back(prim);
+    }
     
     // gather native objects if applicable
     //printf("E_GI (%u) %p\n", ITERP, f);
     f(nullptr, arguments, context);
     //printf("L_GI (%u) %p\n", ITERP, f);
-    return sandboxe_context_get_return_value(context);
+    
+    global->storage->PopArguments(objects);
+    //printf("%d handles closed\n", v8_handleScope.NumberOfHandles());
+    return v8_handleScope.Close(sandboxe_context_get_return_value(context));
 
 
 
@@ -579,16 +521,9 @@ void Sandboxe::Script::Runtime::Initialize() {
     //assert(!global->context.IsEmpty());
     global->context->Enter();
 
+  
 
-    // setup global storage unit
-    global->storage = new ObjectHeap();    
 
-    // innitialize dynacoe shell extension
-    Sandboxe::Script::Shell::Initialize();
-    
-
-    Sandboxe::Script::ApplyPostBindings();
-    
     
 }
 
@@ -598,10 +533,22 @@ std::string initialization_source =
 ;
 #include <sandboxe/script/garbageCollector.h>
 void Sandboxe::Script::Runtime::Start() {
-    SANDBOXE_SCOPE;
+    v8::HandleScope v8_handleScope;
     v8::Context::Scope scope(global->context);
     v8::TryCatch exceptionHandler;
     global->exceptionHandler = &exceptionHandler;
+
+    ObjectHeap storageBase(global->context);
+    // setup global storage unit
+    global->storage = &storageBase;  
+
+    // innitialize dynacoe shell extension
+    Sandboxe::Script::Shell::Initialize();
+    
+
+    Sandboxe::Script::ApplyPostBindings();
+    
+
     Dynacoe::Engine::AttachManager(Dynacoe::Entity::Create<Sandboxe::GarbageCollector>());
 
     // finally, load in base logic for sandboxe bindings
@@ -637,7 +584,7 @@ void Sandboxe::Script::Runtime::Start() {
 }
 
 std::string Sandboxe::Script::Runtime::Execute(const std::string & source, const std::string & name) {
-    //v8::HandleScope scopeMonitor;
+    v8::HandleScope scopeMonitor;
     v8::Handle<v8::String> sourceHandle = v8::String::New(source.c_str());
     v8::Handle<v8::String> nameHandle = v8::String::New(name.c_str());
 
@@ -690,7 +637,7 @@ void Sandboxe::Script::Runtime::AddType(int typeID,
         types.push_back(nullptr);
     }
     
-    SANDBOXE_SCOPE;
+    v8::HandleScope v8_handleScope;
 
     Type * data = new Type;
     data->self = v8::Persistent<v8::ObjectTemplate>::New(v8::ObjectTemplate::New());
@@ -770,27 +717,27 @@ Object::Object(Object_Internal & inData) {
 
 Object::~Object() {
     for(uint32_t i = 0; i < data->nonNatives.size(); ++i) {
-        temporary.push_back(data->nonNatives[i]);
+        Object_Internal::temporary.push_back(data->nonNatives[i]);
     }
     delete data;
 }
 
 Primitive Object::Get(const std::string & name) {
-    v8::Handle<v8::Object> src = GetNative()->GetV8Object()->ToObject();
+    v8::HandleScope scope;
+    v8::Local<v8::Object> src = GetNative()->GetV8Object()->ToObject();
     if (src.IsEmpty()) {
         v8::ThrowException(v8::String::New("sandboxe script object: Get() failed; reference is dead"));
         return Primitive();
     }
     v8::Handle<v8::Value> obj = src->Get(v8::String::New(name.c_str()));
-    if (obj->IsObject() && (obj->IsFunction() || obj->IsArray())) {
-        return sandboxe_object_reference_temporary_from_v8_value(obj);
-    }
-    v8::String::Utf8Value value(obj);
-    return (*value ? Primitive(std::string(*value)) : Primitive());
+    uint32_t temp = global->storage->Add(obj);
+    auto out = global->storage->GetAsPrimitive(temp);
+    global->storage->Remove(temp);
+    return out;
 }
 
 void Object::Set(const std::string & name, const Primitive & d) {
-    v8::Handle<v8::Object> obj = GetNative()->GetV8Object()->ToObject();
+    v8::Local<v8::Object> obj = GetNative()->GetV8Object()->ToObject();
     if (obj.IsEmpty()) {
          v8::ThrowException(v8::String::New("sandboxe script object: Set() failed; reference is dead"));
     }
@@ -806,28 +753,30 @@ void Object::Set(const std::string & name, const Primitive & d) {
 void Object_Internal::ForceNative() {
     assert(!isNative);
     if (!isNative) {
+        v8::HandleScope scope;
 
         //v8::Handle<v8::Object> obj = reference; // non-native data
 
-        global->storage->Get(heapAddress)->ToObject()->SetPointerInInternalField(0, this);
-
+        //v8::Handle<v8::Value> val = global->storage->Get(heapAddress);
+        //v8::Handle<v8::Object> obj = val->ToObject();
+        //obj->SetPointerInInternalField(0, this);
         // transform into native reference
-        isNative = true;
-        typeData = nullptr;
+        //isNative = true;
+        //typeData = nullptr;
 
-        std::cout << this << "is now native" << std::endl;
+        std::cout << heapAddress << "is now native" << std::endl;
     }
 }
 
 void Object_Internal::ForceWeak() {    
-    cleanupHandle = v8::Persistent<v8::Value>::New(global->storage->Get(heapAddress));
-    cleanupHandle.MakeWeak(this, sandboxe_v8_object_garbage_collect);
+    //cleanupHandle = v8::Persistent<v8::Value>::New(global->storage->Get(heapAddress));
+    //cleanupHandle.MakeWeak(this, sandboxe_v8_object_garbage_collect);
+    printf("%u is now ready for garbage collection\n", heapAddress);
     global->storage->Remove(heapAddress);
     heapAddress = 0;
-    printf("%p is now ready for garbage collection\n", this);
 }
 
-v8::Handle<v8::Value> Object_Internal::GetV8Object() {
+v8::Local<v8::Value> Object_Internal::GetV8Object() {
     return global->storage->Get(heapAddress); 
 }
 
@@ -835,14 +784,14 @@ v8::Handle<v8::Value> Object_Internal::GetV8Object() {
 uint32_t Object::AddNonNativeReference(Object * d) {
     uint32_t out = data->nonNatives.size();
 
-    d->data->ForceNative();
+    //d->data->ForceNative();
 
     data->nonNatives.push_back(d);
     // defers destruction of temporary
     // they will be reposted to destruction on this objects destructor
-    for(uint32_t i = 0; i < temporary.size(); ++i) {
-        if (temporary[i] == d) {
-            temporary.erase(temporary.begin() + i);
+    for(uint32_t i = 0; i < Object_Internal::temporary.size(); ++i) {
+        if (Object_Internal::temporary[i] == d) {
+            Object_Internal::temporary.erase(Object_Internal::temporary.begin() + i);
             return out;
         }
     }    
@@ -850,15 +799,15 @@ uint32_t Object::AddNonNativeReference(Object * d) {
 }
 void Object::UpdateNonNativeReference(Object * d, uint32_t index) {
     //if (d->IsNative()) return;
-    d->data->ForceNative();
+    //d->data->ForceNative();
     while(data->nonNatives.size() <= index) data->nonNatives.push_back(nullptr);
     data->nonNatives[index] = d;
 
     // defers destruction of temporary
     // they will be reposted to destruction on this objects destructor
-    for(uint32_t i = 0; i < temporary.size(); ++i) {
-        if (temporary[i] == d) {
-            temporary.erase(temporary.begin() + i);
+    for(uint32_t i = 0; i < Object_Internal::temporary.size(); ++i) {
+        if (Object_Internal::temporary[i] == d) {
+            Object_Internal::temporary.erase(Object_Internal::temporary.begin() + i);
             return;
         }
     }
@@ -875,12 +824,12 @@ Object * Object::GetNonNativeReference(uint32_t index) const {
 
 Primitive Object::CallMethod(const std::string & str, const std::vector<Primitive> & args) {
     v8::HandleScope scope;
-    v8::Handle<v8::Object> fn;
-    v8::Handle<v8::Object> thisv8 = global->storage->Get(data->heapAddress)->ToObject();   
+    v8::Local<v8::Object> fn;
+    v8::Local<v8::Object> thisv8 = global->storage->Get(data->heapAddress)->ToObject();   
  
 
     if (str.size()) {
-        v8::Handle<v8::Value> pre = thisv8->ToObject()->Get(v8::String::New(str.c_str()));
+        v8::Local<v8::Value> pre = thisv8->ToObject()->Get(v8::String::New(str.c_str()));
         if (!(!pre.IsEmpty() && pre->IsObject())) {
             // throw error?
             return Primitive();
@@ -901,9 +850,9 @@ Primitive Object::CallMethod(const std::string & str, const std::vector<Primitiv
     //printf("FUNCTION CALLMETHOD %s \n", *fnName);
     //fflush(stdout);
 
-    v8::Handle<v8::Value> result;
+    v8::Local<v8::Value> result;
     if (args.size()) {
-        v8::Handle<v8::Value> args_conv[args.size()];
+        v8::Local<v8::Value> args_conv[20];
         for(uint32_t i = 0; i < args.size(); ++i) {
             args_conv[i] = sandboxe_primitive_to_v8_value(args[i]);
         }
@@ -947,15 +896,15 @@ void Sandboxe::Script::Runtime::ScriptError(const std::string & str) {
 
 
 void Sandboxe::Script::Runtime::PerformGarbageCollection() {
-    for(uint32_t i = 0; i < temporary.size(); ++i) {
-        if (!temporary[i]) continue;
+    for(uint32_t i = 0; i < Object_Internal::temporary.size(); ++i) {
+        if (!Object_Internal::temporary[i]) continue;
         
         // making weak 
-        temporary[i]->GetNative()->ForceWeak();
-        temporary[i] = nullptr;
+        Object_Internal::temporary[i]->GetNative()->ForceWeak();
+        Object_Internal::temporary[i] = nullptr;
         
     }
-    temporary.clear();
+    Object_Internal::temporary.clear();
 
     
 

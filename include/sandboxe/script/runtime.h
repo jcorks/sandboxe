@@ -167,7 +167,7 @@ class Object {
     
     // Calls the given method. If name is blank, the 
     // object itself is attempted to be called as a function
-    Primitive CallMethod(const std::string & name, const std::vector<Primitive> & args = {});
+    Primitive CallMethod(const std::string & name = "", const std::vector<Primitive> & args = {});
     
     // Returns whether the object is native. NonNative objects 
     // have restricted functionality.

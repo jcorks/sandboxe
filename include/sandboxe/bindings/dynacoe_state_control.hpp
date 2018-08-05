@@ -19,10 +19,13 @@ namespace Bindings {
     
 // member functions 
 SANDBOXE_NATIVE_DEF(__state_control_create_state) {
-    SANDBOXE_ASSERT__ARG_COUNT(2);
+    SANDBOXE_ASSERT__ARG_COUNT(4);
     SANDBOXE_ASSERT__ARG_TYPE(1, ObjectReferenceNonNativeT);    
+    SANDBOXE_ASSERT__ARG_TYPE(2, ObjectReferenceNonNativeT);    
+    SANDBOXE_ASSERT__ARG_TYPE(3, ObjectReferenceNonNativeT);    
+
     auto state = (Sandboxe::StateControlObject*)source;
-    state->CreateStateNonNative(arguments[0], arguments[1]);    
+    state->CreateStateNonNative(arguments[0], arguments[1], arguments[2], arguments[3]);    
 }
 
 SANDBOXE_NATIVE_DEF(__state_control_remove_state) {
