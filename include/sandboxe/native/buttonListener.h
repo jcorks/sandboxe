@@ -8,9 +8,17 @@ class ButtonListenerObject : public Dynacoe::ButtonListener, public Sandboxe::Sc
     ButtonListenerObject() :
         Sandboxe::Script::Runtime::Object((int)Sandboxe::NativeType::ButtonListenerT)
     {
-        
+        onPress = nullptr;
+        onHold = nullptr;
+        onRelease = nullptr;
+
     }
     
+    Sandboxe::Script::Runtime::Object * onPress;
+    Sandboxe::Script::Runtime::Object * onHold;
+    Sandboxe::Script::Runtime::Object * onRelease;
+
+
     void OnGarbageCollection() {
         
     }
@@ -20,15 +28,15 @@ class ButtonListenerObject : public Dynacoe::ButtonListener, public Sandboxe::Sc
     }
       
     void OnPress() {
-        CallMethod("onPress");
+        if (onPress) onPress->CallMethod();
     }
 
     void OnHold() {
-        CallMethod("onHold");
+        if (onHold) onHold->CallMethod();
     }
 
     void OnRelease() {
-        CallMethod("onRelease");
+        if (onRelease) onRelease->CallMethod();
     }
 
     

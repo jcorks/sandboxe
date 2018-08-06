@@ -167,6 +167,56 @@ SANDBOXE_NATIVE_DEF(__input_get_last_unicode)  {
     context.SetReturnValue(Dynacoe::Input::GetLastUnicode());
 }
 
+
+SANDBOXE_NATIVE_DEF(__input_get_on_press) {
+    auto b = (Sandboxe::ButtonListenerObject*)(Sandboxe::Script::Runtime::Object*)source;
+    if (b->onPress)
+        context.SetReturnValue(b->onPress);
+}
+
+
+SANDBOXE_NATIVE_DEF(__input_get_on_hold) {
+    auto b = (Sandboxe::ButtonListenerObject*)(Sandboxe::Script::Runtime::Object*)source;
+    if (b->onHold)
+        context.SetReturnValue(b->onHold);
+}
+
+SANDBOXE_NATIVE_DEF(__input_get_on_release) {
+    auto b = (Sandboxe::ButtonListenerObject*)(Sandboxe::Script::Runtime::Object*)source;
+    if (b->onRelease)
+        context.SetReturnValue(b->onRelease);
+}
+
+
+
+SANDBOXE_NATIVE_DEF(__input_set_on_press) {
+    auto b = (Sandboxe::ButtonListenerObject*)(Sandboxe::Script::Runtime::Object*)source;
+    SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceNonNativeT);
+    b->onPress = arguments[0];
+
+    b->AddNonNativeReference(b->onPress);
+}
+
+SANDBOXE_NATIVE_DEF(__input_set_on_hold) {
+    auto b = (Sandboxe::ButtonListenerObject*)(Sandboxe::Script::Runtime::Object*)source;
+    SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceNonNativeT);
+    b->onHold = arguments[0];
+
+    b->AddNonNativeReference(b->onHold);
+}
+
+SANDBOXE_NATIVE_DEF(__input_set_on_release) {
+    auto b = (Sandboxe::ButtonListenerObject*)(Sandboxe::Script::Runtime::Object*)source;
+    SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceNonNativeT);
+    b->onRelease = arguments[0];
+
+    b->AddNonNativeReference(b->onRelease);
+}
+
+
+
+
+
 void dynacoe_input(std::vector<std::pair<std::string, Sandboxe::Script::Runtime::Function>> & fns) {
     Sandboxe::Script::Runtime::AddType(
         (int)Sandboxe::NativeType::ButtonListenerT,
@@ -186,32 +236,15 @@ void dynacoe_input(std::vector<std::pair<std::string, Sandboxe::Script::Runtime:
         
         // managed properties,
         {
+            {"onPress", {__input_get_on_press, __input_set_on_press}},
+            {"onHold", {__input_get_on_hold, __input_set_on_hold}},
+            {"onRelease", {__input_get_on_release, __input_set_on_release}}
+
+
         }
     );
     
-    /*
-    Sandboxe::Script::Runtime::AddType(
-        Sandboxe::NativeTypeToString(Sandboxe::NativeType::InputPadT),
 
-        // methods
-        {
-            {"mapInput", __pad_map_input},
-            {"addListener", __pad_add_listener},
-            {"isHeld", __pad_is_held},
-            {"isReleased", __pad_is_released},
-            {"isPressed", __pad_is_pressed},
-            {"getState", __pad_get_state}
-
-        },
-        // properties
-        {
-        },
-        
-        // managed properties,
-        {
-        }
-    );
-    */
     fns.push_back({"__input_button_listener_new", __input_button_listener_new});
     fns.push_back({"__input_mouse_x", __input_mouse_x});
     fns.push_back({"__input_mouse_y", __input_mouse_y});

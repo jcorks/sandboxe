@@ -23,7 +23,7 @@ inputExample.node.position.y = 100
 sandboxe.engine.setRoot(inputExample);
 
 // Then create the square itself and center it.
-inputExample.visual = inputExample.add('shape2d');
+inputExample.visual = inputExample.addComponent(sandboxe.component.type.shape2d);
 inputExample.visual.formRectangle(width = 10, height = 10);
 inputExample.visual.node.position = '{-5, -5}';
 inputExample.visual.color = 'white';
