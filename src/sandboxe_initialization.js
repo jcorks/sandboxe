@@ -966,7 +966,7 @@ var sandboxe = {
     input : {
         /**
          * Creates a new buttonListener object, which are using to call methods after certain inputs are detected.
-         * @param {Number} Input The input to detect. See {@link sandboxe} input flags.
+         * @param {Number|String} Input The input to detect. See {@link sandboxe} input flags.
          * @returns {buttonListener}
          * @function
          */
@@ -1140,7 +1140,13 @@ var sandboxe = {
          * @returns {String} The version.
          * @function
          */
-        version : __engine_version        
+        version : __engine_version,
+        
+        /**
+         * Returns the total number of MS since sandboxe started.
+         * @returns {Number} milliseconds since startup. Note that this is approximate.
+         */       
+         getTotalTime : __engine_get_total_time
     },
     
     

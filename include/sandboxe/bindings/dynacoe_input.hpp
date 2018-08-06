@@ -154,7 +154,7 @@ SANDBOXE_NATIVE_DEF(__input_add_listener) {
             Dynacoe::Input::AddListener(b, (Dynacoe::MouseButtons)(input-93));
         }
     } else { // else mapped
-        Dynacoe::Input::AddListener(b, std::string(arguments[0]));            
+        Dynacoe::Input::AddListener(b, std::string(arguments[1]));            
     }    
 }
 
