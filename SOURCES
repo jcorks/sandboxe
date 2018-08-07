@@ -1,9 +1,9 @@
 ./src/main.cc
 ./src/script/shell.cc
 ./src/script/runtime.cc
-./src/script/v8/runtime_v8_old.cc
+./src/script/duktape/runtime_duktape.cc
 ./src/trunk.cc
 
 ./src/native/component.cc
 ./src/native/entity.cc
-./duktape-src/duktape.src
+./duktape-src/duktape.c

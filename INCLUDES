@@ -1,1 +1,1 @@
--I./duktake-src/
+-I../duktape-src/ -I../include/

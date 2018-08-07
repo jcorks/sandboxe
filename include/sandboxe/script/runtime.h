@@ -129,7 +129,13 @@ void ScriptError(const std::string & str);
 
 
 
+// call occasionally to cleanup built-up data generated for management 
+// of communicating with the scripting language
+void PerformGarbageCollection();
 
+void CheckAndHandleErrors();
+
+    
 
 
 
@@ -186,7 +192,13 @@ class Object {
     // Returns the type that the object was instantiated with
     virtual const char * GetObjectName(){return "Object";}
 
-    uint32_t AddNonNativeReference(Object *);
+    // Makes this object the owner of ref. In garbage collected 
+    // languages, this adds a reference count from the ownership 
+    // to guarantee the validity of this reference. THe normal 
+    // use of this function is to capture local / script-sourced 
+    // references and preserve them. If another object has already claimed 
+    // ref, it is reparented to this object.
+    uint32_t AddNonNativeReference(Object * ref);
 
     // Sets data associated with the object only retrievable 
     // through GetNonObject_Internalerence();
@@ -207,13 +219,7 @@ class Object {
     
 };
 
-// call occasionally to cleanup built-up data generated for management 
-// of communicating with the scripting language
-void PerformGarbageCollection();
 
-void CheckAndHandleErrors();
-
-    
 }
 }
 }
