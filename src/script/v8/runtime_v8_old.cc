@@ -280,20 +280,28 @@ static void sandboxe_v8_native__accessor_set(v8::Local<v8::String> name, v8::Loc
     Object_Internal * ref = (Object_Internal*) info.This()->GetPointerFromInternalField(0);
     std::vector<Primitive> arguments;
     Context context;
+    
+    if (value->IsFunction()) {
+        v8::Function * f = v8::Function::Cast(*value);
+        
+        std::string from = *v8::String::Utf8Value(f->GetInferredName());
+        printf("WHOA! function input: %s %d\n", from.c_str(), f->GetScriptLineNumber());
+        
+    } 
 
     uint32_t temp = global->storage->Add(value);
     arguments.push_back(global->storage->GetAsPrimitive(temp));
     if (global->storage->Get(temp)->IsArray()) {
         context.SetArrayArgument(0, global->storage->GetAsPrimitiveArray(temp));
-
-    }
+   
+    } 
     
     std::string into = *v8::String::Utf8Value(name);
     //printf("E_AS (%u) %p %s\n", ITERP, ref->typeData->natives[into].second, into.c_str());
     ref->typeData->natives[into].second(
         ref->parent,
         arguments,
-        context
+        context  
     );
     
     global->storage->Remove(temp);

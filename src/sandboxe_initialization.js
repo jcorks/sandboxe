@@ -1812,7 +1812,7 @@ var sandboxe = {
     ease : __mutator_step
 
 };
-
+sandboxe.heap = SANDBOXE_ObjectHeap;
 
 
 

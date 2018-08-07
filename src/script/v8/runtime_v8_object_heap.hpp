@@ -3,13 +3,20 @@
 
 class ObjectHeap {
   public:
+    static void GCPrologue(v8::GCType type, v8::GCCallbackFlags flags) {
+        printf("GC<%d %d>\n", type, flags);
+        fflush(stdout);
+    }
+
+      
     ObjectHeap(v8::Persistent<v8::Context> context) {
         heap = v8::Persistent<v8::Object>::New(v8::Object::New());        
         context->Global()->Set(v8::String::New("SANDBOXE_ObjectHeap"), heap, v8::PropertyAttribute::DontDelete);
-
+        v8::Local<v8::Value> empty = v8::Object::New();
+        heap->Set(0, empty);
         index = 1;
         
-        
+        v8::V8::AddGCPrologueCallback(GCPrologue);
     }
     
     std::vector<uint32_t> PushArguments(const v8::Arguments & args) {
@@ -36,18 +43,22 @@ class ObjectHeap {
         } else {
             next = dead.top(); dead.pop();
         }
+        printf("Add %d\n", next);
+        fflush(stdout);
         heap->Set(next, val);
         return next;
     }
 
     void Remove(uint32_t i) {
-        heap->Set(i, v8::Null());
+        printf("Remove %d\n", i);
+        fflush(stdout);
+        heap->Set(i, heap->Get(0));
         dead.push(i);
     }
 
     v8::Local<v8::Value> Get(uint32_t i) {
         v8::HandleScope scope;
-        if (i == 0) return scope.Close(v8::Local<v8::Value>::New(v8::Null()));
+        if (i == 0) return scope.Close(heap->Get(0));
         return scope.Close(heap->Get(i));
     }
 
@@ -118,7 +129,7 @@ class ObjectHeap {
         
         // here's the magic: we get our own copy of the object and hold it captive 
         // even if it already exists as a temporary
-        ref->heapAddress = global->storage->Add(global->storage->Get(val)->ToObject()->Clone());
+        ref->heapAddress = global->storage->Add(global->storage->Get(val)->ToObject()); // double counts the ref
         global->storage->Get(ref->heapAddress)->ToObject()->SetPointerInInternalField(0, ref);
 
         Object * temp = new Object(*ref);

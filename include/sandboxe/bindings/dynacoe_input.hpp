@@ -204,7 +204,7 @@ SANDBOXE_NATIVE_DEF(__input_set_on_hold) {
 
     b->AddNonNativeReference(b->onHold);
 }
-
+ 
 SANDBOXE_NATIVE_DEF(__input_set_on_release) {
     auto b = (Sandboxe::ButtonListenerObject*)(Sandboxe::Script::Runtime::Object*)source;
     SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceNonNativeT);
