@@ -1,1 +1,1 @@
--I../include -DV8_ENABLE_CHECKS
+-I./duktake-src/

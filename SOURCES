@@ -6,3 +6,4 @@
 
 ./src/native/component.cc
 ./src/native/entity.cc
+./duktape-src/duktape.src
