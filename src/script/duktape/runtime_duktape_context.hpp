@@ -43,12 +43,10 @@ class DTContext {
 
         std::string out;
         if (duk_pcompile(source, 0)) {
-            duk_pop(source);
-            ErrorMessage(duk_safe_to_string(source, -1));
+            ScriptErrorMessage();
         } else {
             if (duk_pcall(source, 0)) {
-                ErrorMessage(duk_safe_to_string(source, -1));
-                duk_pop(source);                
+                ScriptErrorMessage();
             } else {
                 const char * result = duk_safe_to_string(source, -1);
                 out = (result ? result : "<null>");
@@ -65,7 +63,7 @@ class DTContext {
   private:
     duk_context * source;
     static duk_ret_t global_invocation(duk_context * ctx) {
-        
+        return 0;
     }
       
     static void fatal_error(void * data, const char * msg) {
@@ -74,9 +72,23 @@ class DTContext {
 
     }
 
-    void ErrorMessage(const std::string & msg) {
+    void ScriptErrorMessage() {
+        TObject errObj(source);        
+        std::string name = errObj.Get("name");    
+        std::string message = errObj.Get("message");    
+        std::string fileName = errObj.Get("fileName");    
+        std::string lineNumber = errObj.Get("lineNumber");    
+        std::string stack = errObj.Get("stack");    
+
+               
+        std::string msg = 
+            std::string("@") + name + " from:   " + fileName + ", line " + lineNumber + ". Detail:\n\n" + stack;
+
+
         Sandboxe::Script::Terminal * term = terminal.IdentifyAs<Sandboxe::Script::Terminal>();
         term->ReportError(msg);
+
+        duk_pop(source);
     }
 };
 

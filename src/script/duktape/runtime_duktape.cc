@@ -6,19 +6,18 @@
 #include <sandboxe/trunk.h>
 #include <stack>
 #include <cassert>
-#include <v8.h>
 #include <sandboxe/bindings/all.hpp>
 #include <map>
 #include <duktape.h>
-
+ 
 
 
 using Sandboxe::Script::Runtime::Function;
 using Sandboxe::Script::Runtime::Primitive;
 using Sandboxe::Script::Runtime::Context;
-using Sandboxe::Script::Runtime::Object_Internal;
+using Sandboxe::Script::Runtime::Object_Internal; 
 
-
+#include "runtime_duktape_tobject.hpp"
 #include "runtime_duktape_object.hpp"
 #include "runtime_duktape_context.hpp"
 std::string initialization_source = 
