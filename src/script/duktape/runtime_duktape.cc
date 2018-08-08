@@ -29,7 +29,7 @@ std::string initialization_source =
 DTContext * global;
 
 void Sandboxe::Script::Runtime::Initialize() {
-    global = new DTContext();
+    global = new DTContext(); 
 }
 
 void Sandboxe::Script::Runtime::Start() {
@@ -71,17 +71,17 @@ void Sandboxe::Script::Runtime::Start() {
     
     Sandboxe::Script::Runtime::Load("main.js");
     
+    Dynacoe::ViewManager::NewMain("temp");
     Dynacoe::Engine::Run();
 }
 
 
 std::string Sandboxe::Script::Runtime::Execute(const std::string & code, const std::string & name) {
-    return std::string();
+    return global->Execute(code, name);
 }
 
 
 void Sandboxe::Script::Runtime::Load(const std::string & path) {
-
 }
 
 
