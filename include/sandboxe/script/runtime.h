@@ -39,7 +39,7 @@ class Primitive {
     Primitive(Sandboxe::Script::Runtime::Object *);
 
     void Modify(const Primitive & other) {*this = other;}
-    const std::string & Data() {return data;}
+    const std::string & Data() const {return data;}
     bool IsDefined() const {return defined;}
     TypeHint hint;
 

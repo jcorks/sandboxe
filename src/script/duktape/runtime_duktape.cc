@@ -8,7 +8,7 @@
 #include <cassert>
 #include <sandboxe/bindings/all.hpp>
 #include <map>
-#include <duktape.h>
+#include <duktape.h> 
  
 
 
@@ -65,8 +65,8 @@ void Sandboxe::Script::Runtime::Start() {
 
 
 
-    
-     
+        
+      
     
     Sandboxe::Script::Runtime::Load("main.js");
     
@@ -85,7 +85,7 @@ void Sandboxe::Script::Runtime::Load(const std::string & path) {
 
 
 void Sandboxe::Script::Runtime::ScriptError(const std::string & str) {
-    
+    global->ThrowErrorObject(str); 
 }
 
 void Sandboxe::Script::Runtime::PerformGarbageCollection() {

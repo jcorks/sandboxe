@@ -12,7 +12,7 @@ Object::Object(int typeID) {
 
 Object::~Object() {
     delete data;
-}
+} 
 
 Object::Object(Object_Internal & n) {
     // pass ownership, internal only
