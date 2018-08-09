@@ -35,12 +35,12 @@ DTContext * global;
 void Sandboxe::Script::Runtime::Initialize() {
     global = new DTContext(); 
     global->InitializeGlobals();
-}
+}  
 
 void Sandboxe::Script::Runtime::Start() {
     // innitialize dynacoe shell extension
     Sandboxe::Script::Shell::Initialize();
-    
+       
 
     Sandboxe::Script::ApplyPostBindings();
     

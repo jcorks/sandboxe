@@ -21,6 +21,7 @@ class DTContext {
     
     
     void InitializeGlobals() {
+        int stackSize = duk_get_top(source);
         auto natives = Sandboxe::Script::GatherNativeBindings();
 
         duk_push_global_object(source);
@@ -28,6 +29,8 @@ class DTContext {
         for(int i = 0; i < natives.size(); ++i) {
             global.SetFunction(natives[i].first, natives[i].second);
         }
+        duk_pop(source);
+        assert(duk_get_top(source) == stackSize);
     }
     
     void AddType(int typeID, 
@@ -122,7 +125,7 @@ class DTContext {
         duk_get_prop_string(source, -1, DT_SANDBOXE_TYPE_STORE);                // global - store
 
         // get the type storage unit on the stack
-        duk_get_prop_index(source, -2, typeID);                                 // global - store - typeBase
+        duk_get_prop_index(source, -1, typeID);                                 // global - store - typeBase
 
         // lets make sure we're working with a type here!
         if (!duk_is_object(source, -1)) {
@@ -146,8 +149,13 @@ class DTContext {
         
         
         // enumerate with keys and values
+        int enumStack = duk_get_top(source);
         while(duk_next(source, -1, 1)) {                                        // global - store - typeBase - {} - enum - key - val
-            duk_put_prop(source, -4); // copy the value key pair into the new object. This pops both the key and value
+            if (duk_get_top(source) - enumStack == 2) // key/value pair successful
+                duk_put_prop(source, -4); // copy the value key pair into the 
+                                          //new object. This pops both the key and value
+            else 
+                duk_pop(source);   // only the key was found, so skip
         }
         duk_pop(source); // enum                                                // global - store - typeBase - {}
 
