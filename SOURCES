@@ -2,6 +2,9 @@
 ./src/script/shell.cc
 ./src/script/runtime.cc
 ./src/script/duktape/runtime_duktape.cc
+./src/script/duktape/runtime_dt_object.cc
+./src/script/duktape/runtime_dt_tobject.cc
+./src/script/duktape/runtime_dt_context.cc
 ./src/trunk.cc
 
 ./src/native/component.cc
