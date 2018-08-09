@@ -2,12 +2,31 @@ using Sandboxe::Script::Runtime::Object;
 
 class Object_Internal {
   public:
+    Object_Internal(int typeID, Object * parent_) : parent(parent_) {
+        type = typeID;
+        heapIndex = global->CreateNewObject(typeID, parent);
+    }
+    
+    ~Object_Internal() {
+        //global->RemoveNewObject(heapIndex);
+    }
+    
+    
+    Object * GetParent() {
+        return parent;
+    }
+    
+    int GetTypeID() const {
+        return type;
+    }
+  private:
     int type;
+    uint32_t heapIndex;
+    Object * parent;
 };
 
 Object::Object(int typeID) {
-    data = new Object_Internal();
-    data->type = typeID;
+    data = new Object_Internal(typeID, this);    
 }
 
 Object::~Object() {
@@ -42,7 +61,7 @@ bool Object::IsNative() const {
 
 
 int Object::GetTypeID() const {
-    return data->type;
+    return data->GetTypeID();
 }
 
 

@@ -11,24 +11,30 @@
 #include <duktape.h> 
  
 
-
+ 
 using Sandboxe::Script::Runtime::Function;
 using Sandboxe::Script::Runtime::Primitive;
 using Sandboxe::Script::Runtime::Context;
 using Sandboxe::Script::Runtime::Object_Internal; 
+using Sandboxe::Script::Runtime::Object; 
 
-#include "runtime_duktape_tobject.hpp"
-#include "runtime_duktape_object.hpp"
-#include "runtime_duktape_context.hpp"
+
+
+
 std::string initialization_source = 
 #include "../../sandboxe_initialization.js"
 ;
 #include <sandboxe/script/garbageCollector.h>
-
+class DTContext;
 DTContext * global;
+#include "runtime_duktape_tobject.hpp"
+#include "runtime_duktape_context.hpp"
+#include "runtime_duktape_object.hpp"
+
 
 void Sandboxe::Script::Runtime::Initialize() {
     global = new DTContext(); 
+    global->InitializeGlobals();
 }
 
 void Sandboxe::Script::Runtime::Start() {
@@ -65,7 +71,7 @@ void Sandboxe::Script::Runtime::Start() {
 
 
 
-        
+
       
     
     Sandboxe::Script::Runtime::Load("main.js");
@@ -82,7 +88,7 @@ std::string Sandboxe::Script::Runtime::Execute(const std::string & code, const s
 
 void Sandboxe::Script::Runtime::Load(const std::string & path) {
 }
-
+ 
 
 void Sandboxe::Script::Runtime::ScriptError(const std::string & str) {
     global->ThrowErrorObject(str); 
@@ -101,7 +107,7 @@ void Sandboxe::Script::Runtime::AddType  (int typeID,
                const std::vector<std::pair<std::string, Function>> & functions,
                const std::vector<std::pair<std::string, Primitive>> & properties,
                const std::vector<std::pair<std::string, std::pair<Function, Function>>> & nativeProperties) {
-
+   global->AddType(typeID, functions, properties, nativeProperties);
 }
 
 
