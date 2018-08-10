@@ -121,8 +121,16 @@ void DTContext::ThrowErrorObject(const std::string & err) {
 }
 
 
+static duk_ret_t object_finalizer(duk_context * source) {
+    // the object SHOULD be the first on the stack
+    TObject obj(source);
+    Object * parent = (Object*)obj.GetMappedPointer((void*)0x1);
+    assert(parent);
+    delete parent;
+}
+
 // creates a new object of the given type in the heap store
-uint32_t DTContext::CreateNewObject(int typeID, Object * parent) {
+uint32_t DTContext::CreateHeapEntryFromObject(Object * parent) {
     int stackSize = duk_get_top(source);
 
     uint32_t out;
@@ -139,7 +147,7 @@ uint32_t DTContext::CreateNewObject(int typeID, Object * parent) {
     duk_get_prop_string(source, -1, DT_SANDBOXE_TYPE_STORE);                // global - store
 
     // get the type storage unit on the stack
-    duk_get_prop_index(source, -1, typeID);                                 // global - store - typeBase
+    duk_get_prop_index(source, -1, parent->GetTypeID());                                 // global - store - typeBase
 
     // lets make sure we're working with a type here!
     if (!duk_is_object(source, -1)) {
@@ -156,6 +164,10 @@ uint32_t DTContext::CreateNewObject(int typeID, Object * parent) {
         newObject.MapPointer((void*)0x1, (void*)parent);
     }
 
+    // we need to push its finalizer! the finalizer will provide the mechanism to cleanup 
+    // our program heap references 
+    duk_push_c_function(source, object_finalizer, 1);                       // global - store - typeBase - {} - finalizer 
+    duk_set_finalizer(source, -2);                                          // global - store - typeBase - {}
 
     // now, copy all properties of  the type object into the new object...
     duk_enum(source, -2, DUK_ENUM_NO_PROXY_BEHAVIOR);                       // global - store - typeBase - {} - enum
@@ -187,6 +199,45 @@ uint32_t DTContext::CreateNewObject(int typeID, Object * parent) {
     assert(duk_get_top(source) == stackSize);
     return heapIndex;
 }
+
+
+uint32_t DTContext::CreateHeapEntryFromDTStack() {
+                                                                            // {}
+
+    // get the global since we will be putting it in our heap
+    duk_push_global_object(source);                                         // {} - global
+
+
+    // we need the target obejct on top though!
+    duk_swap(source, -1, -2);                                               // global - {}
+
+
+    {
+        TObject newObject(source);
+        newObject.MapPointer((void*)0x1, (void*)parent);
+    }
+
+    // we need to push its finalizer! the finalizer will provide the mechanism to cleanup 
+    // our program heap references 
+    duk_push_c_function(source, object_finalizer, 1);                       // global - {} - finalizer 
+    duk_set_finalizer(source, -2);                                          // global - {}
+
+    
+    
+    // now that the new object is here, lets place it in the heap at the new index as a copy
+    duk_get_prop_string(source, -4, DT_SANDBOXE_OBJECT_STORE);              // global - {} - heap
+    duk_swap(source, -1, -2);                                               // global - heap - {} 
+    duk_put_prop_index(source, -2, heapIndex);                              // global - heap
+    
+    
+    duk_pop(source); // objectStore
+    duk_pop(source); // global
+    
+    assert(duk_get_top(source) == stackSize);
+    return heapIndex;
+}
+
+
 
 
 

@@ -105,7 +105,14 @@ Sandboxe::Script::Runtime::Primitive TObject::GetAsPrimitive() const {
         case DUK_TYPE_BOOLEAN:   return Primitive(duk_get_boolean(source, -1));
         case DUK_TYPE_NUMBER:    return Primitive(duk_get_number(source, -1));
         case DUK_TYPE_STRING:    return Primitive(std::string(duk_get_string(source, -1)));
-        case DUK_TYPE_OBJECT:    return Primitive();
+        case DUK_TYPE_OBJECT: {
+            Object * ref = GetMappedPointer(void(0x1));
+            if (ref) // native ref 
+                return Primitive(ref);
+
+            // non-native ref. Needs a temporary native object
+            return Primitive(Object_Internal::CreateObjectFromStackTop());
+        }
         case DUK_TYPE_BUFFER:    return Primitive(); // no generic implementation
         case DUK_TYPE_POINTER:   return Primitive(); // hidden property
         case DUK_TYPE_LIGHTFUNC: return Primitive(std::string(duk_get_string(source, -1))); // function?
@@ -249,7 +256,7 @@ void TObject::PushPrimitive(const Primitive & data) {
       case Primitive::TypeHint::UInt32T: 
       case Primitive::TypeHint::UInt64T: duk_push_number(source, data); break;
       case Primitive::TypeHint::StringT: duk_push_string(source, data.Data().c_str()); break;
-      case Primitive::TypeHint::ObjectReferenceT: duk_push_string(source, data.Data().c_str()); break;     
+      case Primitive::TypeHint::ObjectReferenceT:      
       case Primitive::TypeHint::ObjectReferenceNonNativeT: duk_push_string(source, data.Data().c_str()); break;           
       default: duk_push_string(source, "");
     }

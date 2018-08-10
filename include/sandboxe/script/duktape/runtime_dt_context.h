@@ -39,7 +39,12 @@ class DTContext {
 
 
     // creates a new object of the given type in the heap store
-    uint32_t CreateNewObject(int typeID, Object * parent);
+    uint32_t CreateHeapEntryFromObject(int typeID, Object * parent);
+
+    // Creates a new heap store entry that is a copy of the object on the stack.
+    // Primarily used to preserve objects 
+    uint32_t CreateHeapEntryFromDTStack();
+
  
     // Return context
     duk_context * GetCTX() {return source;}

@@ -7,7 +7,7 @@ using namespace Sandboxe::Script::Runtime;
 
 Object_Internal::Object_Internal(int typeID, Object * parent_) : parent(parent_) {
     type = typeID;
-    heapIndex =  DTContext::Get()->CreateNewObject(typeID, parent);
+    heapIndex =  DTContext::Get()->CreateHeapEntryFromObject(parent);
 }
 
 Object_Internal::~Object_Internal() {

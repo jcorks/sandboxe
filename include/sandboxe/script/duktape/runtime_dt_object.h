@@ -15,6 +15,11 @@ class Object_Internal {
 
     Object_Internal(int typeID, Object * parent_);    
     ~Object_Internal();    
+
+
+    // creates a new non-native object proxy to manipulate 
+    // the duktape object as a sandboxe object
+    static Object * CreateObjectFromStackTop();
     
 
     // Gets the owning parent of this reference
