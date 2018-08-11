@@ -39,11 +39,21 @@ class DTContext {
 
 
     // creates a new object of the given type in the heap store
-    uint32_t CreateHeapEntryFromObject(int typeID, Object * parent);
+    uint32_t CreateHeapEntryFromObject(Object * parent);
 
     // Creates a new heap store entry that is a copy of the object on the stack.
     // Primarily used to preserve objects 
-    uint32_t CreateHeapEntryFromDTStack();
+    uint32_t CreateHeapEntryFromDTStack(Object *);
+    
+    // Pushes the heap entry to the top of the duktype stack as to perform 
+    // operations on it. Please be sure to pop this reference
+    void PushHeapEntryToDTTop(uint32_t);
+    
+    // Removes a heap entry. This also reduces the reference count for 
+    // the object and may invoke the finalizer for the object (which would free the
+    // sandboxe object reference) so the referring parent Object 
+    // should not be used after this call.
+    void RemoveHeapEntry(uint32_t);
 
  
     // Return context

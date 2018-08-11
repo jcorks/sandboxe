@@ -119,6 +119,7 @@ void Sandboxe::Script::Runtime::AddType  (int typeID,
 
 Object::Object(int typeID) {
     data = new Object_Internal(typeID, this);    
+    data->AssignHeapEntry();
 }
 
 Object::~Object() {

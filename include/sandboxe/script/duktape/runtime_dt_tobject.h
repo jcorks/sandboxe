@@ -24,9 +24,20 @@ class TObject {
     
     // Gets the given property as a string value as interpreted by the ES engine
     std::string Get(const std::string & str) const;
+
+    // Gets the given property as a string value as interpreted by the ES engine
+    Primitive GetAsPrimitive(const std::string & str) const;
+
+    
+    // Gets the object as a primitive
+    Sandboxe::Script::Runtime::Primitive ThisAsPrimitive() const;
+
     
     // Sets/replaces a property with the given value.
     void Set(const std::string & str, const Primitive & data);    
+    
+    // Calls a function fo te given name if it exists.
+    Primitive CallMethod(const std::string & str, const std::vector<Primitive> & args);
     
     
     // Sets a native function object with the given name on the top object
@@ -41,12 +52,9 @@ class TObject {
     void MapPointer(void * key, void * value);
 
     // gets a hidden mapped pointer for the object
-    void * GetMappedPointer(void * key);
+    void * GetMappedPointer(void * key) const;
 
-
-    // Gets the object as a primitive
-    Sandboxe::Script::Runtime::Primitive GetAsPrimitive() const;
-
+    
 
   private:
     duk_context * source;

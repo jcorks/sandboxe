@@ -127,6 +127,8 @@ static duk_ret_t object_finalizer(duk_context * source) {
     Object * parent = (Object*)obj.GetMappedPointer((void*)0x1);
     assert(parent);
     delete parent;
+    printf("Finlized %p\n", parent);
+    return 0;
 }
 
 // creates a new object of the given type in the heap store
@@ -188,7 +190,7 @@ uint32_t DTContext::CreateHeapEntryFromObject(Object * parent) {
     // now that the new object is made, lets place it in the heap at the new index
     duk_get_prop_string(source, -4, DT_SANDBOXE_OBJECT_STORE);              // global - store - typeBase - {} - heap
     duk_swap(source, -1, -2);                                               // global - store - typeBase - heap - {} 
-    duk_put_prop_index(source, -2, heapIndex);                              // global - store - typeBase - heap
+    duk_put_prop_index(source, -2, out);                                   // global - store - typeBase - heap
     
     
     duk_pop(source); // objectStore
@@ -197,11 +199,20 @@ uint32_t DTContext::CreateHeapEntryFromObject(Object * parent) {
     duk_pop(source); // global
     
     assert(duk_get_top(source) == stackSize);
-    return heapIndex;
+    return out;
 }
 
 
-uint32_t DTContext::CreateHeapEntryFromDTStack() {
+uint32_t DTContext::CreateHeapEntryFromDTStack(Object * parent) {
+    int stackSize = duk_get_top(source);
+
+    uint32_t out;
+    if (dead.empty()) {
+        out = heapIndex++;
+    } else {
+        out = dead.top();
+        dead.pop();
+    }
                                                                             // {}
 
     // get the global since we will be putting it in our heap
@@ -225,16 +236,48 @@ uint32_t DTContext::CreateHeapEntryFromDTStack() {
     
     
     // now that the new object is here, lets place it in the heap at the new index as a copy
-    duk_get_prop_string(source, -4, DT_SANDBOXE_OBJECT_STORE);              // global - {} - heap
+    duk_get_prop_string(source, -2, DT_SANDBOXE_OBJECT_STORE);              // global - {} - heap
     duk_swap(source, -1, -2);                                               // global - heap - {} 
-    duk_put_prop_index(source, -2, heapIndex);                              // global - heap
+    duk_put_prop_index(source, -2, out);                                    // global - heap
     
     
     duk_pop(source); // objectStore
     duk_pop(source); // global
     
     assert(duk_get_top(source) == stackSize);
-    return heapIndex;
+    return out;
+}
+
+void DTContext::PushHeapEntryToDTTop(uint32_t i) {
+    if (i == 0 || i >= heapIndex) return;
+    // get the global object heap
+    duk_push_global_object(source);                                         // global
+    duk_get_prop_string(source, -1, DT_SANDBOXE_OBJECT_STORE);              // global - heap
+    duk_get_prop_index(source, -1, i);                                      // global - heap - {}
+    duk_swap(source, -3, -1);                                               // {} - heap - global
+    duk_pop(source); // global
+    duk_pop(source); // heap
+    
+}
+
+
+void DTContext::RemoveHeapEntry(uint32_t i) {
+    if (i == 0 || i >= heapIndex) return;
+    int stackSize = duk_get_top(source);
+    // get the global object heap
+    duk_push_global_object(source);                                         // global
+    duk_get_prop_string(source, -1, DT_SANDBOXE_OBJECT_STORE);              // global - heap
+
+    duk_push_null(source);                                                  // global - heap - null
+    duk_put_prop_index(source, -2, i);                                      // global - heap 
+
+    duk_pop(source); // heap
+    duk_pop(source); // global
+    
+    dead.push(i);
+
+    assert(duk_get_top(source) == stackSize);
+
 }
 
 
@@ -265,6 +308,57 @@ void DTContext::ScriptErrorMessage() {
     term->ReportError(msg);
 
     duk_pop(source);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+static void PrintKeys() {
+    duk_context * source = DTContext::Get()->GetCTX();
+    int stackSz = (duk_get_top(source));
+
+    duk_enum(source, -1, DUK_ENUM_NO_PROXY_BEHAVIOR);  
+    // enumerate with keys and values
+    int enumStack = duk_get_top(source);
+    while(duk_next(source, -1, 0)) {                                
+        printf("%s, ", duk_to_string(source, -1));
+        duk_pop(source); 
+    }
+    printf("\n");
+    fflush(stdout);
+    duk_pop(source); // enum 
+    assert(stackSz == duk_get_top(source));
+}
+
+
+static void PrintIndex(uint32_t index) {
+    duk_context * source = DTContext::Get()->GetCTX();
+
+    duk_get_prop_index(source, -1, index);
+    printf("%s\n", duk_safe_to_string(source, -1));
+    duk_pop(source);
+}
+
+static void Execute(const char * str) {
+    printf("%s\n", DTContext::Get()->Execute(str, "").c_str());
 }
 
 

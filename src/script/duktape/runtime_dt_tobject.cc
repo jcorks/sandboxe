@@ -1,4 +1,6 @@
 #include <sandboxe/script/duktape/runtime_dt_tobject.h>
+#include <sandboxe/script/duktape/runtime_dt_object.h>
+#include <sandboxe/script/duktape/runtime_dt_context.h>
 #include <cassert>
 #include <duktape.h> 
 
@@ -21,6 +23,60 @@ std::string TObject::Get(const std::string & str) const {
 
     assert(stackSz == duk_get_top(source));
     return out;
+}
+
+Primitive TObject::GetAsPrimitive(const std::string & str) const {
+    int stackSz = (duk_get_top(source));
+
+    duk_get_prop_string(source, -1, str.c_str());      
+    TObject top(source);
+    Primitive out = top.ThisAsPrimitive();
+    duk_pop(source);
+
+    assert(stackSz == duk_get_top(source));
+    return out;
+}
+
+
+Primitive TObject::CallMethod(const std::string & name, const std::vector<Primitive> & args) {
+    int stackSz = (duk_get_top(source));
+
+    if (name.size()) { // method / member call!
+        duk_push_string(source, name.c_str());
+        for(uint32_t i = 0; i < args.size(); ++i) {
+            PushPrimitive(args[i]);
+        }
+        if (duk_pcall_prop(source, (-1*(int)args.size()) - 2, args.size()) != DUK_EXEC_SUCCESS) {
+            duk_pop(source); // failure ignore;
+            assert(stackSz == duk_get_top(source));
+            return Primitive();
+        } else {
+            Primitive out = ThisAsPrimitive(); // the return value is at the top of the stack, so we can return it!
+            duk_pop(source); // retval
+            assert(stackSz == duk_get_top(source));
+            return out;
+        }
+    } else {     // Self call!
+        if (!duk_is_callable(source, -1)) {
+            duk_pop(source); // failure ignore;
+            //DTContext::Get()->ThrowErrorObject(std::string() + "\"" + name + "\" is not a callable object.");
+            return Primitive();
+        }
+        for(uint32_t i = 0; i < args.size(); ++i) {
+            PushPrimitive(args[i]);
+        }
+        if (duk_pcall(source, args.size()) != DUK_EXEC_SUCCESS) {
+            assert(stackSz == duk_get_top(source));
+            return Primitive();
+        } else {
+            Primitive out = ThisAsPrimitive(); // the return value is at the top of the stack, so we can return it!
+            duk_pop(source); // retval
+            assert(stackSz == duk_get_top(source));
+            return out;
+        }
+        
+    }
+    return Primitive();
 }
 
 // Sets/replaces a property with the given value.
@@ -83,7 +139,7 @@ void TObject::MapPointer(void * key, void * value) {
 }
 
 // gets a hidden mapped pointer for the object
-void * TObject::GetMappedPointer(void * key) {
+void * TObject::GetMappedPointer(void * key) const {
     int stackSz = (duk_get_top(source));
 
     duk_get_prop_string(source, -1, PointerToHiddenKey(key));      
@@ -97,7 +153,7 @@ void * TObject::GetMappedPointer(void * key) {
 
 
 
-Sandboxe::Script::Runtime::Primitive TObject::GetAsPrimitive() const {
+Sandboxe::Script::Runtime::Primitive TObject::ThisAsPrimitive() const {
     switch(duk_get_type(source, -1)) {
         case DUK_TYPE_NONE:      return Primitive();
         case DUK_TYPE_UNDEFINED: return Primitive();
@@ -106,12 +162,12 @@ Sandboxe::Script::Runtime::Primitive TObject::GetAsPrimitive() const {
         case DUK_TYPE_NUMBER:    return Primitive(duk_get_number(source, -1));
         case DUK_TYPE_STRING:    return Primitive(std::string(duk_get_string(source, -1)));
         case DUK_TYPE_OBJECT: {
-            Object * ref = GetMappedPointer(void(0x1));
+            Object * ref = (Object*)GetMappedPointer((void*)(0x1));
             if (ref) // native ref 
                 return Primitive(ref);
 
             // non-native ref. Needs a temporary native object
-            return Primitive(Object_Internal::CreateObjectFromStackTop());
+            return Primitive(Object_Internal::CreateTemporaryObjectFromStackTop());
         }
         case DUK_TYPE_BUFFER:    return Primitive(); // no generic implementation
         case DUK_TYPE_POINTER:   return Primitive(); // hidden property
@@ -131,6 +187,8 @@ const char * TObject::PointerToHiddenKey(void * p) const {
 }
 
 
+
+
 // A normal native call. Is the entry point for all 
 // function defined by the user.
 duk_ret_t TObject::method_call(duk_context * source) {
@@ -140,7 +198,7 @@ duk_ret_t TObject::method_call(duk_context * source) {
         duk_dup(source, i);
         {
             TObject arg(source);
-            argsConverted.push_back(arg.GetAsPrimitive());
+            argsConverted.push_back(arg.ThisAsPrimitive());
         }
         duk_pop(source);
 
@@ -160,6 +218,7 @@ duk_ret_t TObject::method_call(duk_context * source) {
 
     // TODO: need to handle arrays
     duk_push_string(source, context.GetReturnValue().Data().c_str());
+    Object_Internal::SweepTemporaryObjects();
 
     return 1;
 }
@@ -217,7 +276,7 @@ duk_ret_t TObject::native_set(duk_context * source) {
     // last argument should be the value, so get it immediately
     {
         TObject arg(source);
-        argsConverted.push_back(arg.GetAsPrimitive());
+        argsConverted.push_back(arg.ThisAsPrimitive());
     }
     duk_pop(source);
 
@@ -257,7 +316,11 @@ void TObject::PushPrimitive(const Primitive & data) {
       case Primitive::TypeHint::UInt64T: duk_push_number(source, data); break;
       case Primitive::TypeHint::StringT: duk_push_string(source, data.Data().c_str()); break;
       case Primitive::TypeHint::ObjectReferenceT:      
-      case Primitive::TypeHint::ObjectReferenceNonNativeT: duk_push_string(source, data.Data().c_str()); break;           
+      case Primitive::TypeHint::ObjectReferenceNonNativeT: {
+        Object * obj = data;
+        DTContext::Get()->PushHeapEntryToDTTop(obj->GetNative()->GetHeapStoreIndex());
+        break;
+      }
       default: duk_push_string(source, "");
     }
 
