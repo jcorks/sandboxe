@@ -60,8 +60,8 @@ Primitive TObject::CallMethod(const std::string & name, const std::vector<Primit
         }
     } else {     // Self call!
         if (!duk_is_callable(source, -1)) {
-            duk_pop(source); // failure ignore;
             //DTContext::Get()->ThrowErrorObject(std::string() + "\"" + name + "\" is not a callable object.");
+            assert(stackSz == duk_get_top(source));
             return Primitive();
         }
         for(uint32_t i = 0; i < args.size(); ++i) {

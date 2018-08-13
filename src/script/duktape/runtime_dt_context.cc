@@ -377,6 +377,14 @@ void DTContext::fatal_error(void * data, const char * msg) {
 }
 
 void DTContext::ScriptErrorMessage() {
+    auto win = Dynacoe::ViewManager::Get(Dynacoe::ViewManager::GetCurrent());
+    if (!win) {
+        Dynacoe::Console::Info() << "**Note**: A display was automatically created and shown to display the scripting error.\n";
+        Dynacoe::ViewManager::NewMain("sandboxe");
+    }
+
+    Dynacoe::Console::Show(true);
+    
     TObject errObj(source);        
     std::string name = errObj.Get("name");    
     std::string message = errObj.Get("message");    
@@ -393,6 +401,8 @@ void DTContext::ScriptErrorMessage() {
     term->ReportError(msg);
 
     duk_pop(source);
+    
+    
 }
 
 

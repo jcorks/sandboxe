@@ -76,7 +76,7 @@ void Sandboxe::Script::Runtime::Start() {
     
     Sandboxe::Script::Runtime::Load("main.js");
     
-    Dynacoe::ViewManager::NewMain("temp");
+    //Dynacoe::ViewManager::NewMain("temp");
     Dynacoe::Engine::Run();
 }
 
