@@ -84,22 +84,24 @@ void Sandboxe::Script::Runtime::Start() {
 std::string Sandboxe::Script::Runtime::Execute(const std::string & code, const std::string & name) {
     return DTContext::Get()->Execute(code, name);
 }
+  
 
 
 void Sandboxe::Script::Runtime::Load(const std::string & path) {
+    //TODO: sanitize?
+    Execute(Dynacoe::Chain() << "__script_include(\"" << path << "\");\n");
 }
- 
 
 void Sandboxe::Script::Runtime::ScriptError(const std::string & str) {
     DTContext::Get()->ThrowErrorObject(str); 
 }
 
 void Sandboxe::Script::Runtime::PerformGarbageCollection() {
-
+    //??
 }
 
 void Sandboxe::Script::Runtime::CheckAndHandleErrors() {
-
+    //
 }
 
 
@@ -148,7 +150,7 @@ Primitive Object::CallMethod(const std::string & name, const std::vector<Primiti
 
 
 bool Object::IsNative() const {
-    return data->IsNative();
+    return data->GetTypeID() > 0;
 }
 
 
@@ -166,8 +168,6 @@ void Object::UpdateNonNativeReference(Object * ref, uint32_t index) {
     data->UpdateNonNativeReference(ref, index);
 
 }
-
-
 
 
 Object * Object::GetNonNativeReference(uint32_t index) const {

@@ -50,11 +50,13 @@ Primitive TObject::CallMethod(const std::string & name, const std::vector<Primit
             duk_pop(source); // failure ignore;
             assert(stackSz == duk_get_top(source));
             return Primitive();
-        } else {
+        }else if (stackSz != duk_get_top(source)) { // return value
             Primitive out = ThisAsPrimitive(); // the return value is at the top of the stack, so we can return it!
             duk_pop(source); // retval
             assert(stackSz == duk_get_top(source));
             return out;
+        } else { // no return value!
+            return Primitive();
         }
     } else {     // Self call!
         if (!duk_is_callable(source, -1)) {
@@ -68,11 +70,13 @@ Primitive TObject::CallMethod(const std::string & name, const std::vector<Primit
         if (duk_pcall(source, args.size()) != DUK_EXEC_SUCCESS) {
             assert(stackSz == duk_get_top(source));
             return Primitive();
-        } else {
+        } else if (stackSz != duk_get_top(source)) { // return value
             Primitive out = ThisAsPrimitive(); // the return value is at the top of the stack, so we can return it!
             duk_pop(source); // retval
             assert(stackSz == duk_get_top(source));
             return out;
+        } else { // no return value!
+            return Primitive();
         }
         
     }
@@ -106,22 +110,44 @@ void TObject::SetFunction(const std::string & str, Sandboxe::Script::Runtime::Fu
 
 // Adds a managed property. Managed properties have intercepted set/get functions 
 // using the ES6 proxy feature
-void TObject::SetManagedProperty(const std::string & str, Sandboxe::Script::Runtime::Function set, Sandboxe::Script::Runtime::Function get) {
+void TObject::SetManagedProperty(const std::string & str, Sandboxe::Script::Runtime::Function get, Sandboxe::Script::Runtime::Function set) {
     int stackSz = (duk_get_top(source));
+    auto src = ThisAsPrimitive();
+    assert(
+        src.hint == Sandboxe::Script::Runtime::Primitive::TypeHint::ObjectReferenceT ||
+        src.hint == Sandboxe::Script::Runtime::Primitive::TypeHint::ObjectReferenceNonNativeT
+    );
+    Object * obj = src;
 
-    // uses proxy functionality 
-    duk_dup_top(source); // copy the object at the top (since making the proxy will consume it)
-    duk_push_object(source); // handler (not used)
 
-    // set proxy target attributes (target should just capture it)
-    duk_push_c_function(source, native_set, 4);
-    duk_put_prop_string(source, -2, "set");
+    // uses ES5 define property mechanism
+    duk_push_string(source, str.c_str());
     
-    duk_push_c_function(source, native_get, 3);
-    duk_put_prop_string(source, -2, "get");
+    duk_push_c_function(source, native_get, 0);
+    {
+        TObject func(source);
+        func.MapPointer((void*)0x1, (void*)obj);
+        func.MapPointer((void*)0x2, (void*)get);
+    }
+
+    duk_push_c_function(source, native_set, 1);
+    {
+        TObject func(source);
+        func.MapPointer((void*)0x1, (void*)obj);
+        func.MapPointer((void*)0x2, (void*)set);
+    }
+
+
+
     
-    duk_push_proxy(source, 0);
-    duk_pop(source); // we dont need the ref really
+    // default: configurable: false, enumerable: false
+    duk_def_prop(
+        source, 
+        -4,
+        DUK_DEFPROP_HAVE_GETTER |
+        DUK_DEFPROP_HAVE_SETTER
+    );
+    
     assert(stackSz == duk_get_top(source));
 
 }
@@ -202,9 +228,17 @@ duk_ret_t TObject::method_call(duk_context * source) {
         }
         duk_pop(source);
 
-        Dynacoe::Console::Info() << "ARG" << i << ":" << argsConverted[i].Data() << "\n";
+        //Dynacoe::Console::Info() << "ARG" << i << ":" << argsConverted[i].Data() << "\n";
     }
 
+    // get the source if possible
+    Object * ref = nullptr;
+    duk_push_this(source);
+    if (!duk_is_undefined(source, -1)) {
+        TObject obj(source);
+        ref = (Object*)obj.GetMappedPointer((void*)0x1);
+    }
+    duk_pop(source);
 
     duk_push_current_function(source);
     Function f;
@@ -213,64 +247,59 @@ duk_ret_t TObject::method_call(duk_context * source) {
         f = (Function)thisFunction.GetMappedPointer((void*)0x1);
     }
     Sandboxe::Script::Runtime::Context context;
-    f(nullptr, argsConverted, context);
+    f(ref, argsConverted, context);
 
 
     // TODO: need to handle arrays
-    duk_push_string(source, context.GetReturnValue().Data().c_str());
+    TObject prim(source);
+    prim.PushPrimitive(context.GetReturnValue());
     Object_Internal::SweepTemporaryObjects();
-
     return 1;
 }
 
 // the standard get interceptor
-// targ: underlying plain object (= target, above)
-// key: key (can be any value, not just a string)
-// recv: object being read from (= the proxy object)
+// Through ES5 define property gets, no arguments are given
 duk_ret_t TObject::native_get(duk_context * source) {
     // first get the source object
-    Object * ref;
-    {
-        TObject obj(source);
-        ref = (Object*)obj.GetMappedPointer((void*)0x1);
-    }
-    assert(ref);    
-    duk_pop(source);
-    
-
-    // get the function to run from the ES function object
     duk_push_current_function(source);
+    Object * ref;
     Function f;
     {
-        TObject thisFunction(source);
-        f = (Function)thisFunction.GetMappedPointer((void*)0x1);
+        TObject obj(source);
+        ref = (Object*)          obj.GetMappedPointer((void*)0x1);
+        f   = (Function)         obj.GetMappedPointer((void*)0x2);
     }
+    assert(ref);    
+    TObject pushr(source);
+
+    duk_pop(source);
     Sandboxe::Script::Runtime::Context context;
     f(ref, {}, context);
-    
+
+        
     // since this is a get interceptor, the return value is 
     // essential
-    TObject pushr(source);
+
     pushr.PushPrimitive(context.GetReturnValue());
     return 1;
 }
 
 
-// the standard set interception function.
-// targ: underlying plain object (= target, above)
-// key: key (can be any value, not just a string)
-// val: value
-// recv: object being read from (= the proxy object)
+// the standard set interception function. Through ES define property
+// one argument is given
 duk_ret_t TObject::native_set(duk_context * source) {
-    // now that the object callee is at the top of the stack, 
+    // now that the object function is at the top of the stack, 
     // lets extract that mapped pointer!
+    duk_push_current_function(source);
     Object * ref;
+    Function f;
     {
         TObject obj(source);
-        ref = (Object*)obj.GetMappedPointer((void*)0x1);
+        ref = (Object*)          obj.GetMappedPointer((void*)0x1);
+        f   = (Function)         obj.GetMappedPointer((void*)0x2);
     }
+    duk_pop(source);
     assert(ref);        
-    duk_pop(source); // skip the recv argument
 
     std::vector<Primitive> argsConverted;
     // last argument should be the value, so get it immediately
@@ -280,27 +309,12 @@ duk_ret_t TObject::native_set(duk_context * source) {
     }
     duk_pop(source);
 
-    // the top object at this point is the property name, which we dont 
-    // really use!
-    duk_pop(source); // key
 
 
-
-    // get the function to run from the ES function object
-    duk_push_current_function(source);
-    Function f;
-    {
-        TObject thisFunction(source);
-        f = (Function)thisFunction.GetMappedPointer((void*)0x1);
-    }
     Sandboxe::Script::Runtime::Context context;
     f(ref, argsConverted, context);
     
-    // since this is a set interceptor, we dont need the return value..
-    // but the proxy set function expects a "was this write accepted"
-    // value, which we always return as true (for now);
-    duk_push_boolean(source, true);
-    return 1;
+    return 0;
 }
 
 

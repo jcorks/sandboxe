@@ -45,6 +45,7 @@ void Object_Internal::SweepTemporaryObjects() {
 }
 
 Object_Internal::~Object_Internal() {
+
     // since this owner will no longer exist, return the temporary status 
     // of the object once more.
     for(uint32_t i = 0; i < ownedTemps.size(); ++i) {
@@ -54,6 +55,9 @@ Object_Internal::~Object_Internal() {
     if (heapIndex) {    
         // we need to also remove the finalizer
         auto source = DTContext::Get()->GetCTX();
+
+        int stackSz = duk_get_top(source);
+
         int size = duk_get_top(source);
         DTContext::Get()->PushHeapEntryToDTTop(heapIndex);
         duk_push_undefined(source);
@@ -61,9 +65,13 @@ Object_Internal::~Object_Internal() {
         duk_pop(source);
         assert(size == duk_get_top(source));
         DTContext::Get()->RemoveHeapEntry(heapIndex);
+
+        assert(stackSz == duk_get_top(source));
+
     }
         
     printf("Deleted %p (heap tag %d)\n", parent, heapIndex);
+
 }
 
 

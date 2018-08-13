@@ -46,6 +46,8 @@ class Object_Internal {
     uint32_t heapIndex;
     Object * parent;
     std::vector<Object*> ownedTemps;
+    std::unordered_map<std::string, Function> setters;
+    std::unordered_map<std::string, Function> getters;
 
   public:
    // inherited!

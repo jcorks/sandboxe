@@ -1,7 +1,11 @@
 #include <sandboxe/script/duktape/runtime_dt_context.h>
 #include <sandboxe/script/duktape/runtime_dt_tobject.h>
+#include <sandboxe/trunk.h>
 #include <duktape.h> 
 #include <sandboxe/entity/terminal.h>
+#include <Dynacoe/Library.h>
+#include <Dynacoe/RawData.h>
+
 #include <cassert>
 
 using namespace Sandboxe::Script::Runtime;
@@ -13,8 +17,70 @@ static Dynacoe::Entity::ID terminal;
 const char * DT_SANDBOXE_OBJECT_STORE    = "__sandboxe_internal__heap";
 const char * DT_SANDBOXE_TYPE_STORE      = "__sandboxe_internal__type";
 DTContext * DTContext::global = nullptr;
+
+static std::vector<std::vector<std::pair<std::string, std::pair<Function, Function>>>> managedProperties_types;
+static std::set<std::string> includedScripts; 
+void runtime_include_script(Object *, const std::vector<Primitive> & args, Context & context) {
+    //v8::HandleScope scopeMonitor;
+    if (args.size() < 1) {
+        return ScriptError((Dynacoe::Chain() << "Exactly one arg, dummy\n").ToString());
+    }
+    
+    // having a second argument is a flag for only including rather than running.
+    bool pragmaOnce = false;
+    if (args.size() == 2) {
+        pragmaOnce = args[1];
+    }
+    
+    std::string path = args[0];
+
+    // if include_once, ignore additional include requests
+    if (pragmaOnce && includedScripts.find(path) != includedScripts.end()) {
+        return;
+    }
+    
+    Dynacoe::AssetID id;
+    if (Sandboxe::Trunk::ItemExists(path)) {
+        //Dynacoe::Console::Info() << "Loading " << *path << " from trunk\n";
+        id = Dynacoe::Assets::LoadFromBuffer(
+            "", 
+            path, 
+            Sandboxe::Trunk::ItemGet(path)
+        );    
+    } else {
+        id = Dynacoe::Assets::Load("", path, false);
+    }
+    if (!id.Valid()) {
+        ScriptError((Dynacoe::Chain() << "File " << path << " could not be accessed.\n").ToString());
+        return;
+    }
+    
+    // retrieve full string
+    Dynacoe::RawData & data = Dynacoe::Assets::Get<Dynacoe::RawData>(id);
+    char * rawStr = new char[data.GetSize()+1];
+    rawStr[data.GetSize()] = 0;
+    memcpy(rawStr, data.GetPtr(), data.GetSize());
+    
+    includedScripts.insert(path);
+    
+    // execute the script
+    Sandboxe::Script::Runtime::Execute(rawStr, path);
+        //delete[] rawStr;
+        //return v8::ThrowException(v8::String::New((Dynacoe::Chain() << "File " << *path << " could not be accessed.\n").ToString().c_str()));
+    
+
+    
+    delete[] rawStr;
+    
+    return;
+}
+
+
+
+
   
 DTContext::DTContext() {
+    managedProperties_types.push_back({});
     global = this;
     source = duk_create_heap(NULL, NULL, NULL, NULL, fatal_error);
 
@@ -27,9 +93,13 @@ DTContext::DTContext() {
     duk_put_global_string(source, DT_SANDBOXE_TYPE_STORE);
     heapIndex = 1;
 
-
-
-
+    
+    // built-in stuff
+    duk_push_global_object(source);
+    TObject global(source);
+        global.SetFunction("__script_include", runtime_include_script);
+    duk_pop(source);
+    
 
 }
 
@@ -44,7 +114,6 @@ void DTContext::ApplyGlobalFunctions(const std::vector<std::pair<std::string, Ru
     duk_pop(source);
     assert(duk_get_top(source) == stackSize);
 }
-
 
 
 void DTContext::AddType(int typeID, 
@@ -73,10 +142,8 @@ void DTContext::AddType(int typeID,
         for(uint32_t i = 0; i < properties.size(); ++i) {
             store.Set(properties[i].first, properties[i].second);
         }
-        
-        for(uint32_t i = 0; i < nativeProperties.size(); ++i) {
-            store.SetManagedProperty(nativeProperties[i].first, nativeProperties[i].second.first, nativeProperties[i].second.second);
-        }            
+        while(typeID >= managedProperties_types.size()) managedProperties_types.push_back({});
+        managedProperties_types[typeID] = (nativeProperties);
     }
     duk_put_prop_index(source, -2, typeID);
 
@@ -131,6 +198,8 @@ static duk_ret_t object_finalizer(duk_context * source) {
     return 0;
 }
 
+
+
 // creates a new object of the given type in the heap store
 uint32_t DTContext::CreateHeapEntryFromObject(Object * parent) {
     int stackSize = duk_get_top(source);
@@ -179,13 +248,28 @@ uint32_t DTContext::CreateHeapEntryFromObject(Object * parent) {
     // enumerate with keys and values
     int enumStack = duk_get_top(source);
     while(duk_next(source, -1, 1)) {                                        // global - store - typeBase - {} - enum - key - val
-        if (duk_get_top(source) - enumStack == 2) // key/value pair successful
+        if (duk_get_top(source) - enumStack == 2) { // key/value pair successful
+            duk_to_string(source, -2); // stringify the key ?
             duk_put_prop(source, -4); // copy the value key pair into the 
                                       //new object. This pops both the key and value
+        }
         else 
             duk_pop(source);   // only the key was found, so skip
     }
     duk_pop(source); // enum                                                // global - store - typeBase - {}
+
+    // dont forget!! we also have our managed properties that are not enumerable 
+    // from their ES5 defineProperty attribute
+    {
+        auto nativeProperties = managedProperties_types[parent->GetTypeID()];
+        TObject object (source);
+        for(uint32_t i = 0; i < nativeProperties.size(); ++i) {
+            object.SetManagedProperty(nativeProperties[i].first, nativeProperties[i].second.first, nativeProperties[i].second.second);
+        }            
+    }
+
+
+
 
     // now that the new object is made, lets place it in the heap at the new index
     duk_get_prop_string(source, -4, DT_SANDBOXE_OBJECT_STORE);              // global - store - typeBase - {} - heap
@@ -243,6 +327,7 @@ uint32_t DTContext::CreateHeapEntryFromDTStack(Object * parent) {
     
     duk_pop(source); // objectStore
     duk_pop(source); // global
+    PushHeapEntryToDTTop(out);
     
     assert(duk_get_top(source) == stackSize);
     return out;

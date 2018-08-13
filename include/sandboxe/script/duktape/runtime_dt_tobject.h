@@ -46,7 +46,7 @@ class TObject {
     
     // Adds a managed property. Managed properties have intercepted set/get functions 
     // using the ES6 proxy feature
-    void SetManagedProperty(const std::string & str, Sandboxe::Script::Runtime::Function set, Sandboxe::Script::Runtime::Function get);
+    void SetManagedProperty(const std::string & str, Sandboxe::Script::Runtime::Function get, Sandboxe::Script::Runtime::Function set);
 
     // sets a hidden property pointer that is accessible via pointer
     void MapPointer(void * key, void * value);

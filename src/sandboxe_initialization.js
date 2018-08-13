@@ -176,33 +176,6 @@ var sandboxe = {
      * @namespace
      */   
     debug : {
-        /**
-         * Convenience function that returns all names of an object. 
-         *
-         * @param {Object} object The object to query.
-         * @returns {Array} Names of properties belonging to the object as an array.
-         * @function
-         */
-        getProperties : __debug_get_properties,
-
-        /**
-         * Returns whether an object is a native object. When native, the object's
-         * functions and member accesses will trigger code internal to the sandboxe binary.
-         *
-         * @param {Object} object The object to query.
-         * @returns {Boolean} Whether the object is a native object. 
-         * @function
-         */
-        isNative : __debug_isNative,
-
-        /**
-         * Convenience function that reurns whether the object can be called as a function
-         *
-         * @param {Object} object The object to query.
-         * @returns {Boolean} Whether the object is a function object. 
-         * @function
-         */
-        isFunction : __debug_isFunction,
 
         /**
          * Convenience function that throws an exception if the parameter passed is not true.
@@ -1812,7 +1785,7 @@ var sandboxe = {
     ease : __mutator_step
 
 };
-sandboxe.heap = SANDBOXE_ObjectHeap;
+sandboxe.heap = __sandboxe_internal__heap;
 
 
 
