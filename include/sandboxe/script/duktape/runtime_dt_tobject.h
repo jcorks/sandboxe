@@ -54,6 +54,17 @@ class TObject {
     // gets a hidden mapped pointer for the object
     void * GetMappedPointer(void * key) const;
 
+    // Gets whether this object is an array. Arrays are not language-agnostic constructs,
+    // so they are blanketed as ObjectReferenceNonNative unless detected and extracted using 
+    // ThisAsPrimitiveArray(), which will only produce meaningful results if IsThisArray() 
+    // is true.
+    bool IsThisArray() const;
+    
+    // Returns an array of values that this obejct holds when considered as an array.
+    // Due to the nature of this function, calling this function for a non-array object
+    // will be indistinguishable from calling this on an empty array object. To identify whether 
+    // this object is an array, use IsThisArray();
+    std::vector<Primitive> ThisAsPrimitiveArray() const;
     
 
   private:
@@ -67,6 +78,7 @@ class TObject {
     
 
     void PushPrimitive(const Primitive & data);
+    void PushPrimitiveArray(const std::vector<Primitive> & data);
 
 };
 

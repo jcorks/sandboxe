@@ -237,7 +237,7 @@ skyLight = (function(){
     var out = sandboxe.entity.create();
     
     // Lights are maintained using renderLight components, so lets create one.
-    var directional = out.add('renderLight');
+    var directional = out.addComponent(sandboxe.component.type.renderLight);
     
     // This first example will be a directional light, so the type should be set accordingly.
     directional.type = sandboxe.component.renderLight.type.directional;
@@ -271,7 +271,7 @@ light = (function(){
     var out = sandboxe.entity.create();
     
     // Like before lets set these properties.
-    var point = out.add('renderLight');
+    var point = out.addComponent(sandboxe.component.type.renderLight);
     point.type = sandboxe.component.renderLight.type.point;
     point.intensity = 20;
     

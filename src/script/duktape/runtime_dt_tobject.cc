@@ -108,6 +108,23 @@ void TObject::SetFunction(const std::string & str, Sandboxe::Script::Runtime::Fu
 }
 
 
+bool TObject::IsThisArray() const {
+    return duk_is_array(source, -1);
+}
+
+std::vector<Primitive> TObject::ThisAsPrimitiveArray() const {
+    int stackSz = (duk_get_top(source));
+    std::vector<Primitive> out;
+    uint32_t length = duk_get_length(source, -1);
+    for(uint32_t i = 0; i < length; ++i) {
+        duk_get_prop_index(source, -1, i);
+        out.push_back(ThisAsPrimitive());
+        duk_pop(source);        
+    }
+    assert(stackSz == duk_get_top(source)); 
+    return out;
+}
+
 // Adds a managed property. Managed properties have intercepted set/get functions 
 // using the ES6 proxy feature
 void TObject::SetManagedProperty(const std::string & str, Sandboxe::Script::Runtime::Function get, Sandboxe::Script::Runtime::Function set) {
@@ -219,12 +236,18 @@ const char * TObject::PointerToHiddenKey(void * p) const {
 // function defined by the user.
 duk_ret_t TObject::method_call(duk_context * source) {
     int args = duk_get_top(source);
+    Sandboxe::Script::Runtime::Context context;
     std::vector<Primitive> argsConverted;
     for(uint32_t i = 0; i < args; ++i) {
         duk_dup(source, i);
         {
             TObject arg(source);
             argsConverted.push_back(arg.ThisAsPrimitive());
+
+            if (arg.IsThisArray()) {
+                context.SetArrayArgument(i, arg.ThisAsPrimitiveArray());
+            }
+
         }
         duk_pop(source);
 
@@ -246,13 +269,16 @@ duk_ret_t TObject::method_call(duk_context * source) {
         TObject thisFunction(source);
         f = (Function)thisFunction.GetMappedPointer((void*)0x1);
     }
-    Sandboxe::Script::Runtime::Context context;
     f(ref, argsConverted, context);
 
 
     // TODO: need to handle arrays
-    TObject prim(source);
-    prim.PushPrimitive(context.GetReturnValue());
+    TObject pushr(source);
+    if (context.ReturnsArray()) {
+        pushr.PushPrimitiveArray(context.GetReturnArray());
+    } else {
+        pushr.PushPrimitive(context.GetReturnValue());
+    }
     Object_Internal::SweepTemporaryObjects();
     return 1;
 }
@@ -279,8 +305,11 @@ duk_ret_t TObject::native_get(duk_context * source) {
         
     // since this is a get interceptor, the return value is 
     // essential
-
-    pushr.PushPrimitive(context.GetReturnValue());
+    if (context.ReturnsArray()) {
+        pushr.PushPrimitiveArray(context.GetReturnArray());
+    } else {
+        pushr.PushPrimitive(context.GetReturnValue());
+    }
     return 1;
 }
 
@@ -301,17 +330,21 @@ duk_ret_t TObject::native_set(duk_context * source) {
     duk_pop(source);
     assert(ref);        
 
+    Sandboxe::Script::Runtime::Context context;
     std::vector<Primitive> argsConverted;
     // last argument should be the value, so get it immediately
     {
         TObject arg(source);
         argsConverted.push_back(arg.ThisAsPrimitive());
+
+        if (arg.IsThisArray()) {
+            context.SetArrayArgument(0, arg.ThisAsPrimitiveArray());
+        }
     }
     duk_pop(source);
 
 
 
-    Sandboxe::Script::Runtime::Context context;
     f(ref, argsConverted, context);
     
     return 0;
@@ -338,5 +371,15 @@ void TObject::PushPrimitive(const Primitive & data) {
       default: duk_push_string(source, "");
     }
 
+}
+
+
+void TObject::PushPrimitiveArray(const std::vector<Primitive> & array) {
+    int index = duk_push_array(source);
+    uint32_t len = array.size();
+    for(uint32_t i = 0; i < len; ++i) {
+        PushPrimitive(array[i]);
+        duk_put_prop_index(source, index, i);
+    }
 }
 

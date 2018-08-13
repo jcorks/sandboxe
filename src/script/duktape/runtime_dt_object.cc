@@ -88,6 +88,7 @@ Primitive Object_Internal::Get(const std::string & name) {
     TObject object(DTContext::Get()->GetCTX());
     auto out = object.GetAsPrimitive(name);
     duk_pop(DTContext::Get()->GetCTX());
+    return out;
 }
 void Object_Internal::Set(const std::string & name, const Primitive & data) {
     DTContext::Get()->PushHeapEntryToDTTop(heapIndex);
