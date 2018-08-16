@@ -383,7 +383,7 @@ void DTContext::ScriptErrorMessage() {
         Dynacoe::ViewManager::NewMain("sandboxe");
     }
 
-    Dynacoe::Console::Show(true);
+    //Dynacoe::Console::Show(true);
     
     TObject errObj(source);        
     std::string name = errObj.Get("name");    
@@ -392,10 +392,46 @@ void DTContext::ScriptErrorMessage() {
     std::string lineNumber = errObj.Get("lineNumber");    
     std::string stack = errObj.Get("stack");    
 
-           
     std::string msg = 
-        std::string("@") + name + " from:   " + fileName + ", line " + lineNumber + ". Detail:\n\n" + stack;
+        std::string("@") + name + " from:   " + fileName + ", line " + lineNumber + ". Detail:\n\n";
 
+
+    Dynacoe::Chain filter;
+    filter = stack.c_str();
+    filter.SetDelimiters("\r\n");
+    while(filter.LinksLeft()) {
+        std::string line = filter.GetLink();
+        filter.NextLink();        
+
+
+        // remove useless engine-internal stack references
+        if (line.find(".c:") != std::string::npos) {
+            continue;
+        } 
+
+        if (line.find(".cc:") != std::string::npos) {
+            continue;
+        } 
+
+        if (line.find("native strict preventsyield") != std::string::npos) {
+            continue;
+        } 
+
+
+        // remove unneeded keywords
+        size_t p;
+        while((p = line.find("preventsyield")) != std::string::npos) {
+            line.replace(p, strlen("preventsyield"), "");
+        }
+
+        while((p = line.find("internal")) != std::string::npos) {
+            line.replace(p, strlen("internal"), "");
+        }
+        msg += line + "\n";
+    }
+    
+    
+    
 
     Sandboxe::Script::Terminal * term = terminal.IdentifyAs<Sandboxe::Script::Terminal>();
     term->ReportError(msg);

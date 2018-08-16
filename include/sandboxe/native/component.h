@@ -81,7 +81,9 @@ class Component : public Dynacoe::Component, public Sandboxe::ComponentAdaptor {
     }
       
     std::string info;
-    
+    std::string GetInfo() {
+        return info;
+    }
     void OnGarbageCollection(){}
     const char * GetObjectName() const {return "Component";}
 
