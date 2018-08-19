@@ -37,6 +37,9 @@ class DTContext {
     // Generates the given error. May longjump the program.
     void ThrowErrorObject(const std::string & err);
 
+    // Processes the error object at the top of the stack
+    void ProcessErrorObject();
+
 
     // creates a new object of the given type in the heap store
     uint32_t CreateHeapEntryFromObject(Object * parent);

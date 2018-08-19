@@ -42,32 +42,26 @@ Primitive TObject::CallMethod(const std::string & name, const std::vector<Primit
     int stackSz = (duk_get_top(source));
 
     if (name.size()) { // method / member call!
-        duk_push_string(source, name.c_str());
-        for(uint32_t i = 0; i < args.size(); ++i) {
-            PushPrimitive(args[i]);
-        }
-        if (duk_pcall_prop(source, (-1*(int)args.size()) - 2, args.size()) != DUK_EXEC_SUCCESS) {
-            duk_pop(source); // failure ignore;
-            assert(stackSz == duk_get_top(source));
-            return Primitive();
-        }else if (stackSz != duk_get_top(source)) { // return value
-            Primitive out = ThisAsPrimitive(); // the return value is at the top of the stack, so we can return it!
-            duk_pop(source); // retval
-            assert(stackSz == duk_get_top(source));
-            return out;
-        } else { // no return value!
-            return Primitive();
-        }
+        duk_get_prop_string(source, -1, name.c_str());
+        Primitive out = CallMethod("", args);
+        duk_pop(source);
+        assert(stackSz == duk_get_top(source));
+
+        return out;
     } else {     // Self call!
+        
         if (!duk_is_callable(source, -1)) {
             //DTContext::Get()->ThrowErrorObject(std::string() + "\"" + name + "\" is not a callable object.");
             assert(stackSz == duk_get_top(source));
             return Primitive();
         }
+        // pcall consumes the object itself even in error.
+        duk_dup(source, -1);
         for(uint32_t i = 0; i < args.size(); ++i) {
             PushPrimitive(args[i]);
         }
         if (duk_pcall(source, args.size()) != DUK_EXEC_SUCCESS) {
+            DTContext::Get()->ProcessErrorObject();
             assert(stackSz == duk_get_top(source));
             return Primitive();
         } else if (stackSz != duk_get_top(source)) { // return value

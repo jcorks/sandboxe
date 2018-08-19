@@ -164,10 +164,10 @@ std::string DTContext::Execute(const std::string & code, const std::string & nam
 
     std::string out;
     if (duk_pcompile(source, 0)) {
-        ScriptErrorMessage();
+        ProcessErrorObject();
     } else {
         if (duk_pcall(source, 0)) {
-            ScriptErrorMessage();
+            ProcessErrorObject();
         } else {
             const char * result = duk_safe_to_string(source, -1);
             out = (result ? result : "<null>");
@@ -376,7 +376,7 @@ void DTContext::fatal_error(void * data, const char * msg) {
 
 }
 
-void DTContext::ScriptErrorMessage() {
+void DTContext::ProcessErrorObject() {
     auto win = Dynacoe::ViewManager::Get(Dynacoe::ViewManager::GetCurrent());
     if (!win) {
         Dynacoe::Console::Info() << "**Note**: A display was automatically created and shown to display the scripting error.\n";

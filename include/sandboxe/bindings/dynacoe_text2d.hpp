@@ -34,7 +34,13 @@ SANDBOXE_NATIVE_DEF(__text2d_get_char_position) {
 SANDBOXE_NATIVE_DEF(__text2d_get_dimensions) {
     auto shape = (Sandboxe::Text2DObject*)source;
     auto out = new Sandboxe::VectorObject();
-    *out->vector = shape->GetDimensions();
+
+    if (arguments.size() == 0) {
+        *out->vector = shape->GetDimensions();
+    } else {
+        *out->vector = shape->GetDimensions(arguments[0].Data());
+    }
+    
     context.SetReturnValue(out);
 }
 
