@@ -392,13 +392,18 @@ void DTContext::ProcessErrorObject() {
     std::string lineNumber = errObj.Get("lineNumber");    
     std::string stack = errObj.Get("stack");    
 
-    std::string msg = 
-        std::string("@") + name + " from:   " + fileName + ", line " + lineNumber + ". Detail:\n\n";
-
+    std::string msg;
+    if (stack.size()) {
+        msg = stack;
+    } else {
+        msg = 
+            std::string("@") + name + " from:   " + fileName + ", line " + lineNumber;
+    }
 
     Dynacoe::Chain filter;
-    filter = stack.c_str();
+    filter = msg.c_str();
     filter.SetDelimiters("\r\n");
+    msg = "";
     while(filter.LinksLeft()) {
         std::string line = filter.GetLink();
         filter.NextLink();        

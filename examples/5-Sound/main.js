@@ -87,9 +87,9 @@ entity.onStep = function() {
     // expand the shape for the duration of the sample's playback.
     // We check to see if the sample is playing by using the result 
     // from sandboxe.sound.playAudio(), which is a reference to the active sound.
-    kickScale = (kickSample && kickSample.valid ? 2.0 : .5);
-    snareScale = (snareSample && snareSample.valid ? 2.0 : .5);
-    clangScale = (clangSample && clangSample.valid ? 2.0 : .5);
+    kickScale = (kickSample && kickSample.valid ? 3.0 : .5);
+    snareScale = (snareSample && snareSample.valid ? 3.0 : .5);
+    clangScale = (clangSample && clangSample.valid ? 3.0 : .5);
     
     snareShape.node.scale.x = sandboxe.ease(snareShape.node.scale.x, snareScale, .1);
     snareShape.node.scale.y = snareShape.node.scale.x; 
