@@ -1,0 +1,100 @@
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> <style>
+	.KEYW {color: #933;}
+	.COMM {color: #bbb; font-style: italic;}
+	.NUMB {color: #393;}
+	.STRN {color: #393;}
+	.REGX {color: #339;}
+	.line {border-right: 1px dotted #666; color: #666; font-style: normal;}
+	</style></head><body><pre><span class='line'>  1</span> <span class="COMM">/**
+<span class='line'>  2</span>  * @class color
+<span class='line'>  3</span>  * @description
+<span class='line'>  4</span>  * Holds a standard RGBA value. See {@link sandboxe.color.create} to instantiate 
+<span class='line'>  5</span>  * it. &lt;/br>&lt;/br>
+<span class='line'>  6</span>  *
+<span class='line'>  7</span>  * colors are sandboxe's primitive color type. Each component holds byte values 
+<span class='line'>  8</span>  * but are expressed as decimals from 0.0 (no intensity) to 1.0 (maximum intensity).
+<span class='line'>  9</span>  *
+<span class='line'> 10</span>  * A notable feature is that components or arguments that except colors may 
+<span class='line'> 11</span>  * also accept string values as if calling {@link color.set}.
+<span class='line'> 12</span>  *
+<span class='line'> 13</span>  */</span><span class="WHIT"> 
+<span class='line'> 14</span> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">color</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 15</span> 
+<span class='line'> 16</span> </span><span class="WHIT">    
+<span class='line'> 17</span>     </span><span class="COMM">/**
+<span class='line'> 18</span>      * Converts the color into a string.
+<span class='line'> 19</span>      * @returns {String}
+<span class='line'> 20</span>      */</span><span class="WHIT">
+<span class='line'> 21</span> </span><span class="WHIT">    </span><span class="NAME">this.toString</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 22</span> 
+<span class='line'> 23</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 24</span>      * Creates a copy of this color.
+<span class='line'> 25</span>      * @returns {color}
+<span class='line'> 26</span>      */</span><span class="WHIT">
+<span class='line'> 27</span> </span><span class="WHIT">    </span><span class="NAME">this.clone</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 28</span> </span><span class="WHIT">    
+<span class='line'> 29</span>     </span><span class="COMM">/** 
+<span class='line'> 30</span>      * Sets the color from a string value or color.
+<span class='line'> 31</span>      * String values accepted can follow one of 2 formats: &lt;/br>&lt;/br>
+<span class='line'> 32</span>      * 1.) As a color name (see this list https://en.wikipedia.org/wiki/X11_color_names) &lt;/br>
+<span class='line'> 33</span>      * 2.) As a typical hex html / css style format color (i.e. #ff00ff). Alpha channel may be included in this hex string. 
+<span class='line'> 34</span>      * @param {String|color} value The new value to set.
+<span class='line'> 35</span>      */</span><span class="WHIT">
+<span class='line'> 36</span> </span><span class="WHIT">    </span><span class="NAME">this.set</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">value</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 37</span> 
+<span class='line'> 38</span> 
+<span class='line'> 39</span> 
+<span class='line'> 40</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 41</span>      * Red component. Defined from 0.0 to 1.0
+<span class='line'> 42</span>      * @type {Number}
+<span class='line'> 43</span>      */</span><span class="WHIT">
+<span class='line'> 44</span> </span><span class="WHIT">    </span><span class="NAME">this.r</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 45</span> 
+<span class='line'> 46</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 47</span>      * Green component. Defined from 0.0 to 1.0
+<span class='line'> 48</span>      * @type {Number}
+<span class='line'> 49</span>      */</span><span class="WHIT">
+<span class='line'> 50</span> </span><span class="WHIT">    </span><span class="NAME">this.g</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 51</span> 
+<span class='line'> 52</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 53</span>      * Blue component. Defined from 0.0 to 1.0
+<span class='line'> 54</span>      * @type {Number}
+<span class='line'> 55</span>      */</span><span class="WHIT">
+<span class='line'> 56</span> </span><span class="WHIT">    </span><span class="NAME">this.b</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 57</span> 
+<span class='line'> 58</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 59</span>      * Alpha/opacity component. Defined from 0.0 to 1.0
+<span class='line'> 60</span>      * @type {Number}
+<span class='line'> 61</span>      */</span><span class="WHIT">
+<span class='line'> 62</span> </span><span class="WHIT">    </span><span class="NAME">this.a</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 63</span> 
+<span class='line'> 64</span> 
+<span class='line'> 65</span> 
+<span class='line'> 66</span> 
+<span class='line'> 67</span> 
+<span class='line'> 68</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 69</span>      * Alias for color.r
+<span class='line'> 70</span>      * @type {Number}
+<span class='line'> 71</span>      */</span><span class="WHIT">
+<span class='line'> 72</span> </span><span class="WHIT">    </span><span class="NAME">this.red</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 73</span> 
+<span class='line'> 74</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 75</span>      * Alias for color.g
+<span class='line'> 76</span>      * @type {Number}
+<span class='line'> 77</span>      */</span><span class="WHIT">
+<span class='line'> 78</span> </span><span class="WHIT">    </span><span class="NAME">this.green</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 79</span> 
+<span class='line'> 80</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 81</span>      * Alias for color.b
+<span class='line'> 82</span>      * @type {Number}
+<span class='line'> 83</span>      */</span><span class="WHIT">
+<span class='line'> 84</span> </span><span class="WHIT">    </span><span class="NAME">this.blue</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 85</span> 
+<span class='line'> 86</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 87</span>      * Alias for color.a
+<span class='line'> 88</span>      * @type {Number}
+<span class='line'> 89</span>      */</span><span class="WHIT">
+<span class='line'> 90</span> </span><span class="WHIT">    </span><span class="NAME">this.alpha</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 91</span> 
+<span class='line'> 92</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 93</span> </span><span class="PUNC">}</span></pre></body></html>

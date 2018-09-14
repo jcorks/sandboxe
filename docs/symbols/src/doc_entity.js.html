@@ -1,0 +1,235 @@
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> <style>
+	.KEYW {color: #933;}
+	.COMM {color: #bbb; font-style: italic;}
+	.NUMB {color: #393;}
+	.STRN {color: #393;}
+	.REGX {color: #339;}
+	.line {border-right: 1px dotted #666; color: #666; font-style: normal;}
+	</style></head><body><pre><span class='line'>  1</span> <span class="COMM">/**
+<span class='line'>  2</span>  * @class entity
+<span class='line'>  3</span>  * @description
+<span class='line'>  4</span>  * extensible behavior object updated by the engine. Created with 
+<span class='line'>  5</span>  * {@link sandboxe.entity.create}&lt;/br>&lt;/br>
+<span class='line'>  6</span>  *
+<span class='line'>  7</span>  * Entities are the base object that provides means to easily 
+<span class='line'>  8</span>  * include custom update behavior. Along with calling custom step and draw 
+<span class='line'>  9</span>  * functions over time, with {@link component}s you can provide
+<span class='line'> 10</span>  * a more manageable software platform fior youtr project. &lt;/br>&lt;/br>
+<span class='line'> 11</span>  *
+<span class='line'> 12</span>  * Entities are arranged in a hierarchical fashion, where the root
+<span class='line'> 13</span>  * is assigned using {@link sandboxe.engine.setRoot} 
+<span class='line'> 14</span>  */</span><span class="WHIT">
+<span class='line'> 15</span> 
+<span class='line'> 16</span> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">entity</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 17</span> 
+<span class='line'> 18</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 19</span>      * Performs the normal draw iteration, which calls onDraw() for this entity,
+<span class='line'> 20</span>      * draw() for all children entities, and draw() for all attached components.
+<span class='line'> 21</span>      */</span><span class="WHIT">
+<span class='line'> 22</span> </span><span class="WHIT">    </span><span class="NAME">this.draw</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 23</span> 
+<span class='line'> 24</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 25</span>      * Performs the normal draw iteration, which calls onStep() for this entity,
+<span class='line'> 26</span>      * step() for all children entities, and step() for all attached components.
+<span class='line'> 27</span>      */</span><span class="WHIT">
+<span class='line'> 28</span> </span><span class="WHIT">    </span><span class="NAME">this.step</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 29</span> 
+<span class='line'> 30</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 31</span>      * Returns whether the entity has been removed from sandboxe. It will 
+<span class='line'> 32</span>      * still be accessible, but not usable.
+<span class='line'> 33</span>      * @returns {Boolean} Whether this entity is still valid.
+<span class='line'> 34</span>      */</span><span class="WHIT">
+<span class='line'> 35</span> </span><span class="WHIT">    </span><span class="NAME">this.valid</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 36</span> 
+<span class='line'> 37</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 38</span>      * Detaches and marks this entity for deletion.
+<span class='line'> 39</span>      */</span><span class="WHIT">
+<span class='line'> 40</span> </span><span class="WHIT">    </span><span class="NAME">this.remove</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 41</span> 
+<span class='line'> 42</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 43</span>      * Adds the given entity as a child. When a child, an Entity will be
+<span class='line'> 44</span>      * updated when the World is updated.
+<span class='line'> 45</span>      * @param {entity} child
+<span class='line'> 46</span>      */</span><span class="WHIT">
+<span class='line'> 47</span> </span><span class="WHIT">    </span><span class="NAME">this.attach</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 48</span> 
+<span class='line'> 49</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 50</span>      * Removes the child-parent relationship, detaching this entity from its parent.
+<span class='line'> 51</span>      */</span><span class="WHIT">
+<span class='line'> 52</span> </span><span class="WHIT">    </span><span class="NAME">this.detach</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 53</span> 
+<span class='line'> 54</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 55</span>      * Returns the number of children belonging to this entity.
+<span class='line'> 56</span>      * @returns {Number}
+<span class='line'> 57</span>      */</span><span class="WHIT">
+<span class='line'> 58</span> </span><span class="WHIT">    </span><span class="NAME">this.getNumChildren</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 59</span> 
+<span class='line'> 60</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 61</span>      * Returns whether the given entity is contained within this entity.
+<span class='line'> 62</span>      * @param {entity} queriedEntity 
+<span class='line'> 63</span>      * @returns {Boolean}
+<span class='line'> 64</span>      */</span><span class="WHIT">
+<span class='line'> 65</span> </span><span class="WHIT">    </span><span class="NAME">this.contains</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 66</span> 
+<span class='line'> 67</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 68</span>      * Returns the i'th Entity starting at 0.
+<span class='line'> 69</span>      *
+<span class='line'> 70</span>      * Entities are ordered by priority, where the first entity
+<span class='line'> 71</span>      * is guaranteed to be the one with the lowest Priority value.
+<span class='line'> 72</span>      * @returns {Array} children
+<span class='line'> 73</span>      */</span><span class="WHIT">
+<span class='line'> 74</span> </span><span class="WHIT">    </span><span class="NAME">this.getChildren</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 75</span> 
+<span class='line'> 76</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 77</span>      * Returns all Entities that are within this Entity's hierarchy.
+<span class='line'> 78</span>      * @returns {Array} allSubEntities
+<span class='line'> 79</span>      */</span><span class="WHIT">
+<span class='line'> 80</span> </span><span class="WHIT">    </span><span class="NAME">this.getAllSubEntities</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 81</span> 
+<span class='line'> 82</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 83</span>      * Returns all bound entities with the name equivalent to the one given within 
+<span class='line'> 84</span>      * this entity's hierarchy.
+<span class='line'> 85</span>      * @returns {Array} searchResults
+<span class='line'> 86</span>      */</span><span class="WHIT">
+<span class='line'> 87</span> </span><span class="WHIT">    </span><span class="NAME">this.findChildByName</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 88</span> 
+<span class='line'> 89</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 90</span>      * Convenienve function to create a new entity that is set 
+<span class='line'> 91</span>      * as a child of this entity.
+<span class='line'> 92</span>      * @returns {entity}
+<span class='line'> 93</span>      */</span><span class="WHIT">
+<span class='line'> 94</span> </span><span class="WHIT">    </span><span class="NAME">this.createChild</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 95</span> 
+<span class='line'> 96</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 97</span>      * Creates a new component as part of this entity.
+<span class='line'> 98</span>      * @param {Number} type The component type to use. See {@link sandboxe.component.type} 
+<span class='line'> 99</span>      * @returns {component} The component created.
+<span class='line'>100</span>      */</span><span class="WHIT">
+<span class='line'>101</span> </span><span class="WHIT">    </span><span class="NAME">this.addComponent</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>102</span> 
+<span class='line'>103</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>104</span>      * Returns the last recorded amount of milliseconds it took the
+<span class='line'>105</span>      * Entity, iedentified by id, to complete its step cycle. A step cycle consists of the Entities
+<span class='line'>106</span>      * Step function and any attached components' step.
+<span class='line'>107</span>      * @returns {Number} 
+<span class='line'>108</span>      */</span><span class="WHIT">
+<span class='line'>109</span> </span><span class="WHIT">    </span><span class="NAME">this.stepDuration</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>110</span> 
+<span class='line'>111</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>112</span>      * Returns the last recorded amount of milliseconds it took the
+<span class='line'>113</span>      * Entity, iedentified by id, to complete its draw cycle. A draw cycle consists of the Entities
+<span class='line'>114</span>      * Draw function and any attached components' draw.
+<span class='line'>115</span>      * @returns {Number}
+<span class='line'>116</span>      */</span><span class="WHIT">
+<span class='line'>117</span> </span><span class="WHIT">    </span><span class="NAME">this.drawDuration</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>118</span> 
+<span class='line'>119</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>120</span>      * Alters the priority of this entity.
+<span class='line'>121</span>      *
+<span class='line'>122</span>      * Priorty determines the order in which this
+<span class='line'>123</span>      * entity is updated. A lower priority means it will be drawn and updated earlier.
+<span class='line'>124</span>      * It is undefined which entity is updated first if both have the same priority.
+<span class='line'>125</span>      * @param {Number} p The new priority.
+<span class='line'>126</span>      */</span><span class="WHIT">
+<span class='line'>127</span> </span><span class="WHIT">    </span><span class="NAME">this.setPriority</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>128</span> 
+<span class='line'>129</span> 
+<span class='line'>130</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>131</span>      * Sends the entity of the ID to
+<span class='line'>132</span>      * be the last of in line for drawing and updates.
+<span class='line'>133</span>      */</span><span class="WHIT">
+<span class='line'>134</span> </span><span class="WHIT">    </span><span class="NAME">this.setPriorityLast</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>135</span> 
+<span class='line'>136</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>137</span>      * Sends the entity to be drawn and updated as the last in the queue
+<span class='line'>138</span>      * causing it to be on top when drawing.
+<span class='line'>139</span>      */</span><span class="WHIT">
+<span class='line'>140</span> </span><span class="WHIT">    </span><span class="NAME">this.setPriorityFirst</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>141</span> 
+<span class='line'>142</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>143</span>      * Returns the priority of the this entity.
+<span class='line'>144</span>      * @returns {Number} priority value
+<span class='line'>145</span>      */</span><span class="WHIT">
+<span class='line'>146</span> </span><span class="WHIT">    </span><span class="NAME">this.getPriority</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>147</span> 
+<span class='line'>148</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>149</span>      * Returns the parent of the entity.
+<span class='line'>150</span>      * @returns {entity} 
+<span class='line'>151</span>      */</span><span class="WHIT">
+<span class='line'>152</span> </span><span class="WHIT">    </span><span class="NAME">this.getParent</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>153</span> 
+<span class='line'>154</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>155</span>      * Returns whether this entity has a parent.
+<span class='line'>156</span>      * @returns {Boolean}
+<span class='line'>157</span>      */</span><span class="WHIT">
+<span class='line'>158</span> </span><span class="WHIT">    </span><span class="NAME">this.hasParent</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>159</span> 
+<span class='line'>160</span> 
+<span class='line'>161</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>162</span>      * Returns whether or not there is currently an attached component of the
+<span class='line'>163</span>      * tag given if it exists. If there a multiple, the earliest component 
+<span class='line'>164</span>      * added is returned.
+<span class='line'>165</span>      * @returns {component}
+<span class='line'>166</span>      */</span><span class="WHIT">
+<span class='line'>167</span> </span><span class="WHIT">    </span><span class="NAME">this.queryComponent</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>168</span> 
+<span class='line'>169</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>170</span>      * Returns all components that belong to the Entity.
+<span class='line'>171</span>      * @returns {Array} array of all components
+<span class='line'>172</span>      */</span><span class="WHIT">
+<span class='line'>173</span> </span><span class="WHIT">    </span><span class="NAME">this.getComponents</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>174</span> 
+<span class='line'>175</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>176</span>      * Removes the first occurrance of a component
+<span class='line'>177</span>      * with the tag given.
+<span class='line'>178</span>      *
+<span class='line'>179</span>      * @param {String} tag The tag that identifies the component to remove.
+<span class='line'>180</span>      */</span><span class="WHIT">
+<span class='line'>181</span> </span><span class="WHIT">    </span><span class="NAME">this.removeComponent</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>182</span> 
+<span class='line'>183</span> 
+<span class='line'>184</span> 
+<span class='line'>185</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>186</span>      * Returns wether or not the engine is handling calling step() automatically,
+<span class='line'>187</span>      * taking into account the Entity's hierarchy.
+<span class='line'>188</span>      *
+<span class='line'>189</span>      * @type {Boolean}
+<span class='line'>190</span>      */</span><span class="WHIT">
+<span class='line'>191</span> </span><span class="WHIT">    </span><span class="NAME">this.isStepping</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>192</span> 
+<span class='line'>193</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>194</span>      * Returns wether or not the Engine is handling calling Draw() automatically,
+<span class='line'>195</span>      * taking into account the Entity's hierarchy.
+<span class='line'>196</span>      *
+<span class='line'>197</span>      * @type {Boolean}
+<span class='line'>198</span>      */</span><span class="WHIT">
+<span class='line'>199</span> </span><span class="WHIT">    </span><span class="NAME">this.isDrawing</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>200</span> 
+<span class='line'>201</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>202</span>      * The entity's unique ID.
+<span class='line'>203</span>      *
+<span class='line'>204</span>      * The ID uniquely identifies an entity. 
+<span class='line'>205</span>      * @type {Number}
+<span class='line'>206</span>      */</span><span class="WHIT">
+<span class='line'>207</span> </span><span class="WHIT">    </span><span class="NAME">this.id</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>208</span> 
+<span class='line'>209</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>210</span>      * The name identifier of the entity.
+<span class='line'>211</span>      * The name is settable only the first time it is set. 
+<span class='line'>212</span>      * Afterward, any further setting will have no effect.
+<span class='line'>213</span>      * @type {String}
+<span class='line'>214</span>      */</span><span class="WHIT">
+<span class='line'>215</span> </span><span class="WHIT">    </span><span class="NAME">this.name</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>216</span> 
+<span class='line'>217</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>218</span>      * The Node of the Entity, holding info such as the position and rotation.
+<span class='line'>219</span>      *
+<span class='line'>220</span>      * @type {transform}
+<span class='line'>221</span>      */</span><span class="WHIT">
+<span class='line'>222</span> </span><span class="WHIT">    </span><span class="NAME">this.node</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>223</span> 
+<span class='line'>224</span> </span><span class="WHIT">    
+<span class='line'>225</span>      
+<span class='line'>226</span>     </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>227</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>228</span> </span></pre></body></html>

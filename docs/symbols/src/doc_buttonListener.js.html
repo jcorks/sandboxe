@@ -1,0 +1,73 @@
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> <style>
+	.KEYW {color: #933;}
+	.COMM {color: #bbb; font-style: italic;}
+	.NUMB {color: #393;}
+	.STRN {color: #393;}
+	.REGX {color: #339;}
+	.line {border-right: 1px dotted #666; color: #666; font-style: normal;}
+	</style></head><body><pre><span class='line'>  1</span> <span class="COMM">/**
+<span class='line'>  2</span>  * @class buttonListener
+<span class='line'>  3</span>  * @description
+<span class='line'>  4</span>  * An object to listen to input. See {@link sandboxe.input.buttonListener.create} to instantiate 
+<span class='line'>  5</span>  * and enable it. &lt;/br>&lt;/br>
+<span class='line'>  6</span>  *
+<span class='line'>  7</span>  * buttonListener allows you to set up more detailed specific behavior as soon 
+<span class='line'>  8</span>  * as an input even is recorded for a frame, allowing you to avoid the classic 
+<span class='line'>  9</span>  * "query input every frame pattern". &lt;/br>&lt;/br>
+<span class='line'> 10</span>  * 
+<span class='line'> 11</span>  * Example: &lt;/br>&lt;/br>
+<span class='line'> 12</span>  * @example 
+<span class='line'> 13</span>  // creates the button listener and automatically links it 
+<span class='line'> 14</span>  // to start listening for the button. In this case, the space key
+<span class='line'> 15</span>  listener = sandboxe.input.buttonListener.create(sandboxe.key_space);
+<span class='line'> 16</span> 
+<span class='line'> 17</span>  // Sets the message for the press event
+<span class='line'> 18</span>  listener.onPress = function() {
+<span class='line'> 19</span>      sandboxe.console.info('Space was pressed!\n');
+<span class='line'> 20</span>  }
+<span class='line'> 21</span> 
+<span class='line'> 22</span>  // Sets the message for the hold event
+<span class='line'> 23</span>  listener.onHold = function() {
+<span class='line'> 24</span>      sandboxe.console.info('Space was held!\n');
+<span class='line'> 25</span>  }
+<span class='line'> 26</span> 
+<span class='line'> 27</span>  // Sets the message for the release event
+<span class='line'> 28</span>  listener.onRelease = function() {
+<span class='line'> 29</span>      sandboxe.console.info('Space was released!\n');
+<span class='line'> 30</span>  }
+<span class='line'> 31</span>  
+<span class='line'> 32</span>  
+<span class='line'> 33</span>  
+<span class='line'> 34</span>  
+<span class='line'> 35</span>  *
+<span class='line'> 36</span>  */</span><span class="WHIT"> 
+<span class='line'> 37</span> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">buttonListener</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 38</span> 
+<span class='line'> 39</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 40</span>      * The user function to call when the input is pressed / activated
+<span class='line'> 41</span>      * @type {Function}
+<span class='line'> 42</span>      */</span><span class="WHIT">
+<span class='line'> 43</span> </span><span class="WHIT">    </span><span class="NAME">this.onPress</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 44</span> 
+<span class='line'> 45</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 46</span>     * The user function to call when the input is held. It is called 
+<span class='line'> 47</span>     * every frame that it is held until it is release.
+<span class='line'> 48</span>     * @type {Function}
+<span class='line'> 49</span>      */</span><span class="WHIT">
+<span class='line'> 50</span> </span><span class="WHIT">    </span><span class="NAME">this.onHold</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 51</span> 
+<span class='line'> 52</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 53</span>      * The user function to call when the input is released.
+<span class='line'> 54</span>      * @type {Function}
+<span class='line'> 55</span>      */</span><span class="WHIT">
+<span class='line'> 56</span> </span><span class="WHIT">    </span><span class="NAME">this.onRelease</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 57</span> 
+<span class='line'> 58</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 59</span>      * Removes the button listener from sandboxe.
+<span class='line'> 60</span>      */</span><span class="WHIT">
+<span class='line'> 61</span> </span><span class="WHIT">    </span><span class="NAME">this.remove</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 62</span> 
+<span class='line'> 63</span> 
+<span class='line'> 64</span> 
+<span class='line'> 65</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 66</span> </span><span class="PUNC">}</span></pre></body></html>

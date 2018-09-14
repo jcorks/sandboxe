@@ -1,0 +1,125 @@
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> <style>
+	.KEYW {color: #933;}
+	.COMM {color: #bbb; font-style: italic;}
+	.NUMB {color: #393;}
+	.STRN {color: #393;}
+	.REGX {color: #339;}
+	.line {border-right: 1px dotted #666; color: #666; font-style: normal;}
+	</style></head><body><pre><span class='line'>  1</span> <span class="COMM">/**
+<span class='line'>  2</span>  * @class material
+<span class='line'>  3</span>  * @description
+<span class='line'>  4</span>  * Defines how a mesh should be visualized.
+<span class='line'>  5</span>  *
+<span class='line'>  6</span>  * Materials are the main way to have advanced graphics control
+<span class='line'>  7</span>  * with customized behavior. With custom or built-in {@link shader} objects,
+<span class='line'>  8</span>  * materials provide the data inputs to these programs allowing for dynamic 
+<span class='line'>  9</span>  * visuals.
+<span class='line'> 10</span>  *
+<span class='line'> 11</span>  * 
+<span class='line'> 12</span>  */</span><span class="WHIT"> 
+<span class='line'> 13</span> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">material</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 14</span> 
+<span class='line'> 15</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 16</span>      * Adds a texture to be drawn.
+<span class='line'> 17</span>      *
+<span class='line'> 18</span>      * How textures interact with the mesh is dependent on the material attached with 
+<span class='line'> 19</span>      * {@link renderMesh.material}. If the material is using a {@link sandboxe.material.coreProgram}, {@link sandboxe.material.textureSlot.color} 
+<span class='line'> 20</span>      * will be used as an RGBA texture, {@link sandboxe.material.textureSlot.normal} will be used as a lighting normal map,
+<span class='line'> 21</span>      * and {@link sandboxe.material.textureSlot.shiny} will be used as a light reflectivity map. For user-made programs using
+<span class='line'> 22</span>      * Shader, the first argument refers to what texture slot you can access the texture from in 
+<span class='line'> 23</span>      * the shader programming language. Refer to {@link shader} for more info. Note that using textureSlot.color,
+<span class='line'> 24</span>      * .normal, and .shiny are equivalent to calling addTexture() with 0, 1, and 2 respectively as 
+<span class='line'> 25</span>      * the texture slot argument.
+<span class='line'> 26</span>      * @param {Number} slot The texture slot. See {@link sandboxe.material.textureSlot}
+<span class='line'> 27</span>      * @param {asset} image The image to use a texture. Multiple frames are supported and can be iterated through dynamically.
+<span class='line'> 28</span>      */</span><span class="WHIT">
+<span class='line'> 29</span> </span><span class="WHIT">    </span><span class="NAME">this.addTexture</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 30</span> 
+<span class='line'> 31</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 32</span>      * Sets the given camera as the source framebuffer.
+<span class='line'> 33</span>      *
+<span class='line'> 34</span>      * The source framebuffer is an optional input you can specify 
+<span class='line'> 35</span>      * to utilize the last known visual of a camera as a texture 
+<span class='line'> 36</span>      * source. This can be used in a few different ways. Once its set, 
+<span class='line'> 37</span>      * sandboxe.material.corePrograms will map it as another texture binding.
+<span class='line'> 38</span>      * To disable this, simply call setFramebufferSource again with a 
+<span class='line'> 39</span>      * default entity. If your material uses a custom shader, the shader can access 
+<span class='line'> 40</span>      * if through the Dynacoe_SampleFramebuffer function.
+<span class='line'> 41</span>      * @param {camera} Camera 
+<span class='line'> 42</span>      */</span><span class="WHIT">
+<span class='line'> 43</span> </span><span class="WHIT">    </span><span class="NAME">this.setFramebufferSource</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 44</span> 
+<span class='line'> 45</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 46</span>      * Iterates all textures to the next texture frame
+<span class='line'> 47</span>      */</span><span class="WHIT">
+<span class='line'> 48</span> </span><span class="WHIT">    </span><span class="NAME">this.nextTextureFrame</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 49</span> 
+<span class='line'> 50</span> 
+<span class='line'> 51</span> 
+<span class='line'> 52</span> 
+<span class='line'> 53</span> 
+<span class='line'> 54</span> 
+<span class='line'> 55</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 56</span>      * The ambient color of the material.
+<span class='line'> 57</span>      * @type {color}
+<span class='line'> 58</span>      */</span><span class="WHIT">
+<span class='line'> 59</span> </span><span class="WHIT">    </span><span class="NAME">this.ambient</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 60</span> 
+<span class='line'> 61</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 62</span>      * The diffuse color of the material.
+<span class='line'> 63</span>      * @type {color}
+<span class='line'> 64</span>      */</span><span class="WHIT">
+<span class='line'> 65</span> </span><span class="WHIT">    </span><span class="NAME">this.diffuse</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 66</span> 
+<span class='line'> 67</span> </span><span class="WHIT">    </span><span class="COMM">/** 
+<span class='line'> 68</span>      * The specular color of the material
+<span class='line'> 69</span>      * @type {color}
+<span class='line'> 70</span>      */</span><span class="WHIT">
+<span class='line'> 71</span> </span><span class="WHIT">    </span><span class="NAME">this.specular</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 72</span> 
+<span class='line'> 73</span> 
+<span class='line'> 74</span> 
+<span class='line'> 75</span> 
+<span class='line'> 76</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 77</span>      * The amount of specular light that should be allowed.
+<span class='line'> 78</span>      * @type {Number}
+<span class='line'> 79</span>      */</span><span class="WHIT">
+<span class='line'> 80</span> </span><span class="WHIT">    </span><span class="NAME">this.specularAmount</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 81</span> 
+<span class='line'> 82</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 83</span>      * The amount of diffuse light that should be allowed.
+<span class='line'> 84</span>      * @type {Number}
+<span class='line'> 85</span>      */</span><span class="WHIT">
+<span class='line'> 86</span> </span><span class="WHIT">    </span><span class="NAME">this.diffuseAmount</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 87</span> 
+<span class='line'> 88</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 89</span>      * The amount of reflected specular light.
+<span class='line'> 90</span>      * @type {Number}
+<span class='line'> 91</span>      */</span><span class="WHIT">
+<span class='line'> 92</span> </span><span class="WHIT">    </span><span class="NAME">this.shininess</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 93</span> 
+<span class='line'> 94</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 95</span>      * The source logic for the material as a shading program.
+<span class='line'> 96</span>      * This can either be a {@link sandboxe.material.coreProgram} or 
+<span class='line'> 97</span>      * a {@link shader} program object with custom logic.
+<span class='line'> 98</span>      * @type {Number|shader}
+<span class='line'> 99</span>      */</span><span class="WHIT">
+<span class='line'>100</span> </span><span class="WHIT">    </span><span class="NAME">this.program</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>101</span> 
+<span class='line'>102</span> 
+<span class='line'>103</span> 
+<span class='line'>104</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>105</span>      * Data that depends on the drawing mode. In implementations
+<span class='line'>106</span>      * that support shaders, this can be used as you see fit.
+<span class='line'>107</span>      * This property should be overwritten to update the user data.
+<span class='line'>108</span>      * Up to 32 values can be given to the program.
+<span class='line'>109</span>      * @type {Array}
+<span class='line'>110</span>      */</span><span class="WHIT">
+<span class='line'>111</span> </span><span class="WHIT">    </span><span class="NAME">this.userData</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>112</span> 
+<span class='line'>113</span> 
+<span class='line'>114</span> 
+<span class='line'>115</span> 
+<span class='line'>116</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>117</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>118</span> </span></pre></body></html>

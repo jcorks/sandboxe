@@ -1,0 +1,68 @@
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> <style>
+	.KEYW {color: #933;}
+	.COMM {color: #bbb; font-style: italic;}
+	.NUMB {color: #393;}
+	.STRN {color: #393;}
+	.REGX {color: #339;}
+	.line {border-right: 1px dotted #666; color: #666; font-style: normal;}
+	</style></head><body><pre><span class='line'>  1</span> <span class="COMM">/**
+<span class='line'>  2</span>  * @class shader
+<span class='line'>  3</span>  * @description
+<span class='line'>  4</span>  *   Allows you to specify rendering programs usually on your GPU.
+<span class='line'>  5</span>  *
+<span class='line'>  6</span>  * Shaders are programs compiled and run during runtime to process graphics data. On 
+<span class='line'>  7</span>  * backends that support them, they will usually run on dedicated hardware. 
+<span class='line'>  8</span>  * Since the actual source language of the Shader depends on the Renderer backend, 
+<span class='line'>  9</span>  * The rules and behavior of how the shader source will vary greatly.
+<span class='line'> 10</span>  *
+<span class='line'> 11</span>  * For the stock OpenGL backend, the shader language will be a variant of GLSL.
+<span class='line'> 12</span>  *
+<span class='line'> 13</span>  */</span><span class="WHIT"> 
+<span class='line'> 14</span> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">shader</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 15</span> 
+<span class='line'> 16</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 17</span>      * Adds a stage to the shader program.
+<span class='line'> 18</span>      * If the stage already exists and the program has not been compiled succesfully, 
+<span class='line'> 19</span>      * this call replaces the old source with this source.
+<span class='line'> 20</span>      * @param {Number} stage See {@link sandboxe.shader.stage}
+<span class='line'> 21</span>      * @param {String} shader data
+<span class='line'> 22</span>      */</span><span class="WHIT">
+<span class='line'> 23</span> </span><span class="WHIT">    </span><span class="NAME">this.addStage</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 24</span> 
+<span class='line'> 25</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 26</span>      * Finalizes the programs stages. After this call,
+<span class='line'> 27</span>      * the status property will either contain success, meaning the program is now usable,
+<span class='line'> 28</span>      * or invalid, meaning compilation failed. In the case of failure,
+<span class='line'> 29</span>      * the log property may contain more information as to why the compilation failed.
+<span class='line'> 30</span>      */</span><span class="WHIT">
+<span class='line'> 31</span> </span><span class="WHIT">    </span><span class="NAME">this.compile</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 32</span> 
+<span class='line'> 33</span> 
+<span class='line'> 34</span> 
+<span class='line'> 35</span> 
+<span class='line'> 36</span> 
+<span class='line'> 37</span> 
+<span class='line'> 38</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 39</span>      * Returns any additional logging information from the shader program.
+<span class='line'> 40</span>      * If the status Invalid, typically the log will contain information on why.
+<span class='line'> 41</span>      * @type {String}
+<span class='line'> 42</span>      */</span><span class="WHIT">
+<span class='line'> 43</span> </span><span class="WHIT">    </span><span class="NAME">this.log</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">""</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 44</span> 
+<span class='line'> 45</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 46</span>      * Returns the current program status.
+<span class='line'> 47</span>      * See {@link sandboxe.shader.status}
+<span class='line'> 48</span>      * @type {Number}
+<span class='line'> 49</span>      */</span><span class="WHIT">
+<span class='line'> 50</span> </span><span class="WHIT">    </span><span class="NAME">this.status</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0.5</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 51</span> 
+<span class='line'> 52</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 53</span>      * Returns a string containing the shader language used by shading programs. This 
+<span class='line'> 54</span>      * is dependent on the parameters of the renderer used by / compiled with sandboxe.
+<span class='line'> 55</span>      * @type {String}
+<span class='line'> 56</span>      */</span><span class="WHIT">
+<span class='line'> 57</span> </span><span class="WHIT">    </span><span class="NAME">this.shaderLanguage</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">""</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 58</span> </span><span class="WHIT">    
+<span class='line'> 59</span>      
+<span class='line'> 60</span>     </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 61</span> </span><span class="PUNC">}</span></pre></body></html>

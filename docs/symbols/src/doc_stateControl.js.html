@@ -1,0 +1,97 @@
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> <style>
+	.KEYW {color: #933;}
+	.COMM {color: #bbb; font-style: italic;}
+	.NUMB {color: #393;}
+	.STRN {color: #393;}
+	.REGX {color: #339;}
+	.line {border-right: 1px dotted #666; color: #666; font-style: normal;}
+	</style></head><body><pre><span class='line'>  1</span> <span class="COMM">/**
+<span class='line'>  2</span>  * @class stateControl
+<span class='line'>  3</span>  * @extends component
+<span class='line'>  4</span>  * @description
+<span class='line'>  5</span>  * Adds a state machine mechanism to the entity.
+<span class='line'>  6</span>  *
+<span class='line'>  7</span>  * Each StateControl instance is effectively a dynamic state machine.
+<span class='line'>  8</span>  * After desgnating what states exist within the machine using
+<span class='line'>  9</span>  * CreateState(), the machine can be run using Execute(). Using each state's
+<span class='line'> 10</span>  * StepFunc, the states will transition until an invalid state is returned. Referring
+<span class='line'> 11</span>  * to an invalid state halts the state machine.
+<span class='line'> 12</span>  *
+<span class='line'> 13</span>  * It is also entirely valid to modify the state machine mid-execution.
+<span class='line'> 14</span>  *
+<span class='line'> 15</span>  * 
+<span class='line'> 16</span>  */</span><span class="WHIT"> 
+<span class='line'> 17</span> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">stateControl</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 18</span> 
+<span class='line'> 19</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 20</span>      * Sets this array of functions as the only one associated 
+<span class='line'> 21</span>      * with the state of the given name.
+<span class='line'> 22</span>      *
+<span class='line'> 23</span>      * During each state, different logic is disgnated to run to control
+<span class='line'> 24</span>      * what happens during this state and when the state should be altered.
+<span class='line'> 25</span>      * The step function of the state loop is is meant to hold the bulk of the logic, but 
+<span class='line'> 26</span>      * it also returns what state should be transitioned to. If the state is to be 
+<span class='line'> 27</span>      * kept the same, the StepFunc should simply return the empty string. The draw function of the array
+<span class='line'> 28</span>      * can be used to produce visual effects associated with the state, but
+<span class='line'> 29</span>      * may not change the current state.
+<span class='line'> 30</span>      *
+<span class='line'> 31</span>      * If the state tag returned by the StepFunc does not refer to a valid 
+<span class='line'> 32</span>      * state part of stateControl, the execution state of the stateControl halts.
+<span class='line'> 33</span>      * After being halted, the state machine will remain idle until the next
+<span class='line'> 34</span>      * execute() is called. 
+<span class='line'> 35</span>      * 
+<span class='line'> 36</span>      *
+<span class='line'> 37</span>      * @param {String} name Name of the state.
+<span class='line'> 38</span>      * @param {Function} onInit The function to call when entering a state 
+<span class='line'> 39</span>      * @param {Function} onStep The function to call during the step phase of the component when in this state
+<span class='line'> 40</span>      * @param {Function} onDraw The function to call during the draw phase of the component when in this state
+<span class='line'> 41</span>      */</span><span class="WHIT">
+<span class='line'> 42</span> </span><span class="WHIT">    </span><span class="NAME">this.createState</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 43</span> 
+<span class='line'> 44</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 45</span>      * Removes the state.
+<span class='line'> 46</span>      *
+<span class='line'> 47</span>      * No action is taken if the tag does not refer to a valid state.
+<span class='line'> 48</span>      * @param {String} name
+<span class='line'> 49</span>      */</span><span class="WHIT">
+<span class='line'> 50</span> </span><span class="WHIT">    </span><span class="NAME">this.removeState</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 51</span> 
+<span class='line'> 52</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 53</span>      * Begins the state machine execution loop from the given state.
+<span class='line'> 54</span>      *
+<span class='line'> 55</span>      * If begin state does not refer to a valid state, no action is taken.
+<span class='line'> 56</span>      * If done in the middle of a state loop function, any queued 
+<span class='line'> 57</span>      * function calls are cancelled.
+<span class='line'> 58</span>      * @param {String} name
+<span class='line'> 59</span>      */</span><span class="WHIT">
+<span class='line'> 60</span> </span><span class="WHIT">    </span><span class="NAME">this.execute</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 61</span> 
+<span class='line'> 62</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 63</span>      * stops all current execution.
+<span class='line'> 64</span>      *
+<span class='line'> 65</span>      * If done during a state loop, all remaining state loop functions 
+<span class='line'> 66</span>      * that would have executed are cancelled.
+<span class='line'> 67</span>      */</span><span class="WHIT">
+<span class='line'> 68</span> </span><span class="WHIT">    </span><span class="NAME">this.halt</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 69</span> 
+<span class='line'> 70</span> 
+<span class='line'> 71</span> 
+<span class='line'> 72</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 73</span>      * Returns the current state tag. If no execution state is active, the empty string is returned.
+<span class='line'> 74</span>      * @type {String}
+<span class='line'> 75</span>      */</span><span class="WHIT">
+<span class='line'> 76</span> </span><span class="WHIT">    </span><span class="NAME">this.state</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">""</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 77</span> 
+<span class='line'> 78</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 79</span>      * Returns whether or not the machine is in a halted state.
+<span class='line'> 80</span>      * @type {Boolean}
+<span class='line'> 81</span>      */</span><span class="WHIT">
+<span class='line'> 82</span> </span><span class="WHIT">    </span><span class="NAME">this.halted</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 83</span> 
+<span class='line'> 84</span> 
+<span class='line'> 85</span> 
+<span class='line'> 86</span> 
+<span class='line'> 87</span> 
+<span class='line'> 88</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 89</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 90</span> </span></pre></body></html>

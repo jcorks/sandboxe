@@ -1,0 +1,50 @@
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> <style>
+	.KEYW {color: #933;}
+	.COMM {color: #bbb; font-style: italic;}
+	.NUMB {color: #393;}
+	.STRN {color: #393;}
+	.REGX {color: #339;}
+	.line {border-right: 1px dotted #666; color: #666; font-style: normal;}
+	</style></head><body><pre><span class='line'>  1</span> <span class="COMM">/**
+<span class='line'>  2</span>  * @class particleEmitter2D
+<span class='line'>  3</span>  * @extends entity
+<span class='line'>  4</span>  * @description
+<span class='line'>  5</span>  *
+<span class='line'>  6</span>  * Particle emitters are a means of producing particle effects 
+<span class='line'>  7</span>  * that are both more efficiently rendered and rendered with relatively 
+<span class='line'>  8</span>  * few configurations. By importing a particle specification file to 
+<span class='line'>  9</span>  * define a particle ({@link sandboxe.assets.load}), you can instantiate 
+<span class='line'> 10</span>  * a pseudorandomixed effect with a single call.
+<span class='line'> 11</span>  *
+<span class='line'> 12</span>  */</span><span class="WHIT"> 
+<span class='line'> 13</span> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">particleEmitter2D</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 14</span> 
+<span class='line'> 15</span> 
+<span class='line'> 16</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 17</span>      * Instantiates a particle in 2D space based on a stored design.
+<span class='line'> 18</span>      *
+<span class='line'> 19</span>      * @param {asset} p    The name of the particle design to emit. If p does
+<span class='line'> 20</span>      *             not refer to a stored particle, then no particle is emitted
+<span class='line'> 21</span>      *             and the reference returned is invalid.
+<span class='line'> 22</span>      * @param {Number} count number of these particles to emit.
+<span class='line'> 23</span>      */</span><span class="WHIT">
+<span class='line'> 24</span> </span><span class="WHIT">    </span><span class="NAME">this.emitParticle</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">p</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">count</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 25</span> 
+<span class='line'> 26</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 27</span>      * Enable texture filtering for each particle emitted.
+<span class='line'> 28</span>      * It is enabled by default.
+<span class='line'> 29</span>      * @type {Boolean}
+<span class='line'> 30</span>      */</span><span class="WHIT">
+<span class='line'> 31</span> </span><span class="WHIT">    </span><span class="NAME">this.filtered</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 32</span> 
+<span class='line'> 33</span> 
+<span class='line'> 34</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 35</span>      * Enable translucency for each each particle drawn.
+<span class='line'> 36</span>      * It is enabled by default.
+<span class='line'> 37</span>      * @type {Boolean}
+<span class='line'> 38</span>      */</span><span class="WHIT">
+<span class='line'> 39</span> </span><span class="WHIT">    </span><span class="NAME">this.translucent</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 40</span> </span><span class="WHIT">    
+<span class='line'> 41</span>      
+<span class='line'> 42</span>     </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 43</span> </span><span class="PUNC">}</span></pre></body></html>

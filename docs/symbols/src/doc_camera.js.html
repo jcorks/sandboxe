@@ -1,0 +1,99 @@
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> <style>
+	.KEYW {color: #933;}
+	.COMM {color: #bbb; font-style: italic;}
+	.NUMB {color: #393;}
+	.STRN {color: #393;}
+	.REGX {color: #339;}
+	.line {border-right: 1px dotted #666; color: #666; font-style: normal;}
+	</style></head><body><pre><span class='line'>  1</span> <span class="COMM">/**
+<span class='line'>  2</span>  * @class camera
+<span class='line'>  3</span>  * @extends entity
+<span class='line'>  4</span>  * @description
+<span class='line'>  5</span>  * A rendering target and manipulation object.
+<span class='line'>  6</span>  *
+<span class='line'>  7</span>  * The camera is the symbolic viewing port for sandboxe.
+<span class='line'>  8</span>  * It acts as the bridge between the rendered scene and the viewer.
+<span class='line'>  9</span>  * Any number of cameras can be maintained, but only one may be used at a time.
+<span class='line'> 10</span>  * See {@link sandboxe.graphics.setCamera2d}
+<span class='line'> 11</span>  * ,{@link sandboxe.graphics.setCamera3d}
+<span class='line'> 12</span>  * ,{@link sandboxe.graphics.setRenderCamera}
+<span class='line'> 13</span>  * 
+<span class='line'> 14</span>  *
+<span class='line'> 15</span>  */</span><span class="WHIT"> 
+<span class='line'> 16</span> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">camera</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 17</span> 
+<span class='line'> 18</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 19</span>      * Forces clearing of the results of drawing stored within the Camera.
+<span class='line'> 20</span>      */</span><span class="WHIT">
+<span class='line'> 21</span> </span><span class="WHIT">    </span><span class="NAME">this.refresh</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 22</span> 
+<span class='line'> 23</span> 
+<span class='line'> 24</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 25</span>      * Sets the camera's facing target. When called, the camera will orient itseld
+<span class='line'> 26</span>      * so that the center of its view "looks" at the given position.
+<span class='line'> 27</span>      * @param {vector} pos Position to look at
+<span class='line'> 28</span>      */</span><span class="WHIT">
+<span class='line'> 29</span> </span><span class="WHIT">    </span><span class="NAME">this.setTarget</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">pos</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 30</span> 
+<span class='line'> 31</span> 
+<span class='line'> 32</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 33</span>      * Sets the width and height of the camer'as internal framebuffer. The frameuffer 
+<span class='line'> 34</span>      * is effectively the image representing the results of drawing operations.
+<span class='line'> 35</span>      * @param {Number} width The new width in device units.
+<span class='line'> 36</span>      * @param {Number} height The new height in device units.
+<span class='line'> 37</span>      */</span><span class="WHIT">
+<span class='line'> 38</span> </span><span class="WHIT">    </span><span class="NAME">this.setRenderResolution</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">width</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">height</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 39</span> 
+<span class='line'> 40</span> 
+<span class='line'> 41</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 42</span>      * Converts a point representing a pixel on a display to
+<span class='line'> 43</span>      * a point in world space..
+<span class='line'> 44</span>      *
+<span class='line'> 45</span>      * @param {vector} pointScreen The point to convert.
+<span class='line'> 46</span>      * @param {Number} disance The distance to project the Vector to. In the case of a 3D perspective camera: Since the source is 2D, the
+<span class='line'> 47</span>      * Z value is ignored. However, when projecting, since there is no source Z value,
+<span class='line'> 48</span>      * The actual depth from the Camera's point of view is undefined when projecting,
+<span class='line'> 49</span>      * so a distance from the viewpoint is needed.
+<span class='line'> 50</span>      */</span><span class="WHIT">
+<span class='line'> 51</span> </span><span class="WHIT">    </span><span class="NAME">this.transformScreenToWorld</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">pointScreen</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">distance</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 52</span> 
+<span class='line'> 53</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 54</span>      * Converts a point in transformed space to a pixel position on the camera's framebuffer.
+<span class='line'> 55</span>      *
+<span class='line'> 56</span>      * @param {vector} point The source point to project onto the camera.
+<span class='line'> 57</span>      */</span><span class="WHIT">
+<span class='line'> 58</span> </span><span class="WHIT">    </span><span class="NAME">this.transformWorldToScreen</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">point</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 59</span> 
+<span class='line'> 60</span> 
+<span class='line'> 61</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 62</span>      * Width of the camera's output framebuffer
+<span class='line'> 63</span>      * @type {Number}
+<span class='line'> 64</span>      */</span><span class="WHIT">
+<span class='line'> 65</span> </span><span class="WHIT">    </span><span class="NAME">this.width</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 66</span> 
+<span class='line'> 67</span> 
+<span class='line'> 68</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 69</span>      * Height of the camera's output framebuffer
+<span class='line'> 70</span>      * @type {Number}
+<span class='line'> 71</span>      */</span><span class="WHIT">
+<span class='line'> 72</span> </span><span class="WHIT">    </span><span class="NAME">this.height</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 73</span> 
+<span class='line'> 74</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 75</span>      * Type of the camera. See {@link sandboxe.camera.type}.
+<span class='line'> 76</span>      * @type {Number}
+<span class='line'> 77</span>      */</span><span class="WHIT">
+<span class='line'> 78</span> </span><span class="WHIT">    </span><span class="NAME">this.type</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 79</span> 
+<span class='line'> 80</span> 
+<span class='line'> 81</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 82</span>      * Whether the engine should handle clearing the framebuffer for you when 
+<span class='line'> 83</span>      * using this camer as a render target. Unless you're doing something very special,
+<span class='line'> 84</span>      * the default of 'true' is good.
+<span class='line'> 85</span>      * @type {Boolean}
+<span class='line'> 86</span>      */</span><span class="WHIT">
+<span class='line'> 87</span> </span><span class="WHIT">    </span><span class="NAME">this.autoRefresh</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 88</span> 
+<span class='line'> 89</span> </span><span class="WHIT">    
+<span class='line'> 90</span>      
+<span class='line'> 91</span>     </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 92</span> </span><span class="PUNC">}</span></pre></body></html>

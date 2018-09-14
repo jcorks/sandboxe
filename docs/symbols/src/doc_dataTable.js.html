@@ -1,0 +1,129 @@
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> <style>
+	.KEYW {color: #933;}
+	.COMM {color: #bbb; font-style: italic;}
+	.NUMB {color: #393;}
+	.STRN {color: #393;}
+	.REGX {color: #339;}
+	.line {border-right: 1px dotted #666; color: #666; font-style: normal;}
+	</style></head><body><pre><span class='line'>  1</span> <span class="COMM">/**
+<span class='line'>  2</span>  * @class dataTable
+<span class='line'>  3</span>  * @extends component
+<span class='line'>  4</span>  * @description
+<span class='line'>  5</span>  * A component that can store and import arbitrary data. Instantiates with {@link sandboxe.dataTable.create()} &lt;/br>&lt;/br>
+<span class='line'>  6</span>  *
+<span class='line'>  7</span>  * Provides a convenient interface for placing and retrieving named properties.&lt;/br>&lt;/br>
+<span class='line'>  8</span>  * Often with programs, there is a need to preserve data beyond the execution of the 
+<span class='line'>  9</span>  * program. Sometimes, it is enough to simply write to a text file, but this isn't 
+<span class='line'> 10</span>  * always flexible, and has little resistance against device errors, forms 
+<span class='line'> 11</span>  * of corruption, and user tampering. dataTable provides a non-sequential, corruption-resistant 
+<span class='line'> 12</span>  * way to store data. Using the Write functions, you can store named variables 
+<span class='line'> 13</span>  * , data, and even other dataTables in a safe manner. Then getState() can be 
+<span class='line'> 14</span>  * used to retrieve a data buffer that represents the dataTable's exact state,
+<span class='line'> 15</span>  * which can then be used later in another instance.&lt;/br>&lt;/br>
+<span class='line'> 16</span>  *
+<span class='line'> 17</span>  * Known {@link component} events:&lt;/br>
+<span class='line'> 18</span>  * &lt;pre>
+<span class='line'> 19</span>  * - on-read: after reading a piece of data. 
+<span class='line'> 20</span>  * - on-write: before writing a piece of data. The default handler actually performs the write, so stopping propogation will prevent writing.
+<span class='line'> 21</span>  * - on-remove: before removing a piece of data. The default handler actually performs the removal, so stopping propogation will prevent removal. 
+<span class='line'> 22</span>  * - on-read-state: after successfully reading a state
+<span class='line'> 23</span>  * &lt;/pre>
+<span class='line'> 24</span>  *
+<span class='line'> 25</span>  * 
+<span class='line'> 26</span>  */</span><span class="WHIT"> 
+<span class='line'> 27</span> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">dataTable</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 28</span> 
+<span class='line'> 29</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 30</span>      * Associates a datum with a name.
+<span class='line'> 31</span>      *
+<span class='line'> 32</span>      * @param {String} name The name that the data will be associated with 
+<span class='line'> 33</span>      * @param {String} i    The data to store 
+<span class='line'> 34</span>      */</span><span class="WHIT">
+<span class='line'> 35</span> </span><span class="WHIT">    </span><span class="NAME">this.writeString</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">name</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">i</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 36</span> 
+<span class='line'> 37</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 38</span>      * Associates a datum with a name. 
+<span class='line'> 39</span>      *
+<span class='line'> 40</span>      * @param {String} name The name that the data will be associated with 
+<span class='line'> 41</span>      * @param {Array} byteData    The data to store as an array of numbers, each being a byte value 
+<span class='line'> 42</span>      */</span><span class="WHIT">
+<span class='line'> 43</span> </span><span class="WHIT">    </span><span class="NAME">this.writeByteArray</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">name</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">yteData</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 44</span> 
+<span class='line'> 45</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 46</span>      * Retrieves a datum associated with a name. If there is no such association,
+<span class='line'> 47</span>      * an empty string is returned.
+<span class='line'> 48</span>      * 
+<span class='line'> 49</span>      * @param {String} name The name associated with the data.
+<span class='line'> 50</span>      * @returns {String} The data for that name.
+<span class='line'> 51</span>      */</span><span class="WHIT">
+<span class='line'> 52</span> </span><span class="WHIT">    </span><span class="NAME">this.readString</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">name</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 53</span> 
+<span class='line'> 54</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 55</span>     * Retrieves a datum associated with a name. If there is no such association,
+<span class='line'> 56</span>     * an empty Array is returned.
+<span class='line'> 57</span>     * 
+<span class='line'> 58</span>     * @param {String} name The name associated with the data.
+<span class='line'> 59</span>     * @returns {Array} The data for that name.
+<span class='line'> 60</span>      */</span><span class="WHIT">
+<span class='line'> 61</span> </span><span class="WHIT">    </span><span class="NAME">this.readByteArray</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">name</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 62</span> 
+<span class='line'> 63</span> 
+<span class='line'> 64</span> 
+<span class='line'> 65</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 66</span>      * Returns whether there is a datum-name association 
+<span class='line'> 67</span>      * with the given name.
+<span class='line'> 68</span>      * @param {String} name The name to look up.
+<span class='line'> 69</span>      * @returns {boolean}
+<span class='line'> 70</span>      */</span><span class="WHIT">
+<span class='line'> 71</span> </span><span class="WHIT">    </span><span class="NAME">this.query</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">name</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 72</span> 
+<span class='line'> 73</span> 
+<span class='line'> 74</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 75</span>      * Removes the datum-name association.
+<span class='line'> 76</span>      * @param {String} name The name to remove.
+<span class='line'> 77</span>      */</span><span class="WHIT">
+<span class='line'> 78</span> </span><span class="WHIT">    </span><span class="NAME">this.remove</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 79</span> 
+<span class='line'> 80</span> 
+<span class='line'> 81</span> 
+<span class='line'> 82</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 83</span>      * Removes all stored associations and data entries, restoring 
+<span class='line'> 84</span>      * the container back to a default state.
+<span class='line'> 85</span>      */</span><span class="WHIT">
+<span class='line'> 86</span> </span><span class="WHIT">    </span><span class="NAME">this.clear</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 87</span> 
+<span class='line'> 88</span> 
+<span class='line'> 89</span> 
+<span class='line'> 90</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 91</span>      * Writes a pure data-form of the table's contents. This can then be 
+<span class='line'> 92</span>      * passed into setState() turn the calling object into an exact copy 
+<span class='line'> 93</span>      * of this one.
+<span class='line'> 94</span>      *
+<span class='line'> 95</span>      * getState() / setState() were intended to be used in tandem to preserve data contents of 
+<span class='line'> 96</span>      * the dataTable across program invocations. Along with writing the exact state of 
+<span class='line'> 97</span>      * the dataTable, the data includes header and checksum data to improve parity across 
+<span class='line'> 98</span>      * execution states.
+<span class='line'> 99</span>      * @returns {Array} An array of byte values to later be re-read with setState()
+<span class='line'>100</span>      */</span><span class="WHIT">
+<span class='line'>101</span> </span><span class="WHIT">    </span><span class="NAME">this.getState</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>102</span> 
+<span class='line'>103</span> 
+<span class='line'>104</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>105</span>      * Sets the dataTable state to reflect the state
+<span class='line'>106</span>      * defined by the input buffer.
+<span class='line'>107</span>      *
+<span class='line'>108</span>      * The buffer is implied to have been produced from a getState call.
+<span class='line'>109</span>      * If not, or corruption on some device has occurred, 
+<span class='line'>110</span>      * there is a good chance that this function will detect it before applying the data. 
+<span class='line'>111</span>      * In the case that an error does occur, false will be returned and no action taken.
+<span class='line'>112</span>      * @param {Array} byteArray An array of byte values assumed to be from getState().
+<span class='line'>113</span>      */</span><span class="WHIT">
+<span class='line'>114</span> </span><span class="WHIT">    </span><span class="NAME">this.setState</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>115</span> </span><span class="WHIT">    
+<span class='line'>116</span> 
+<span class='line'>117</span> 
+<span class='line'>118</span> 
+<span class='line'>119</span> 
+<span class='line'>120</span> 
+<span class='line'>121</span>     </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>122</span> </span><span class="PUNC">}</span></pre></body></html>
