@@ -31,13 +31,17 @@ a:hover {
     text-decoration: underline;
 }
 
+body {
+    margin: 0px;
+}
+
 
 
 /* animations */
 
 @keyframes ease_in_navbar {
     from {
-        width: 200vw;
+        width: 100vw;
     }
 
     to {
@@ -123,11 +127,15 @@ a:hover {
 /* navigator stuff */
 
 .navbar {
-    width: 200vw;
-    left: -50vw;
+    width: 100vw;
+    top: 0px;
+    left: 0vw;
     background-color: rgb(20, 20, 20);
     height: 50px;
-    position: relative;
+    position: absolute;
+    z-index: -2;
+
+    
 
 }
 
@@ -140,9 +148,9 @@ a:hover {
 
     background-color: rgb(255, 255, 255);
     height: 50px;
-    position: relative;
-    left: -50vw;
-    top: -50px;
+    position: absolute;
+    top: 0px;
+    left: 0vw;
     z-index: 1;
 
 }
