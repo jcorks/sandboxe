@@ -159,7 +159,7 @@ body {
 .navitem {
     display: block;
 
-
+    width: 19%;
     font-family: ui_font;
     font-size: 17pt;
 
@@ -170,8 +170,6 @@ body {
     
 
     padding-top: 15px;
-    padding-left:20px;
-    padding-right:20px;
     height: 35px;
 
     margin: auto;
