@@ -176,7 +176,7 @@ body {
 
     margin: auto;
 
-
+    transition: border-top-width .1s;
     
 
 }
