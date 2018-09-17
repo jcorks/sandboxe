@@ -576,7 +576,7 @@ void Sandboxe::Script::Runtime::Start() {
         << "  / ___/ __ `/ __ \\/ __  / __ \\/ __ \\| |/_/ _ \\\n"
         << " (__  ) /_/ / / / / /_/ / /_/ / /_/ />  </  __/\n"
         << "/____/\\__,_/_/ /_/\\__,_/_.___/\\____/_/|_|\\___/ \n"
-        << "Johnathan Corkery, 2018 (coebeef.net/sandboxe)\n\n"
+        << "Johnathan Corkery, 2018 (jcorks.github.io/sandboxe)\n\n"
         << "Backend status:\n\n";
 
     Dynacoe::Console::OverlayMessageMode(Dynacoe::Console::MessageMode::Standard);
