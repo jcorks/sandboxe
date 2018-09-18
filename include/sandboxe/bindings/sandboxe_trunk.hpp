@@ -55,6 +55,9 @@ SANDBOXE_NATIVE_DEF(__trunk_get_item_names) {
     context.SetReturnArray(primitives);
 }
 
+SANDBOXE_NATIVE_DEF(__trunk_inherit) {
+    Sandboxe::Trunk::Inherit();
+}
 
 
 void sandboxe_trunk(std::vector<std::pair<std::string, Sandboxe::Script::Runtime::Function>> & fns) {
@@ -64,7 +67,7 @@ void sandboxe_trunk(std::vector<std::pair<std::string, Sandboxe::Script::Runtime
     fns.push_back({"__trunk_query", __trunk_query});
     fns.push_back({"__trunk_clear", __trunk_clear});
     fns.push_back({"__trunk_get_item_names", __trunk_get_item_names});
-
+    fns.push_back({"__trunk_inherit", __trunk_inherit});
 
 }
 

@@ -11,6 +11,7 @@ const int trunk_tag_size_c = 128;
 const char * trunk_tag_plaintext_key_c = "|S|A|N|D|B|O|X|E|T|R|U|N|K|JLC18|";
 const int trunk_implementation_version_minor = 1;
 const int trunk_implementation_version_major = 0;
+static bool inherit = false;
 static std::string path_to_source_executable;
 
 class TrunkImporter {
@@ -256,6 +257,17 @@ void Sandboxe::Trunk::Remove(const std::string & path) {
 
 std::string Sandboxe::Trunk::Commit(const std::string & output) {
     TrunkExporter exporter;
+    
+    if (inherit && imported) {
+        auto names = GetItemNames();
+        for(uint32_t i = 0; i < names.size(); ++i) {
+            exporter.PushItem(
+                names[i],
+                imported->GetItem(names[i])
+            );
+        }
+    }
+    
     for(auto it = files.begin(); it != files.end(); ++it) {
         Dynacoe::InputBuffer buffer;
         buffer.Open(*it);
@@ -301,5 +313,9 @@ uint32_t Sandboxe::Trunk::ItemCount() {
 
 std::vector<std::string> Sandboxe::Trunk::GetItemNames() {
     return imported->ListItems();
+}
+
+void Sandboxe::Trunk::Inherit() {
+    inherit = true;
 }
 

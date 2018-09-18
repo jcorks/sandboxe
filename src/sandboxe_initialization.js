@@ -564,7 +564,14 @@ var sandboxe = {
         * @function
         * @returns {Array} List of files in the trunk
          */
-        getItemNames : __trunk_get_item_names
+        getItemNames : __trunk_get_item_names,
+        
+        /**
+        * Stages all trunk items that existed at the creation of this binary.
+        *
+        * @function 
+        */
+        inherit : __trunk_inherit
     },
 
 

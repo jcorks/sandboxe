@@ -10,6 +10,9 @@ void Initialize(const char * sourceName);
 // Stages the given file for a trunk commit.
 void Stage(const std::string & filePath);
 
+// Stages all items in the existing trunk.
+void Inherit();
+
 // Removes the given file from staging
 void Remove(const std::string & filePath);
 
