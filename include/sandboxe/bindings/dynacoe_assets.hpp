@@ -73,7 +73,7 @@ SANDBOXE_NATIVE_DEF(__assets_load) {
     if (arguments.size() > 2) b = arguments[2];
     
     if (Sandboxe::Trunk::ItemExists(name)) {
-        Dynacoe::Console::Info() << "Loading " << name << " from trunk\n";
+        //Dynacoe::Console::Info() << "Loading " << name << " from trunk\n";
         id = Dynacoe::Assets::LoadFromBuffer(
             type, 
             name, 
