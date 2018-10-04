@@ -37,7 +37,7 @@ class ComponentAdaptor : public Sandboxe::Script::Runtime::Object {
     virtual void Native_Draw(){}
     virtual void Native_Step(){}
 
-    virtual void Native_InstallEvent(const std::string & tag, Sandboxe::Script::Runtime::Object * fn){}
+    virtual void Native_InstallEvent(const std::string & tag, Sandboxe::Script::Runtime::Object * fn=nullptr){}
     virtual void Native_UninstallEvent(const std::string & tag){}
     virtual void Native_EmitEvent(const std::string & evt, Dynacoe::Entity::ID id){}
     virtual bool Native_CanHandleEvent(const std::string &){return false;}
@@ -47,6 +47,8 @@ class ComponentAdaptor : public Sandboxe::Script::Runtime::Object {
     virtual void Native_UninstallHandler(const std::string & name){}
     virtual std::vector<std::string> Native_GetKnownEvents(){return{};}
     virtual std::string Native_GetTag(){return "";}
+    virtual void Native_SetTag(const std::string &){}
+
     virtual std::string Native_GetInfo(){return "";}
     virtual void Native_SetInfo(const std::string &){}
     virtual void Native_SetDraw(bool b){}
@@ -74,10 +76,10 @@ class Component : public Dynacoe::Component, public Sandboxe::ComponentAdaptor {
     
     Component(const std::string & tag = "Component", const std::string & info_ = "") :
       Sandboxe::ComponentAdaptor((int)Sandboxe::NativeType::ComponentT),
-      Dynacoe::Component(tag),
+      Dynacoe::Component(),
       info(info_)
     {
-        
+      SetTag("Component");
     }
       
     std::string info;

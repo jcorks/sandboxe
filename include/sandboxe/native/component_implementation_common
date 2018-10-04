@@ -10,8 +10,12 @@ void Native_Step() {
 }
 
 void Native_InstallEvent(const std::string & tag, Sandboxe::Script::Runtime::Object * fn) {
-    AddNonNativeReference(fn);
-    InstallEvent(tag, NativeHandler, fn);
+    if (fn) {
+        AddNonNativeReference(fn);
+        InstallEvent(tag, NativeHandler, fn);
+    } else {
+        InstallEvent(tag);
+    }
 }
 
 void Native_UninstallEvent(const std::string & tag) {
@@ -55,6 +59,10 @@ std::vector<std::string> Native_GetKnownEvents(){
 
 std::string Native_GetTag() {
     return GetTag();
+}
+
+void Native_SetTag(const std::string & s){
+    SetTag(s);
 }
 
 std::string Native_GetInfo() {

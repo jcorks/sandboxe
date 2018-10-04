@@ -12,8 +12,7 @@ class Object2DObject : public Dynacoe::Object2D, public Sandboxe::ComponentAdapt
     Object2DObject() : Dynacoe::Object2D(), Sandboxe::ComponentAdaptor((int)Sandboxe::NativeType::Object2DT) {
         frictionX = 0.0;
         frictionY = 0.0;
-        SetFrictionX(0.0);
-        SetFrictionY(0.0);
+        rate = 1.f;
     }
     
     ~Object2DObject() {    
@@ -21,8 +20,9 @@ class Object2DObject : public Dynacoe::Object2D, public Sandboxe::ComponentAdapt
     
     
     
-    double frictionX;
-    double frictionY;
+    float frictionX;
+    float frictionY;
+    float rate;
     std::vector<float> colliderData;
 
     void OnGarbageCollection() {

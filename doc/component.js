@@ -149,8 +149,7 @@ function component() {
 
 
     /**
-     * Identifying tag of the component. This is set at the creation of the component and 
-     * is readonly. The tag can be used in access functions such as {@link entity.queryComponent}.
+     * Identifying tag of the component. The tag can be used in access functions such as {@link entity.queryComponent}.
      * @type {String}
      */
     this.tag = 0;

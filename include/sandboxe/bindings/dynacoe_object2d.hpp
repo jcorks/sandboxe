@@ -40,11 +40,29 @@ SANDBOXE_NATIVE_DEF(__object2d_add_velocity) {
     o2d->AddVelocity(arguments[0], arguments[1]);
 }
 
+SANDBOXE_NATIVE_DEF(__object2d_add_velocity_towards) {
+    SANDBOXE_ASSERT__ARG_COUNT(2);
+    Dynacoe::Vector v;
+    argument_to_vector_object(v, arguments[1]);    
+    auto o2d = (Sandboxe::Object2DObject*)source;         
+    o2d->AddVelocityTowards(arguments[0], v);
+}
+
+
 SANDBOXE_NATIVE_DEF(__object2d_set_velocity) {
     SANDBOXE_ASSERT__ARG_COUNT(2);
     auto o2d = (Sandboxe::Object2DObject*)source;    
     o2d->SetVelocity(arguments[0], arguments[1]);
 }
+
+SANDBOXE_NATIVE_DEF(__object2d_set_velocity_towards) {
+    SANDBOXE_ASSERT__ARG_COUNT(2);
+    Dynacoe::Vector v;
+    argument_to_vector_object(v, arguments[1]);    
+    auto o2d = (Sandboxe::Object2DObject*)source;         
+    o2d->SetVelocityTowards(arguments[0], v);
+}
+
 
 SANDBOXE_NATIVE_DEF(__object2d_set_collider) {
     auto o2d = (Sandboxe::Object2DObject*)source;    
@@ -160,7 +178,10 @@ void dynacoe_object2d(std::vector<std::pair<std::string, Sandboxe::Script::Runti
         (int)Sandboxe::NativeType::Object2DT,
         {
             {"addVelocity", __object2d_add_velocity},
+            {"addVelocityTowards", __object2d_add_velocity_towards},
             {"setVelocity", __object2d_set_velocity},
+            {"setVelocityTowards", __object2d_set_velocity_towards},
+
             {"halt", __object2d_halt},
 
             ////////////////////////////////////////////////////////
@@ -210,7 +231,6 @@ void dynacoe_object2d(std::vector<std::pair<std::string, Sandboxe::Script::Runti
             {"collider", {__object2d_get_collider, __object2d_set_collider}},
             {"lastCollided", {__object2d_get_last_collided, SANDBOXE_NATIVE_EMPTY}},
             {"nextPosition", {__object2d_get_next_position, SANDBOXE_NATIVE_EMPTY}}
-
 
 
         }

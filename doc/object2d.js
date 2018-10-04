@@ -22,11 +22,27 @@ function object2d() {
     this.addVelocity = function(){};
 
     /**
+     * Compounds a velocity vector with the current velocity towards a point.
+     * @param {Number} factor The velocity amount to add. Can be negative.
+     * @param {vector} target The point to add velocity towards
+     */
+    this.addVelocityTowards = function(){};
+
+
+    /**
      * Sets the velocity vector of an object.
      * @param {Number} factor The velocity to set.
      * @param {Number} direction The direction to set the velocity in degrees.
      */
     this.setVelocity = function(){};
+
+    /**
+     * Sets the velocity vector of an object.
+     * @param {Number} factor The velocity to set.
+     * @param {vector} target The point to set velocity towards
+     */
+    this.setVelocityTowards = function(){};
+
 
     /**
      * Reduces the speed of the Entity to 0.

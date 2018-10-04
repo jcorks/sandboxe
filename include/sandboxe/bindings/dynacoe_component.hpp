@@ -39,14 +39,20 @@ SANDBOXE_NATIVE_DEF(__component_step) {
 
 
 SANDBOXE_NATIVE_DEF(__component_install_event) {
-    SANDBOXE_ASSERT__ARG_COUNT(2);
-    SANDBOXE_ASSERT__ARG_TYPE(1, ObjectReferenceNonNativeT);
+    SANDBOXE_ASSERT__ARG_COUNT(1);
+	auto component = dynamic_cast<Sandboxe::ComponentAdaptor *>(source);
 
-    auto component = dynamic_cast<Sandboxe::ComponentAdaptor *>(source);
-    component->Native_InstallEvent(
-        arguments[0],
-        arguments[1]
-    );
+	if (arguments.size() > 1) {
+    	SANDBOXE_ASSERT__ARG_TYPE(1, ObjectReferenceNonNativeT);
+		component->Native_InstallEvent(
+	        arguments[0],
+	        arguments[1]
+	    );
+	} else {
+		component->Native_InstallEvent(
+	        arguments[0]
+	    );		
+	}
 }
 
 SANDBOXE_NATIVE_DEF(__component_uninstall_event) {
@@ -147,7 +153,10 @@ SANDBOXE_NATIVE_DEF(__component_get_known_events) {
 
 // native properties 
 
-SANDBOXE_NATIVE_DEF(__component_set_tag) {}
+SANDBOXE_NATIVE_DEF(__component_set_tag) {
+	auto component = dynamic_cast<Sandboxe::ComponentAdaptor *>(source);
+    (component->Native_SetTag(arguments[0]));	
+}
 SANDBOXE_NATIVE_DEF(__component_get_tag) {
     auto component = dynamic_cast<Sandboxe::ComponentAdaptor *>(source);
     context.SetReturnValue(component->Native_GetTag());
