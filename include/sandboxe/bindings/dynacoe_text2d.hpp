@@ -132,12 +132,12 @@ SANDBOXE_NATIVE_DEF(__text2d_mode_set) {
 
 SANDBOXE_NATIVE_DEF(__text2d_absolute_get) {
     auto shape = (Sandboxe::Text2DObject*)source;
-    context.SetReturnValue(shape->absolute);
+    context.SetReturnValue(shape->GetAbsolute());
 }
 
 SANDBOXE_NATIVE_DEF(__text2d_absolute_set) {
     auto shape = (Sandboxe::Text2DObject*)source;
-    shape->absolute = arguments[0];
+    shape->SetAbsolute(arguments[0]);
 }
 
 

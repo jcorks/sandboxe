@@ -41,11 +41,12 @@ SANDBOXE_NATIVE_DEF(__object2d_add_velocity) {
 }
 
 SANDBOXE_NATIVE_DEF(__object2d_add_velocity_towards) {
-    SANDBOXE_ASSERT__ARG_COUNT(2);
+    if (arguments.size() < 2) 
+        SANDBOXE_ASSERT__ARG_COUNT(2);
     Dynacoe::Vector v;
     argument_to_vector_object(v, arguments[1]);    
     auto o2d = (Sandboxe::Object2DObject*)source;         
-    o2d->AddVelocityTowards(arguments[0], v);
+    o2d->AddVelocityTowards(arguments[0], v, arguments.size() > 2 ? (float)arguments[2] : 0.f);
 }
 
 
@@ -56,11 +57,12 @@ SANDBOXE_NATIVE_DEF(__object2d_set_velocity) {
 }
 
 SANDBOXE_NATIVE_DEF(__object2d_set_velocity_towards) {
-    SANDBOXE_ASSERT__ARG_COUNT(2);
+    if (arguments.size() < 2) 
+        SANDBOXE_ASSERT__ARG_COUNT(2);
     Dynacoe::Vector v;
     argument_to_vector_object(v, arguments[1]);    
     auto o2d = (Sandboxe::Object2DObject*)source;         
-    o2d->SetVelocityTowards(arguments[0], v);
+    o2d->SetVelocityTowards(arguments[0], v, arguments.size() > 2 ? (float)arguments[2] : 0.f);
 }
 
 
