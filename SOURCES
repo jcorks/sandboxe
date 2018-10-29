@@ -9,4 +9,5 @@
 
 ./src/native/component.cc
 ./src/native/entity.cc
+./src/native/display.cc
 ./duktape-src/duktape.c

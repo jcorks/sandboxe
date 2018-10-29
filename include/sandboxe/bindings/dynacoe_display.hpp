@@ -161,7 +161,6 @@ SANDBOXE_NATIVE_DEF(__view_manager_create_display) {
     context.SetReturnValue(out);
 }
 
-
 SANDBOXE_NATIVE_DEF(__view_manager_destroy_display) {
     SANDBOXE_ASSERT__ARG_COUNT(1);
     SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceT);
@@ -179,8 +178,15 @@ SANDBOXE_NATIVE_DEF(__view_manager_set_main) {
     
     auto disp = (Sandboxe::DisplayObject*)(Sandboxe::Script::Runtime::Object*)arguments[0];
     
+    Sandboxe::DisplayObject::SetMainDisplay(disp);
     Dynacoe::ViewManager::SetMain(disp->id);
 }
+
+SANDBOXE_NATIVE_DEF(__view_manager_get_main) {
+    auto main = Sandboxe::DisplayObject::GetMainDisplay();
+    if (main) context.SetReturnValue(main);
+}
+
 
 
 void dynacoe_display(std::vector<std::pair<std::string, Sandboxe::Script::Runtime::Function>> & fns) {
@@ -217,6 +223,7 @@ void dynacoe_display(std::vector<std::pair<std::string, Sandboxe::Script::Runtim
     fns.push_back({"__display_create", __view_manager_create_display});
     fns.push_back({"__display_destroy", __view_manager_destroy_display});
     fns.push_back({"__display_set_main", __view_manager_set_main});
+    fns.push_back({"__display_get_main", __view_manager_get_main});
  
 }
     

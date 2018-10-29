@@ -1,6 +1,9 @@
 #ifndef H_dynacoe_sandboxe_display_included
 #define H_dynacoe_sandboxe_display_included
 
+#include <sandboxe/native/native.h>
+
+
 namespace Sandboxe {
 class DisplayObject : public Sandboxe::Script::Runtime::Object {
   public:
@@ -25,6 +28,12 @@ class DisplayObject : public Sandboxe::Script::Runtime::Object {
         }
     };
 
+    // Sets a static display object, symbolic of the main display. 
+    // Note that this can desync from the a ctual display in the case the 
+    // system decides to create its own display (extraordinary cases)
+    static DisplayObject * GetMainDisplay();
+    static void SetMainDisplay(DisplayObject *);
+
 
     
     Dynacoe::ViewID id;
@@ -43,6 +52,12 @@ class DisplayObject : public Sandboxe::Script::Runtime::Object {
         disp->AddResizeCallback(resizeCB);
         disp->AddCloseCallback(closeCB);
         
+    }
+    
+    ~DisplayObject() {
+        if (this == GetMainDisplay()) {
+            SetMainDisplay(nullptr);
+        }
     }
     
     void OnGarbageCollection() {

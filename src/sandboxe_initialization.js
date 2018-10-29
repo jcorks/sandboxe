@@ -223,6 +223,14 @@ var sandboxe = {
          */
         setMain : __display_set_main,
         
+        /**
+         * Returns the current main display for sandboxe in use, if any.
+         *
+         * @returns {display}
+         * @function
+         */
+        getMain : __display_get_main,
+
         
         /**
          * View policy for {@link display.setViewPolicy}.
