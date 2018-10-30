@@ -14,7 +14,13 @@
  * a new recognized event with the given name. Once installed, emitEvent() should be called 
  * at the appropriate time user functions should be run. </br></br>
  *
- * Built-in components, link {@link clock}, have their installed events marked in their 
+ * All components will emit the 2 fallowing events:
+ * <pre>
+ * - on-attach: Called when the component is attached to an entity.
+ * - on-detach: Called when the component is about to be destroyed.
+ * </pre>
+ *
+ * Built-in components, like {@link clock}, have their installed events marked in their 
  * class descriptions.
  * @example 
  
