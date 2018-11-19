@@ -953,13 +953,22 @@ var sandboxe = {
      */
     input : {
         /**
-         * Creates a new buttonListener object, which are using to call methods after certain inputs are detected.
+         * Creates a new buttonListener object, which are used to call methods after certain inputs are detected.
          * @param {Number|String} Input The input to detect. See {@link sandboxe} input flags.
          * @returns {buttonListener}
          * @function
          */
         buttonListener : {
             create : __input_button_listener_new
+        },
+        
+        /**
+         * Creates a new unicodeListener object, which are used to call methods after characters are typed by the user keyboard.
+         * @returns {unicodeListener}
+         * @function
+         */        
+        unicodeListener : {
+            create : __input_unicode_listener_new
         },
         
 

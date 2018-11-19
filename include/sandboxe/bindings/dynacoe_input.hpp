@@ -2,6 +2,7 @@
 #define H_sandboxe_bindings_dynacoe_input
 #include <sandboxe/native/native.h>
 #include <sandboxe/native/buttonListener.h>
+#include <sandboxe/native/unicodeListener.h>
 
 /*
     Dynacoe::Input Bindings
@@ -50,6 +51,13 @@ SANDBOXE_NATIVE_DEF(__input_button_listener_new) {
     }    
     context.SetReturnValue(listener);
 }
+
+SANDBOXE_NATIVE_DEF(__input_unicode_listener_new) {
+    auto listener = new Sandboxe::UnicodeListenerObject;
+    Dynacoe::Input::AddUnicodeListener(listener);
+    context.SetReturnValue(listener);
+}
+
 
 SANDBOXE_NATIVE_DEF(__input_get_state) {
     SANDBOXE_ASSERT__ARG_COUNT(1);
@@ -161,6 +169,13 @@ SANDBOXE_NATIVE_DEF(__input_add_listener) {
 SANDBOXE_NATIVE_DEF(__input_remove_listener) {
     auto b = (Sandboxe::ButtonListenerObject*)(Sandboxe::Script::Runtime::Object*)source;
     Dynacoe::Input::RemoveListener(b);
+    delete b;
+}
+
+SANDBOXE_NATIVE_DEF(__input_remove_unicode_listener) {
+    auto b = (Sandboxe::UnicodeListenerObject*)(Sandboxe::Script::Runtime::Object*)source;
+    Dynacoe::Input::RemoveUnicodeListener(b);
+    delete b;
 }
 
 SANDBOXE_NATIVE_DEF(__input_get_last_unicode)  {
@@ -187,6 +202,11 @@ SANDBOXE_NATIVE_DEF(__input_get_on_release) {
         context.SetReturnValue(b->onRelease);
 }
 
+SANDBOXE_NATIVE_DEF(__input_get_on_new_unicode) {
+    auto b = (Sandboxe::UnicodeListenerObject*)(Sandboxe::Script::Runtime::Object*)source;
+    if (b->onNewUnicode)
+        context.SetReturnValue(b->onNewUnicode);
+}
 
 
 SANDBOXE_NATIVE_DEF(__input_set_on_press) {
@@ -211,6 +231,14 @@ SANDBOXE_NATIVE_DEF(__input_set_on_release) {
     b->onRelease = arguments[0];
 
     b->AddNonNativeReference(b->onRelease);
+}
+
+SANDBOXE_NATIVE_DEF(__input_set_on_new_unicode) {
+    auto b = (Sandboxe::UnicodeListenerObject*)(Sandboxe::Script::Runtime::Object*)source;
+    SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceNonNativeT);
+    b->onNewUnicode = arguments[0];
+
+    b->AddNonNativeReference(b->onNewUnicode);
 }
 
 
@@ -244,8 +272,32 @@ void dynacoe_input(std::vector<std::pair<std::string, Sandboxe::Script::Runtime:
         }
     );
     
+    
+    Sandboxe::Script::Runtime::AddType(
+        (int)Sandboxe::NativeType::UnicodeListenerT,
+        // users should populate:
+        // 
+        //  "onNewUnicode",
+
+        // methods
+        {
+            {"remove", __input_remove_unicode_listener}
+        },
+        // properties
+        {
+        },
+        
+        // managed properties,
+        {
+            {"onNewUnicode", {__input_get_on_new_unicode, __input_set_on_new_unicode}},
+
+
+        }
+    );
+    
 
     fns.push_back({"__input_button_listener_new", __input_button_listener_new});
+    fns.push_back({"__input_unicode_listener_new", __input_unicode_listener_new});
     fns.push_back({"__input_mouse_x", __input_mouse_x});
     fns.push_back({"__input_mouse_y", __input_mouse_y});
     fns.push_back({"__input_mouse_x_delta", __input_mouse_x_delta});

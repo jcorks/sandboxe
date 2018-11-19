@@ -48,7 +48,8 @@ enum class NativeType {
     ParticleEmitter2D_EntityIDT,
     InputBufferT,
     OutputBufferT,
-    ModelT
+    ModelT,
+    UnicodeListenerT
 };
 
 
