@@ -20,8 +20,10 @@ int main(int argc, char ** argv) {
 
     Sandboxe::Script::Runtime::Start();
 
-
-    return 0;
+    Sandboxe::Script::Runtime::Load("main.js");
+    Dynacoe::Engine::Run();
+ 
+   return 0;
 
     
 }

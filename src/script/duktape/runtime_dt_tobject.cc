@@ -6,6 +6,10 @@
 
 using namespace Sandboxe::Script::Runtime;
 
+const char * hidden_key_object   = "\xFFSBO";
+const char * hidden_key_function = "\xFFSBF";
+
+
 
 
 TObject::TObject(duk_context * ctx) : source(ctx) {
@@ -94,7 +98,7 @@ void TObject::SetFunction(const std::string & str, Sandboxe::Script::Runtime::Fu
     {
         // associate the function pointer with the data itself
         TObject func(source);
-        func.MapPointer((void*)0x1, (void*)funcSrc);
+        func.MapFunction(funcSrc);
 
     }
     duk_put_prop_string(source, -2, str.c_str());
@@ -137,15 +141,15 @@ void TObject::SetManagedProperty(const std::string & str, Sandboxe::Script::Runt
     duk_push_c_function(source, native_get, 0);
     {
         TObject func(source);
-        func.MapPointer((void*)0x1, (void*)obj);
-        func.MapPointer((void*)0x2, (void*)get);
+        func.MapObject  (obj);
+        func.MapFunction(get);
     }
 
     duk_push_c_function(source, native_set, 1);
     {
         TObject func(source);
-        func.MapPointer((void*)0x1, (void*)obj);
-        func.MapPointer((void*)0x2, (void*)set);
+        func.MapObject  (obj);
+        func.MapFunction(set);
     }
 
 
@@ -165,28 +169,52 @@ void TObject::SetManagedProperty(const std::string & str, Sandboxe::Script::Runt
 
 
 // sets a hidden property pointer that is accessible via pointer
-void TObject::MapPointer(void * key, void * value) {
+void TObject::MapFunction(Function value) {
     int stackSz = (duk_get_top(source));
 
-    duk_push_pointer(source, value);
-    duk_put_prop_string(source, -2, PointerToHiddenKey(key));
+    duk_push_pointer(source, (void*)value);
+    duk_put_prop_string(source, -2, hidden_key_function);
     
 
     assert(stackSz == duk_get_top(source));                
 }
 
-// gets a hidden mapped pointer for the object
-void * TObject::GetMappedPointer(void * key) const {
+void TObject::MapObject(Object * value) {
     int stackSz = (duk_get_top(source));
 
-    duk_get_prop_string(source, -1, PointerToHiddenKey(key));      
-    void * prop = duk_to_pointer(source, -1); 
+    duk_push_pointer(source, (void*)value);
+    duk_put_prop_string(source, -2, hidden_key_object);
+    
+
+    assert(stackSz == duk_get_top(source));                
+}
+
+
+// gets a hidden mapped pointer for the object
+Function TObject::GetMappedFunction() const {
+    int stackSz = (duk_get_top(source));
+
+    duk_get_prop_string(source, -1, hidden_key_function);      
+    Function prop = (Function)duk_to_pointer(source, -1); 
     duk_pop(source);
     
 
     assert(stackSz == duk_get_top(source));
     return prop;
 }
+
+Object * TObject::GetMappedObject() const {
+    int stackSz = (duk_get_top(source));
+
+    duk_get_prop_string(source, -1, hidden_key_object);      
+    Object * prop = (Object*)duk_to_pointer(source, -1); 
+    duk_pop(source);
+    
+
+    assert(stackSz == duk_get_top(source));
+    return prop;
+}
+
 
 
 
@@ -199,7 +227,7 @@ Sandboxe::Script::Runtime::Primitive TObject::ThisAsPrimitive() const {
         case DUK_TYPE_NUMBER:    return Primitive(duk_get_number(source, -1));
         case DUK_TYPE_STRING:    return Primitive(std::string(duk_get_string(source, -1)));
         case DUK_TYPE_OBJECT: {
-            Object * ref = (Object*)GetMappedPointer((void*)(0x1));
+            Object * ref = GetMappedObject();
             if (ref) // native ref 
                 return Primitive(ref);
 
@@ -214,13 +242,6 @@ Sandboxe::Script::Runtime::Primitive TObject::ThisAsPrimitive() const {
 
 
     return Primitive();
-}
-
-
-const char * TObject::PointerToHiddenKey(void * p) const {
-    static char holder[34];
-    snprintf(holder, 34, "\xFF%p", p);
-    return holder;
 }
 
 
@@ -253,7 +274,7 @@ duk_ret_t TObject::method_call(duk_context * source) {
     duk_push_this(source);
     if (!duk_is_undefined(source, -1)) {
         TObject obj(source);
-        ref = (Object*)obj.GetMappedPointer((void*)0x1);
+        ref = obj.GetMappedObject();
     }
     duk_pop(source);
 
@@ -261,7 +282,7 @@ duk_ret_t TObject::method_call(duk_context * source) {
     Function f;
     {
         TObject thisFunction(source);
-        f = (Function)thisFunction.GetMappedPointer((void*)0x1);
+        f = thisFunction.GetMappedFunction();
     }
     f(ref, argsConverted, context);
 
@@ -286,8 +307,8 @@ duk_ret_t TObject::native_get(duk_context * source) {
     Function f;
     {
         TObject obj(source);
-        ref = (Object*)          obj.GetMappedPointer((void*)0x1);
-        f   = (Function)         obj.GetMappedPointer((void*)0x2);
+        ref = (Object*)          obj.GetMappedObject  ();
+        f   = (Function)         obj.GetMappedFunction();
     }
     assert(ref);    
     TObject pushr(source);
@@ -318,8 +339,8 @@ duk_ret_t TObject::native_set(duk_context * source) {
     Function f;
     {
         TObject obj(source);
-        ref = (Object*)          obj.GetMappedPointer((void*)0x1);
-        f   = (Function)         obj.GetMappedPointer((void*)0x2);
+        ref = (Object*)          obj.GetMappedObject  ();
+        f   = (Function)         obj.GetMappedFunction();
     }
     duk_pop(source);
     assert(ref);        

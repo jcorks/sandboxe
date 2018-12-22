@@ -49,10 +49,13 @@ class TObject {
     void SetManagedProperty(const std::string & str, Sandboxe::Script::Runtime::Function get, Sandboxe::Script::Runtime::Function set);
 
     // sets a hidden property pointer that is accessible via pointer
-    void MapPointer(void * key, void * value);
+    void MapObject(Object * value);
+    void MapFunction(Function value);
 
     // gets a hidden mapped pointer for the object
-    void * GetMappedPointer(void * key) const;
+    Object * GetMappedObject() const;
+    Function GetMappedFunction() const;
+
 
     // Gets whether this object is an array. Arrays are not language-agnostic constructs,
     // so they are blanketed as ObjectReferenceNonNative unless detected and extracted using 

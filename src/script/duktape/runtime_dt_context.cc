@@ -191,7 +191,7 @@ void DTContext::ThrowErrorObject(const std::string & err) {
 static duk_ret_t object_finalizer(duk_context * source) {
     // the object SHOULD be the first on the stack
     TObject obj(source);
-    Object * parent = (Object*)obj.GetMappedPointer((void*)0x1);
+    Object * parent = obj.GetMappedObject();
     assert(parent);
     delete parent;
     printf("Finlized %p\n", parent);
@@ -232,7 +232,7 @@ uint32_t DTContext::CreateHeapEntryFromObject(Object * parent) {
 
     {
         TObject newObject(source);
-        newObject.MapPointer((void*)0x1, (void*)parent);
+        newObject.MapObject(parent);
     }
 
     // we need to push its finalizer! the finalizer will provide the mechanism to cleanup 
@@ -309,7 +309,7 @@ uint32_t DTContext::CreateHeapEntryFromDTStack(Object * parent) {
 
     {
         TObject newObject(source);
-        newObject.MapPointer((void*)0x1, (void*)parent);
+        newObject.MapObject(parent);
     }
 
     // we need to push its finalizer! the finalizer will provide the mechanism to cleanup 
