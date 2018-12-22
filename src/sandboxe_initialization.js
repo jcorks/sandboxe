@@ -889,7 +889,7 @@ var sandboxe = {
         /** 
          * Retrieves an asset object by name or disk path.
          * @param {String} extension The standard extension of the file. For example 'png' would be for PNG images. 
-         * @param {String} path The path or name of the asset. If the path refers to a stored name within the trunk, raw data referring to the asset is used from within the binary and the disk is not otherwise accessed. If the asset has been loaded before using this function, the same asset reference is returned and a new one is NOT created.
+         * @param {String} path The path or name of the asset. If the path refers to a stored name within the trunk, raw data referring to the asset is used from within the binary and the disk is not otherwise accessed. If the asset has been loaded before using this function, the same asset reference is returned and a new one is NOT created. In the case that this argument is true and the name is not in the trunk, the disk is searched recursively from the path set from {@link sandboxe.assets.setSearchPath}. By default this is the binary directory.
          * @returns {asset} Reference to the asset.
          * @function 
          */
@@ -932,6 +932,22 @@ var sandboxe = {
          * @function
          */
         query : __assets_query,
+
+
+        /**
+         * Sets the base search path for loading assets. The default is sandboxe.engine.getBaseDirectory().
+         * @param {String} path The path to set as the searching root. See {@link sandboxe.assets.load}.
+         * @function
+         */
+        setSearchPath : __assets_set_search_path,
+
+        /**
+         * Gets the base search path for loading assets. The default is sandboxe.engine.getBaseDirectory().
+         * @returns {String} The path set as the searching root. See {@link sandboxe.assets.load}.
+         * @function
+         */
+        getSearchPath : __assets_get_search_path,
+
         
         
         /**

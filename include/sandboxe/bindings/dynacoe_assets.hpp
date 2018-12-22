@@ -69,7 +69,7 @@ SANDBOXE_NATIVE_DEF(__assets_load) {
     if (arguments.size() < 2) return;
     std::string type = arguments[0];
     std::string name = arguments[1];
-    bool b = false;
+    bool b = true;
     if (arguments.size() > 2) b = arguments[2];
     
     if (Sandboxe::Trunk::ItemExists(name)) {
@@ -141,6 +141,18 @@ SANDBOXE_NATIVE_DEF(__assets_query) {
     context.SetReturnValue(object);
 }
 
+SANDBOXE_NATIVE_DEF(__assets_get_search_path) {
+    context.SetReturnValue(Dynacoe::Assets::GetSearchPath());
+}
+
+SANDBOXE_NATIVE_DEF(__assets_set_search_path) {
+    SANDBOXE_ASSERT__ARG_COUNT(1);
+    std::string i = arguments[0];
+    Dynacoe::Assets::SetSearchPath(i);
+
+}
+
+
 SANDBOXE_NATIVE_DEF(__assets_new) {
     if (arguments.size() < 1) {
         SANDBOXE_ASSERT__ARG_COUNT(1);
@@ -187,6 +199,8 @@ void dynacoe_assets(std::vector<std::pair<std::string, Sandboxe::Script::Runtime
     fns.push_back({"__assets_supported_load_extensions", __assets_supported_load_extensions});
     fns.push_back({"__assets_query", __assets_query});
     fns.push_back({"__assets_new", __assets_new});
+    fns.push_back({"__assets_set_search_path", __assets_set_search_path});
+    fns.push_back({"__assets_get_search_path", __assets_get_search_path});
     fns.push_back({"__assets_supported_write_extensions", __assets_supported_write_extensions});
 }
 
