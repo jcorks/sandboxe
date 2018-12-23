@@ -84,13 +84,13 @@ function object2d() {
 
 
     /**
-     * Returns the signed, horizontal velocity of the object.
+     * Horizontal velocity of the object.
      * @type {Number}
      */
     this.velocityX = 0.0;
 
     /**
-    * Returns the signed, vertical velocity of the object.
+     * Vertical velocity of the object.
      * @type {Number}
      */
     this.velocityY = 0.0;
@@ -120,6 +120,12 @@ function object2d() {
      */
     this.nextPosition = {};
 
+    /**
+     * Returns the previous position that was used before the current position 
+     * when this object2d was attached.
+     * @type {vector}
+     */
+    this.lastPosition = {};
 
 
 

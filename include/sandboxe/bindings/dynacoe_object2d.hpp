@@ -157,6 +157,17 @@ SANDBOXE_NATIVE_DEF(__object2d_get_velocity_y) {
     context.SetReturnValue(o2d->GetVelocityY());
 }
 
+
+SANDBOXE_NATIVE_DEF(__object2d_set_velocity_x) {
+    auto o2d = (Sandboxe::Object2DObject*)source;    
+    o2d->SetVelocityX(arguments[0]);
+}
+
+SANDBOXE_NATIVE_DEF(__object2d_set_velocity_y) {
+    auto o2d = (Sandboxe::Object2DObject*)source;    
+    o2d->SetVelocityY(arguments[0]);
+}
+
 SANDBOXE_NATIVE_DEF(__object2d_get_last_collided) {
     auto o2d = (Sandboxe::Object2DObject*)source;        
     auto a = o2d->collider.lastCollided.IdentifyAs<Sandboxe::Entity>();
@@ -169,6 +180,10 @@ SANDBOXE_NATIVE_DEF(__object2d_get_next_position) {
     context.SetReturnValue(new Sandboxe::VectorObject(o2d->GetNextPosition()));
 }
 
+SANDBOXE_NATIVE_DEF(__object2d_get_last_position) {
+    auto o2d = (Sandboxe::Object2DObject*)source;        
+    context.SetReturnValue(new Sandboxe::VectorObject(o2d->GetLastPosition()));
+}
 
 
 
@@ -228,11 +243,12 @@ void dynacoe_object2d(std::vector<std::pair<std::string, Sandboxe::Script::Runti
             {"frictionY", {__object2d_get_friction_y, __object2d_set_friction_y}},
             {"speed", {__object2d_get_speed, __object2d_set_speed}},
             {"direction", {__object2d_get_direction, SANDBOXE_NATIVE_EMPTY}},
-            {"velocityX", {__object2d_get_velocity_x, SANDBOXE_NATIVE_EMPTY}},
-            {"velocityY", {__object2d_get_velocity_y, SANDBOXE_NATIVE_EMPTY}},
+            {"velocityX", {__object2d_get_velocity_x, __object2d_set_velocity_x}},
+            {"velocityY", {__object2d_get_velocity_y, __object2d_set_velocity_y}},
             {"collider", {__object2d_get_collider, __object2d_set_collider}},
             {"lastCollided", {__object2d_get_last_collided, SANDBOXE_NATIVE_EMPTY}},
-            {"nextPosition", {__object2d_get_next_position, SANDBOXE_NATIVE_EMPTY}}
+            {"nextPosition", {__object2d_get_next_position, SANDBOXE_NATIVE_EMPTY}},
+            {"lastPosition", {__object2d_get_next_position, SANDBOXE_NATIVE_EMPTY}}
 
 
         }

@@ -48,7 +48,7 @@ void runtime_include_script(Object *, const std::vector<Primitive> & args, Conte
             Sandboxe::Trunk::ItemGet(path)
         );    
     } else {
-        id = Dynacoe::Assets::Load("", path, false);
+        id = Dynacoe::Assets::Load("", Dynacoe::Assets::GetSearchPath()+"/"+path, false);
     }
     if (!id.Valid()) {
         ScriptError((Dynacoe::Chain() << "File " << path << " could not be accessed.\n").ToString());

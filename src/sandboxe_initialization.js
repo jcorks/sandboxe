@@ -1232,7 +1232,7 @@ var sandboxe = {
         /**
          * Runs all the logic of the given file as if it were a source file.
          * This is unconditional.
-         * @param {String} path Path to file.
+         * @param {String} path Path to file. This is relative to {@link sandboxe.assets.getSearchPath}
          * @function
          */
         run : __script_include,
@@ -1241,7 +1241,7 @@ var sandboxe = {
          * Similar to {@link sandboxe.script.run} except, a source file is only 
          * executabed the first time include() is called for that path. On subsequent calls
          * with the same path argument, no action is taken.
-         * @param {String} path Path to file.
+         * @param {String} path Path to file. This is relative to {@link sandboxe.assets.getSearchPath}
          * @function
          */
         include : function(script) {__script_include(script, 1);}
