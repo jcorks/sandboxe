@@ -40,8 +40,9 @@ void Object_Internal::SweepTemporaryObjects() {
     
     for(uint32_t i = 0; i < temporary.size(); ++i) {
         // queue for removal
-        DTContext::Get()->RemoveHeapEntry(temporary[i]->heapIndex);
+        uint32_t id = temporary[i]->heapIndex;
         temporary[i]->heapIndex = 0;
+        DTContext::Get()->RemoveHeapEntry(id);
     }
     temporary.clear();
 }
