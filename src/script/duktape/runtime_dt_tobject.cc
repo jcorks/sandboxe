@@ -380,7 +380,8 @@ void TObject::PushPrimitive(const Primitive & data) {
       case Primitive::TypeHint::ObjectReferenceT:      
       case Primitive::TypeHint::ObjectReferenceNonNativeT: {
         Object * obj = data;
-        DTContext::Get()->PushHeapEntryToDTTop(obj->GetNative()->GetHeapStoreIndex());
+        duk_push_heapptr(source, obj->GetNative()->GetHeapStorePointer());
+        //DTContext::Get()->PushHeapEntryToDTTop(obj->GetNative()->GetHeapStoreIndex());
         break;
       }
       default: duk_push_string(source, "");

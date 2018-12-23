@@ -9,16 +9,18 @@ static std::vector<Object_Internal*> temporary;
 Object_Internal::Object_Internal(int typeID, Object * parent_) : parent(parent_) {
     type = typeID;
     heapIndex = 0;
+    heapRef = nullptr;
 }
 
 Object_Internal::Object_Internal() {
     parent = nullptr;
     heapIndex = 0;
+    heapRef = nullptr;
     type = -1;
 }
 
 void Object_Internal::AssignHeapEntry() {
-    heapIndex =  DTContext::Get()->CreateHeapEntryFromObject(parent);
+    heapIndex =  DTContext::Get()->CreateHeapEntryFromObject(parent, &heapRef);
 }
 
 uint32_t Object_Internal::GetHeapStoreIndex() const {
@@ -29,7 +31,7 @@ Object * Object_Internal::CreateTemporaryObjectFromStackTop() {
     Object_Internal * out = new Object_Internal();
     out->type = -1;
     out->parent = new Object(*out); // a little weird, but accurate
-    out->heapIndex = DTContext::Get()->CreateHeapEntryFromDTStack(out->parent);
+    out->heapIndex = DTContext::Get()->CreateHeapEntryFromDTStack(out->parent, &out->heapRef);
     temporary.push_back(out);
     return out->parent;
 }
@@ -55,11 +57,12 @@ Object_Internal::~Object_Internal() {
     if (heapIndex) {    
         // we need to also remove the finalizer
         auto source = DTContext::Get()->GetCTX();
-
         int stackSz = duk_get_top(source);
 
         int size = duk_get_top(source);
-        DTContext::Get()->PushHeapEntryToDTTop(heapIndex);
+        //DTContext::Get()->PushHeapEntryToDTTop(heapIndex);
+        duk_push_heapptr(DTContext::Get()->GetCTX(), heapRef);    
+
         duk_push_undefined(source);
         duk_set_finalizer(source, -2);
         duk_pop(source);
@@ -84,23 +87,43 @@ Object * Object_Internal::GetParent() {
 
 
 Primitive Object_Internal::Get(const std::string & name) {
-    DTContext::Get()->PushHeapEntryToDTTop(heapIndex);
+    auto source = DTContext::Get()->GetCTX();
+    int stackSz = duk_get_top(source);
+
+    //DTContext::Get()->PushHeapEntryToDTTop(heapIndex);
+    duk_push_heapptr(DTContext::Get()->GetCTX(), heapRef);    
     TObject object(DTContext::Get()->GetCTX());
     auto out = object.GetAsPrimitive(name);
     duk_pop(DTContext::Get()->GetCTX());
+
+    assert(stackSz == duk_get_top(source));
+
     return out;
 }
 void Object_Internal::Set(const std::string & name, const Primitive & data) {
-    DTContext::Get()->PushHeapEntryToDTTop(heapIndex);
+    //DTContext::Get()->PushHeapEntryToDTTop(heapIndex);
+    auto source = DTContext::Get()->GetCTX();
+    int stackSz = duk_get_top(source);
+
+    duk_push_heapptr(DTContext::Get()->GetCTX(), heapRef);        
     TObject object(DTContext::Get()->GetCTX());
     object.Set(name, data);
     duk_pop(DTContext::Get()->GetCTX());
+
+    assert(stackSz == duk_get_top(source));
+
 }
 Primitive Object_Internal::CallMethod(const std::string & name, const std::vector<Primitive> & args) {
-    DTContext::Get()->PushHeapEntryToDTTop(heapIndex);
+    auto source = DTContext::Get()->GetCTX();
+    int stackSz = duk_get_top(source);
+
+    //DTContext::Get()->PushHeapEntryToDTTop(heapIndex);
+    duk_push_heapptr(DTContext::Get()->GetCTX(), heapRef);    
     TObject object(DTContext::Get()->GetCTX());
     auto out = object.CallMethod(name, args);    
     duk_pop(DTContext::Get()->GetCTX());
+    assert(stackSz == duk_get_top(source));
+
     return out;
 }
 

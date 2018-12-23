@@ -39,11 +39,15 @@ class Object_Internal {
     // Gets the DTContext heap index for this object. 
     // If the heapIndex is 0, the object has likely been cleaned up already.
     uint32_t GetHeapStoreIndex() const;
+
+    // Gets the DT heap pointer referring to this object.
+    void * GetHeapStorePointer() const {return heapRef;}
  
     
   private:
     int type;
     uint32_t heapIndex;
+    void * heapRef;
     Object * parent;
     std::vector<Object*> ownedTemps;
     std::unordered_map<std::string, Function> setters;

@@ -201,7 +201,7 @@ static duk_ret_t object_finalizer(duk_context * source) {
 
 
 // creates a new object of the given type in the heap store
-uint32_t DTContext::CreateHeapEntryFromObject(Object * parent) {
+uint32_t DTContext::CreateHeapEntryFromObject(Object * parent, void ** heapRef) {
     int stackSize = duk_get_top(source);
 
     uint32_t out;
@@ -229,6 +229,7 @@ uint32_t DTContext::CreateHeapEntryFromObject(Object * parent) {
     
     // create new object
     duk_push_object(source);                                                // global - store - typeBase - {}
+    *heapRef = duk_get_heapptr(source, -1);
 
     {
         TObject newObject(source);
@@ -287,7 +288,7 @@ uint32_t DTContext::CreateHeapEntryFromObject(Object * parent) {
 }
 
 
-uint32_t DTContext::CreateHeapEntryFromDTStack(Object * parent) {
+uint32_t DTContext::CreateHeapEntryFromDTStack(Object * parent, void ** heapRef) {
     int stackSize = duk_get_top(source);
 
     uint32_t out;
@@ -298,6 +299,7 @@ uint32_t DTContext::CreateHeapEntryFromDTStack(Object * parent) {
         dead.pop();
     }
                                                                             // {}
+    *heapRef = duk_get_heapptr(source, -1);
 
     // get the global since we will be putting it in our heap
     duk_push_global_object(source);                                         // {} - global
@@ -327,12 +329,13 @@ uint32_t DTContext::CreateHeapEntryFromDTStack(Object * parent) {
     
     duk_pop(source); // objectStore
     duk_pop(source); // global
-    PushHeapEntryToDTTop(out);
+    duk_push_heapptr(source, *heapRef);    
+    //PushHeapEntryToDTTop(out);
     
     assert(duk_get_top(source) == stackSize);
     return out;
 }
-
+/*
 void DTContext::PushHeapEntryToDTTop(uint32_t i) {
     if (i == 0 || i >= heapIndex) return;
     // get the global object heap
@@ -344,7 +347,7 @@ void DTContext::PushHeapEntryToDTTop(uint32_t i) {
     duk_pop(source); // heap
     
 }
-
+*/
 
 void DTContext::RemoveHeapEntry(uint32_t i) {
     if (i == 0 || i >= heapIndex) return;
