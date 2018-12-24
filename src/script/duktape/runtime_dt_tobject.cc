@@ -167,52 +167,27 @@ void TObject::SetManagedProperty(const std::string & str, Sandboxe::Script::Runt
 
 }
 
+static std::unordered_map<void*, Function> mappedFunctions;
+static std::unordered_map<void*, Object*> mappedObjects;
+
 
 // sets a hidden property pointer that is accessible via pointer
 void TObject::MapFunction(Function value) {
-    int stackSz = (duk_get_top(source));
-
-    duk_push_pointer(source, (void*)value);
-    duk_put_prop_string(source, -2, hidden_key_function);
-    
-
-    assert(stackSz == duk_get_top(source));                
+    mappedFunctions[duk_get_heapptr(source, -1)] = value;
 }
 
 void TObject::MapObject(Object * value) {
-    int stackSz = (duk_get_top(source));
-
-    duk_push_pointer(source, (void*)value);
-    duk_put_prop_string(source, -2, hidden_key_object);
-    
-
-    assert(stackSz == duk_get_top(source));                
+    mappedObjects[duk_get_heapptr(source, -1)] = value;               
 }
 
 
 // gets a hidden mapped pointer for the object
 Function TObject::GetMappedFunction() const {
-    int stackSz = (duk_get_top(source));
-
-    duk_get_prop_string(source, -1, hidden_key_function);      
-    Function prop = (Function)duk_to_pointer(source, -1); 
-    duk_pop(source);
-    
-
-    assert(stackSz == duk_get_top(source));
-    return prop;
+    return mappedFunctions[duk_get_heapptr(source, -1)];
 }
 
 Object * TObject::GetMappedObject() const {
-    int stackSz = (duk_get_top(source));
-
-    duk_get_prop_string(source, -1, hidden_key_object);      
-    Object * prop = (Object*)duk_to_pointer(source, -1); 
-    duk_pop(source);
-    
-
-    assert(stackSz == duk_get_top(source));
-    return prop;
+    return mappedObjects[duk_get_heapptr(source, -1)];
 }
 
 
