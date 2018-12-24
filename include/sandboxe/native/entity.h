@@ -49,6 +49,15 @@ class Entity : public Dynacoe::Entity {
         object = nullptr;
         transform = new TransformObject;
         ReplaceTransform(&transform->transformReal);
+
+        onStepObject    = nullptr;
+        onDrawObject    = nullptr;
+        onEnterObject   = nullptr;
+        onDepartObject  = nullptr;
+        onRemoveObject  = nullptr;
+        onPreStepObject = nullptr;
+        onPreDrawObject = nullptr;
+    
     }    
     
     ~Entity() {
@@ -56,27 +65,50 @@ class Entity : public Dynacoe::Entity {
     }
     EntityObjectID * object;
 
-    
+
+
+    Sandboxe::Script::Runtime::Object * onStepObject;
+    Sandboxe::Script::Runtime::Object * onDrawObject;
+    Sandboxe::Script::Runtime::Object * onEnterObject;
+    Sandboxe::Script::Runtime::Object * onDepartObject;
+    Sandboxe::Script::Runtime::Object * onRemoveObject;
+    Sandboxe::Script::Runtime::Object * onPreStepObject;
+    Sandboxe::Script::Runtime::Object * onPreDrawObject;   
+
     void OnEnter() {
-        object->CallMethod("onEnter");
+        if (onEnterObject) {
+            onEnterObject->CallMethod();
+        }
     }
     void OnDepart() {
-        object->CallMethod("onDepart");
+        if (onDepartObject) {
+            onDepartObject->CallMethod();
+        }
     }
     void OnRemove() {
-        object->CallMethod("onRemove");
+        if (onRemoveObject) {
+            onRemoveObject->CallMethod();
+        }
     }
     void OnPreStep() {
-        object->CallMethod("onPreStep");
+        if (onPreStepObject) {
+            onPreStepObject->CallMethod();
+        }
     }
     void OnStep() {
-        object->CallMethod("onStep");
+        if (onStepObject) {
+            onStepObject->CallMethod();
+        }
     }
     void OnPreDraw() {
-        object->CallMethod("onPreDraw");
+        if (onPreDrawObject) {
+            onPreDrawObject->CallMethod();
+        }
     }
     void OnDraw(){
-        object->CallMethod("onDraw");
+        if (onDrawObject) {
+            onDrawObject->CallMethod();
+        }
     }
 
 };

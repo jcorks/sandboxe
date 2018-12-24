@@ -125,6 +125,24 @@ SANDBOXE_NATIVE_DEF(__camera_create) {
 
 
 
+SANDBOXE_NATIVE_DEF(__camera_set_on_step) {
+    const Dynacoe::Entity::ID & id = ((CameraEntityID*)source)->id;
+    Sandboxe::Camera * e = id.IdentifyAs<Sandboxe::Camera>();
+    Sandboxe::Script::Runtime::Object * object = arguments[0];    
+    ((CameraObjectID*)source)->AddNonNativeReference(object);    
+    e->onStepObject_Camera = arguments[0];
+}
+
+
+SANDBOXE_NATIVE_DEF(__camera_get_on_step) {
+    const Dynacoe::Entity::ID & id = ((CameraEntityID*)source)->id;
+    Sandboxe::Camera * e = id.IdentifyAs<Sandboxe::Camera>();
+    context.SetReturnValue(e->onStepObject_Camera);
+}
+
+
+
+
 
 void dynacoe_camera(std::vector<std::pair<std::string, Sandboxe::Script::Runtime::Function>> & fns) {
     Sandboxe::Script::Runtime::AddType(
@@ -182,6 +200,8 @@ void dynacoe_camera(std::vector<std::pair<std::string, Sandboxe::Script::Runtime
             {"height", {__camera_get_height, SANDBOXE_NATIVE_EMPTY}},
             {"type", {SANDBOXE_NATIVE_EMPTY, __camera_set_type}},
             {"autoRefresh", {__camera_get_auto_refresh, __camera_set_auto_refresh}},
+            {"onStep",    {__camera_get_on_step,     __camera_set_on_step}},
+
 
             //////// inherited from entity
             {"isStepping", {__entity_get_step, __entity_set_step}},

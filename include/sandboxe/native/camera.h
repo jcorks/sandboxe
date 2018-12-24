@@ -12,6 +12,7 @@ class Camera : public Sandboxe::Entity {
     Camera() {
         realCamera = Dynacoe::Entity::Create<Dynacoe::Camera>();
         realCamera.Identify()->SetName(GetID().String());
+        onStepObject_Camera = nullptr;
     }
     
     Dynacoe::Camera * Self() {
@@ -21,6 +22,8 @@ class Camera : public Sandboxe::Entity {
     ~Camera() {
         realCamera.Identify()->Remove();
     }
+
+    Sandboxe::Script::Runtime::Object * onStepObject_Camera;
     
     void OnStep() {
         auto i = realCamera.Identify();
@@ -28,7 +31,9 @@ class Camera : public Sandboxe::Entity {
         i->Node().Scale() = Node().GetScale();
         i->Node().Rotation() = Node().GetRotation();
         realCamera.Identify()->Step();
-        object->CallMethod("onStep");
+        if (onStepObject_Camera) {
+            onStepObject_Camera->CallMethod();
+        }
     }
 };
     
