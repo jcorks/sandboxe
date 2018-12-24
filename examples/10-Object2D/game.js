@@ -3,6 +3,7 @@
 
 sandboxe.script.include('player.js');
 sandboxe.script.include('obstacle.js');
+sandboxe.script.include('wall.js');
 
 
 game = (function(){
@@ -23,8 +24,15 @@ game = (function(){
         for(var i = 0; i < list.length; ++i) {
             list[i].remove();
         }
+
+        var w = sandboxe.graphics.getRenderCamera().width;
+        var h = sandboxe.graphics.getRenderCamera().height;
+        wall(10, h);
+        wall(w, 10);
+        wall(10, h).node.position.x = w;
+        wall(w, 10).node.position.y = h;
         
-        // See player.js
+         // See player.js
         createPlayer('400, 200', diameter=40);
 
         // See obstacle.js

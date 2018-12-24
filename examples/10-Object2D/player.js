@@ -34,7 +34,7 @@ createPlayer = function(position, diameter) {
     // components support events and hooks, including the ability 
     // to add your own events. See the documentation for components.
     object2d.installHook('on-collide', function(o2d, self, other){
-
+        if (other.name != 'obstacle') return;
         
         // Since collisions can happen every frame, we are going to 
         // have the collision logic occur every 100 ms at maximum.
@@ -100,12 +100,15 @@ createPlayer = function(position, diameter) {
     var listenerDown = sandboxe.input.buttonListener.create(sandboxe.key_down);
     var listenerLeft = sandboxe.input.buttonListener.create(sandboxe.key_left);
     var listenerRight = sandboxe.input.buttonListener.create(sandboxe.key_right);
-
+    var listenerMouse = sandboxe.input.buttonListener.create(sandboxe.mouse_left);
     
     listenerUp.onHold = function() {
         object2d.addVelocity(.3, -90);
     }
 
+    listenerMouse.onHold = function() {
+        object2d.addVelocityTowards(1, ''+sandboxe.input.mouseX()+','+sandboxe.input.mouseY());
+    }
     listenerDown.onHold = function() {
         object2d.addVelocity(.3, 90);
     }
@@ -124,13 +127,14 @@ createPlayer = function(position, diameter) {
         listenerUp.remove();
         listenerLeft.remove();
         listenerRight.remove();
-
+        listenerMouse.remove();
     }
 
     // public:
     entity.shape = shape;
     entity.object2d = object2d;    
     game.root.attach(entity);
+
 }
 
 
