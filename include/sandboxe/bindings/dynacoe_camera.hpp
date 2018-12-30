@@ -129,7 +129,7 @@ SANDBOXE_NATIVE_DEF(__camera_set_on_step) {
     const Dynacoe::Entity::ID & id = ((CameraEntityID*)source)->id;
     Sandboxe::Camera * e = id.IdentifyAs<Sandboxe::Camera>();
     Sandboxe::Script::Runtime::Object * object = arguments[0];    
-    ((CameraObjectID*)source)->AddNonNativeReference(object);    
+    ((CameraEntityID*)source)->AddNonNativeReference(object);    
     e->onStepObject_Camera = arguments[0];
 }
 
