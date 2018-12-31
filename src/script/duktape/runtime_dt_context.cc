@@ -194,6 +194,7 @@ static duk_ret_t object_finalizer(duk_context * source) {
     Object * parent = obj.GetMappedObject();
     assert(parent);
     delete parent;
+    obj.MapObject(nullptr);
     printf("Finlized %p\n", parent);
     return 0;
 }

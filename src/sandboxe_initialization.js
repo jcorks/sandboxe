@@ -462,6 +462,75 @@ var sandboxe = {
                 bitmap : 2
             }
         },
+
+        /**
+         * Functions and types general to object2d objects. See {@link object2d}
+         *
+         * @namespace 
+         */        
+        object2d : {
+
+            /**
+             * Group IDs for collisions. See {@link object2d}
+             * @namespace
+             */
+            group : {
+                /** Group A. This is the defult. */
+                a : 0,
+                /** Group B. */
+                b : 1,
+                /** Group C. */
+                c : 2,
+                /** Group D. */
+                d : 3,
+                /** Group E. */
+                e : 4,
+                /** Group F. */
+                f : 5,
+                /** Group G. */
+                g : 6,
+                /** Group H. */
+                h : 7,
+                /** Group I. */
+                i : 8,
+                /** Group J. */
+                j : 9,
+                /** Group K. */
+                k : 10,
+                /** Group L. */
+                l : 11,
+                /** Group M. */
+                m : 12,
+                /** Group N. */
+                n : 13,
+                /** Group O. */
+                o : 14,
+                /** Group P. */
+                p : 15,
+                /** Group Q. */
+                q : 16,
+                /** Group R. */
+                r : 17,
+                /** Group S. */
+                s : 18,
+                /** Group T. */
+                t : 19,
+                /** Group U. */
+                u : 20,
+                /** Group V. */
+                v : 21,
+                /** Group W. */
+                w : 22,
+                /** Group X. */
+                x : 23,
+                /** Group Y. */
+                y : 24,
+                /** Group Z. */
+                z : 25
+
+
+            }
+        },
         
         
         

@@ -45,7 +45,7 @@ SANDBOXE_NATIVE_DEF(__input_buffer_open_buffer) {
 SANDBOXE_NATIVE_DEF(__input_buffer_open) {
     SANDBOXE_ASSERT__ARG_COUNT(1);
     Sandboxe::InputBufferObject * v = (Sandboxe::InputBufferObject*)source;
-    v->localIO.Open(arguments[0]);
+    v->localIO.Open(Dynacoe::Chain() << Dynacoe::Assets::GetSearchPath().c_str() << "/" << (std::string)arguments[0]);
 }
 
 SANDBOXE_NATIVE_DEF(__input_buffer_read_string) {

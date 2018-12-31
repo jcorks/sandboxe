@@ -49,6 +49,21 @@ function object2d() {
      */
     this.halt = function(){};
 
+    /**
+     * Enables collisions between the given groups. By default, all groups can collide 
+     * with all other groups, including itself.
+     * @param {Number} src  Group in question
+     * @param {Number} dest Group to collide with in future collisions
+     */
+    this.enableGroupInteraction = function(){};
+
+    /**
+     * Disables collisions between the given groups.
+     * @param {Number} src  Group in question
+     * @param {Number} dest Group to prevent collisions with in future collisions
+     */
+    this.disableGroupInteraction = function(){};
+
 
 
 
@@ -126,6 +141,14 @@ function object2d() {
      * @type {vector}
      */
     this.lastPosition = {};
+
+    /**
+     * Sets/Gets the collision group. Groups can be used to ignore sets of object2D colliders 
+     * efficently before collisions are processed. The default for all groups is sandboxe.object2d.group.a)
+     * @type {Number}
+     */
+    this.group = 0;
+
 
 
 

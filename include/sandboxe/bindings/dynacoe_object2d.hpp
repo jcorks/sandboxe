@@ -147,6 +147,25 @@ SANDBOXE_NATIVE_DEF(__object2d_halt) {
     o2d->Halt();
 }
 
+SANDBOXE_NATIVE_DEF(__object2d_egi_group) {
+    SANDBOXE_ASSERT__ARG_COUNT(2);
+    auto o2d = (Sandboxe::Object2DObject*)source;    
+    o2d->EnableGroupInteraction(
+        (Dynacoe::Object2D::Group)(int)arguments[0],
+        (Dynacoe::Object2D::Group)(int)arguments[1]
+    );
+}
+
+SANDBOXE_NATIVE_DEF(__object2d_dgi_group) {
+    SANDBOXE_ASSERT__ARG_COUNT(2);
+    auto o2d = (Sandboxe::Object2DObject*)source;    
+    o2d->DisableGroupInteraction(
+        (Dynacoe::Object2D::Group)(int)arguments[0],
+        (Dynacoe::Object2D::Group)(int)arguments[1]
+    );
+}
+
+
 SANDBOXE_NATIVE_DEF(__object2d_get_velocity_x) {
     auto o2d = (Sandboxe::Object2DObject*)source;    
     context.SetReturnValue(o2d->GetVelocityX());
@@ -187,6 +206,19 @@ SANDBOXE_NATIVE_DEF(__object2d_get_last_position) {
 
 
 
+SANDBOXE_NATIVE_DEF(__object2d_get_group) {
+    auto o2d = (Sandboxe::Object2DObject*)source;        
+    context.SetReturnValue((int)o2d->GetGroup());
+}
+
+
+SANDBOXE_NATIVE_DEF(__object2d_set_group) {
+    auto o2d = (Sandboxe::Object2DObject*)source;            
+    o2d->SetGroup(Dynacoe::Object2D::Group((int)arguments[0]));
+}
+
+
+
 
 
 
@@ -200,6 +232,9 @@ void dynacoe_object2d(std::vector<std::pair<std::string, Sandboxe::Script::Runti
             {"setVelocityTowards", __object2d_set_velocity_towards},
 
             {"halt", __object2d_halt},
+            {"enableGroupInteraction", __object2d_egi_group},
+            {"disableGroupInteraction", __object2d_dgi_group},
+
 
             ////////////////////////////////////////////////////////
             //////////////////// imported from component ///////////
@@ -216,6 +251,7 @@ void dynacoe_object2d(std::vector<std::pair<std::string, Sandboxe::Script::Runti
             {"installHandler", __component_install_handler},
             {"uninstallHandler", __component_uninstall_handler},
             {"getKnownEvents", __component_get_known_events}
+    
             ////////////////////////////////////////////////////////
             //////////////////// imported from component ///////////
 
@@ -248,8 +284,8 @@ void dynacoe_object2d(std::vector<std::pair<std::string, Sandboxe::Script::Runti
             {"collider", {__object2d_get_collider, __object2d_set_collider}},
             {"lastCollided", {__object2d_get_last_collided, SANDBOXE_NATIVE_EMPTY}},
             {"nextPosition", {__object2d_get_next_position, SANDBOXE_NATIVE_EMPTY}},
-            {"lastPosition", {__object2d_get_next_position, SANDBOXE_NATIVE_EMPTY}}
-
+            {"lastPosition", {__object2d_get_next_position, SANDBOXE_NATIVE_EMPTY}},
+            {"group", {__object2d_get_group, __object2d_set_group}},
 
         }
         
