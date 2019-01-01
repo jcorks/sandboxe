@@ -50,6 +50,11 @@ function object2d() {
     this.halt = function(){};
 
     /**
+     * Stops continuous motion consideration for the collider for the next frame.
+     */
+    this.ResetMotion = function(){};
+
+    /**
      * Enables collisions between the given groups. By default, all groups can collide 
      * with all other groups, including itself.
      * @param {Number} src  Group in question

@@ -147,6 +147,12 @@ SANDBOXE_NATIVE_DEF(__object2d_halt) {
     o2d->Halt();
 }
 
+
+SANDBOXE_NATIVE_DEF(__object2d_reset_motion) {
+    auto o2d = (Sandboxe::Object2DObject*)source;    
+    o2d->ResetMotion();
+}
+
 SANDBOXE_NATIVE_DEF(__object2d_egi_group) {
     SANDBOXE_ASSERT__ARG_COUNT(2);
     auto o2d = (Sandboxe::Object2DObject*)source;    
@@ -232,6 +238,7 @@ void dynacoe_object2d(std::vector<std::pair<std::string, Sandboxe::Script::Runti
             {"setVelocityTowards", __object2d_set_velocity_towards},
 
             {"halt", __object2d_halt},
+            {"resetMotion", __object2d_reset_motion},
             {"enableGroupInteraction", __object2d_egi_group},
             {"disableGroupInteraction", __object2d_dgi_group},
 

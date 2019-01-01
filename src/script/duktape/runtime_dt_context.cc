@@ -378,6 +378,7 @@ void DTContext::fatal_error(void * data, const char * msg) {
     Sandboxe::Script::Terminal * term = terminal.IdentifyAs<Sandboxe::Script::Terminal>();
     term->ReportError(msg);
 
+
 }
 
 void DTContext::ProcessErrorObject() {
@@ -386,6 +387,33 @@ void DTContext::ProcessErrorObject() {
         Dynacoe::Console::Info() << "**Note**: A display was automatically created and shown to display the scripting error.\n";
         Dynacoe::ViewManager::NewMain("sandboxe");
     }
+
+
+
+    // run the onError signal
+    {
+        int stackSize = duk_get_top(source);
+
+
+        duk_push_string(source, "sandboxe.script.onError();");
+        duk_push_string(source, "<error>");
+
+        std::string out;
+        if (duk_pcompile(source, 0)) {
+        } else {
+            if (duk_pcall(source, 0)) {
+            } else {
+                const char * result = duk_safe_to_string(source, -1);
+                out = (result ? result : "<null>");
+                duk_pop(source);
+            }
+        }
+        
+        
+        assert(duk_get_top(source) == stackSize);
+
+    }
+
 
     //Dynacoe::Console::Show(true);
     
