@@ -30,7 +30,7 @@ SANDBOXE_NATIVE_DEF(__particle_emitter_2d_emit_particle) {
     if (!arguments.size()) return;
     int n = 1;
     if (arguments.size() > 1) {
-        n = arguments[0];
+        n = arguments[1];
     }
     
     
