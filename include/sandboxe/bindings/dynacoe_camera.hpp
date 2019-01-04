@@ -77,6 +77,23 @@ SANDBOXE_NATIVE_DEF(__camera_transform_world_to_screen) {
 }
 
 
+SANDBOXE_NATIVE_DEF(__camera_copy_front_visual) {    
+    auto cam = ((CameraEntityID*)source)->id.IdentifyAs<Sandboxe::Camera>();
+    if (!cam) return;
+
+    auto object = new Sandboxe::AssetIDObject();
+    object->id = cam->Self()->GetFrontVisual();
+    context.SetReturnValue(object);
+}
+
+SANDBOXE_NATIVE_DEF(__camera_copy_back_visual) {    
+    auto cam = ((CameraEntityID*)source)->id.IdentifyAs<Sandboxe::Camera>();
+    if (!cam) return;
+
+    auto object = new Sandboxe::AssetIDObject();
+    object->id = cam->Self()->GetBackVisual();
+    context.SetReturnValue(object);
+}
 
 
 // properties
@@ -154,6 +171,8 @@ void dynacoe_camera(std::vector<std::pair<std::string, Sandboxe::Script::Runtime
             {"setRenderResolution", __camera_set_render_resolution},
             {"transformScreenToWorld", __camera_transform_screen_to_world},
             {"transformWorldToScreen", __camera_transform_world_to_screen},
+            {"copyFrontVisual", __camera_copy_front_visual},
+            {"copyBackVisual", __camera_copy_back_visual},
             
             //////// inherited from entity
             {"draw", __entity_draw},

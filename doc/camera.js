@@ -57,6 +57,27 @@ function camera() {
      */
     this.transformWorldToScreen = function(point){};
 
+    /**
+     * Copies the current front visual of the camera as an image asset.
+     * In a double-buffered environment, the front buffer is usually the currently incomplete   
+     * frame that is painted to as the scene is drawn.
+     * Note that when done, the asset should be removed. See {@link sandboxe.assets}
+     * @returns {asset} The image asset of the front visual. 
+     */
+    this.copyFrontVisual = function(){};
+
+
+    /**
+     * Copies the current back visual of the camera as an image asset.
+     * In a double-buffered environment, the back buffer is usually the previous complete   
+     * frame that is currently visible on the screen.
+     * Note that when done, the asset should be removed. See {@link sandboxe.assets}
+     * @returns {asset} The image asset of the back visual. 
+     */
+    this.copyBackVisual = function(){};
+
+
+
 
     /**
      * Width of the camera's output framebuffer
