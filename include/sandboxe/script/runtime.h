@@ -53,8 +53,15 @@ class Primitive {
     operator Sandboxe::Script::Runtime::Object *() const;
     
   private:
+    // TODO: optimize copy constructor and assignment operator to avoid 
+    // string copy if not needed.
     std::string data;
+    int64_t intData;
     bool defined;
+    bool nsu;
+    double fltData;
+    Sandboxe::Script::Runtime::Object * objectData;
+    
 };
 
 
@@ -174,6 +181,8 @@ class Object {
     // Calls the given method. If name is blank, the 
     // object itself is attempted to be called as a function
     Primitive CallMethod(const std::string & name = "", const std::vector<Primitive> & args = {});
+    
+    bool IsCallable();
     
     // Returns whether the object is native. NonNative objects 
     // have restricted functionality.

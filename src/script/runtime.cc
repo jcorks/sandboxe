@@ -10,101 +10,137 @@ static char format_buffer_s[256];
 Primitive::Primitive() {
     defined = false;
     hint = TypeHint::StringT;
+    nsu = false;
 }
 
 Primitive::Primitive(bool in) {
     defined = true;
-    data = in ? "1" : "0";
+    intData = in;
+    fltData = in;
     hint = TypeHint::BooleanT;
+    nsu = true;
 }
 
 
 Primitive::Primitive(int in) {
     defined = true;
-    snprintf(format_buffer_s, 255, "%i", in);
-    data = std::string(format_buffer_s);
+    intData = in;
+    fltData = in;
     hint = TypeHint::IntegerT;
-
+    nsu = true;
 }
 
 
 Primitive::Primitive(float in) {
     defined = true;
-    snprintf(format_buffer_s, 255, "%f", in);
-    data = std::string(format_buffer_s);
+    intData = in;
+    fltData = in;
     hint = TypeHint::FloatT;
+    nsu = true;
 }
 
 Primitive::Primitive(double in) {
     defined = true;
-    snprintf(format_buffer_s, 255, "%f", in);
-    data = std::string(format_buffer_s);
+    intData = in;
+    fltData = in;
     hint = TypeHint::DoubleT;
+    nsu = true;
 }
 
 Primitive::Primitive(uint32_t in) {
     defined = true;
-    snprintf(format_buffer_s, 255, "%" PRIu32, in);
-    data = std::string(format_buffer_s);
+    intData = in;
+    fltData = in;
     hint = TypeHint::UInt32T;
+    nsu = true;
 }
 
 Primitive::Primitive(uint64_t in) {
     defined = true;
-    snprintf(format_buffer_s, 255, "%" PRIu64, in);
-    data = std::string(format_buffer_s);
+    intData = in;
+    fltData = in;
     hint = TypeHint::UInt64T;
+    nsu = true;
 }
+
+
 
 Primitive::Primitive(const std::string & str) {
     defined = true;
     data = str;
     hint = TypeHint::StringT;
+    nsu = false;
 }
 
 
 
 Primitive::Primitive(Sandboxe::Script::Runtime::Object * in) {
     defined = true;
-    data = (Chain() << (uint64_t)in);
-    hint = in->IsNative() ? TypeHint::ObjectReferenceT : TypeHint::ObjectReferenceNonNativeT;
+    objectData = in;
+    hint = in->IsNative() ? TypeHint::ObjectReferenceT : TypeHint::ObjectReferenceNonNativeT;;
+    nsu = true;
 }
 
 
 
 Primitive::operator int() const {
-    return (Chain() << data).AsInt();
+    return intData;
 }
 
 Primitive::operator bool() const {
-    if (data == "true") return 1;
-    if (data == "false") return 0;
-    return (Chain() << data).AsInt() != 0;
+    return intData;
 }
 
 Primitive::operator float() const {
-    return (Chain() << data).AsFloat();
+    return fltData;
 }
 
 Primitive::operator double() const {
-    return (Chain() << data).AsDouble();
+    return fltData;
 }
 
 Primitive::operator uint32_t() const {
-    return (Chain() << data).AsUInt32();
+    return intData;
 }
 
 Primitive::operator uint64_t() const {
-    return (Chain() << data).AsUInt64();
+    return intData;
 }
 
+
 Primitive::operator std::string() const {
+    if (nsu) {
+        switch(hint) {
+          case TypeHint::StringT:
+            break;
+          case TypeHint::UInt32T:
+          case TypeHint::IntegerT:
+            snprintf(format_buffer_s, 255, "%" PRIu64, intData);
+            *((std::string*)&data) = std::string(format_buffer_s);
+            break;
+            
+          case TypeHint::BooleanT:
+            *((std::string*)&data) = intData ? "true" : "false";
+            break;
+
+          case TypeHint::FloatT:
+          case TypeHint::DoubleT:
+            snprintf(format_buffer_s, 255, "%f", fltData);
+            *((std::string*)&data) = std::string(format_buffer_s);
+            break;
+
+          case TypeHint::ObjectReferenceT:
+          case TypeHint::ObjectReferenceNonNativeT:
+            *((std::string*)&data) = (Chain() << (uint64_t)objectData);
+        }
+        *((bool*)&nsu) = false;
+    }
     return data;
 }
 
 
 Primitive::operator Sandboxe::Script::Runtime::Object * () const {
-    return (Sandboxe::Script::Runtime::Object*)(Chain() << data).AsUInt64();
+    return objectData;
 }
 
 
