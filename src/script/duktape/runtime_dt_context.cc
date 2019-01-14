@@ -405,8 +405,9 @@ void DTContext::ProcessErrorObject() {
             } else {
                 const char * result = duk_safe_to_string(source, -1);
                 out = (result ? result : "<null>");
-                duk_pop(source);
             }
+            duk_pop(source);
+
         }
         
         

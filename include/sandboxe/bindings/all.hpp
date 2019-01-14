@@ -157,7 +157,8 @@ SANDBOXE_NATIVE_DEF(__entity_add_component) {
       case COMPONENT_TYPE__SHAPE2D:    out = e->AddComponent<Sandboxe::Shape2DObject>(when); break;
       case COMPONENT_TYPE__STATE_CONTROL:out = e->AddComponent<Sandboxe::StateControlObject>(when); break;
       case COMPONENT_TYPE__TEXT2D:    out = e->AddComponent<Sandboxe::Text2DObject>(when); break;
-
+      default:
+        out = e->AddComponent<Sandboxe::Component>(when);
     }
     
 

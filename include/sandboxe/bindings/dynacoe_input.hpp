@@ -39,16 +39,16 @@ SANDBOXE_NATIVE_DEF(__input_mouse_wheel) {
 SANDBOXE_NATIVE_DEF(__input_button_listener_new) {
     SANDBOXE_ASSERT__ARG_COUNT(1);
     auto listener = new Sandboxe::ButtonListenerObject;
-    int input = arguments[0];
-    if (input != 0) {
+    if (arguments[0].hint == Sandboxe::Script::Runtime::Primitive::TypeHint::StringT) {
+        Dynacoe::Input::AddListener(listener, std::string(arguments[0]));            
+    } else { // else mapped
+        int input = arguments[0];
         if (input < 93) {
             Dynacoe::Input::AddListener(listener, (Dynacoe::Keyboard)input);
         } else if (input < 96) {
             Dynacoe::Input::AddListener(listener, (Dynacoe::MouseButtons)(input-93));
         }
-    } else { // else mapped
-        Dynacoe::Input::AddListener(listener, std::string(arguments[0]));            
-    }    
+    }
     context.SetReturnValue(listener);
 }
 
@@ -62,8 +62,11 @@ SANDBOXE_NATIVE_DEF(__input_unicode_listener_new) {
 SANDBOXE_NATIVE_DEF(__input_get_state) {
     SANDBOXE_ASSERT__ARG_COUNT(1);
     // TODO: we need a switch for this!
-    int input = arguments[0];
-    if (input != 0) {
+    if (arguments[0].hint == Sandboxe::Script::Runtime::Primitive::TypeHint::StringT) {
+        context.SetReturnValue(Dynacoe::Input::GetState(std::string(arguments[0])));            
+    } else {
+        int input = arguments[0];
+
         if (input < 93) {
             context.SetReturnValue(Dynacoe::Input::GetState((Dynacoe::Keyboard)input));
         } else if (input < 96) {
@@ -72,17 +75,19 @@ SANDBOXE_NATIVE_DEF(__input_get_state) {
             // invalid input
             context.SetReturnValue(false);
         }
-    } else { // else mapped
-        context.SetReturnValue(Dynacoe::Input::GetState(std::string(arguments[0])));            
-    }    
+    }
+
 }
 
 
 SANDBOXE_NATIVE_DEF(__input_is_pressed) {
     SANDBOXE_ASSERT__ARG_COUNT(1);
     // TODO: we need a switch for this!
-    int input = arguments[0];
-    if (input != 0) {
+    if (arguments[0].hint == Sandboxe::Script::Runtime::Primitive::TypeHint::StringT) {
+        context.SetReturnValue(Dynacoe::Input::IsPressed(std::string(arguments[0])));            
+    } else {
+        int input = arguments[0];
+
         if (input < 93) {
             context.SetReturnValue(Dynacoe::Input::IsPressed((Dynacoe::Keyboard)input));
         } else if (input < 96) {
@@ -91,16 +96,18 @@ SANDBOXE_NATIVE_DEF(__input_is_pressed) {
             // invalid input
             context.SetReturnValue(false);
         }
-    } else { // else mapped
-        context.SetReturnValue(Dynacoe::Input::IsPressed(std::string(arguments[0])));            
-    }    
+    }
+
 }
 
 SANDBOXE_NATIVE_DEF(__input_is_held) {
     SANDBOXE_ASSERT__ARG_COUNT(1);
     // TODO: we need a switch for this!
-    int input = arguments[0];
-    if (input != 0) {
+    if (arguments[0].hint == Sandboxe::Script::Runtime::Primitive::TypeHint::StringT) {
+        context.SetReturnValue(Dynacoe::Input::IsHeld(std::string(arguments[0])));            
+    } else {
+        int input = arguments[0];
+
         if (input < 93) {
             context.SetReturnValue(Dynacoe::Input::IsHeld((Dynacoe::Keyboard)input));
         } else if (input < 96) {
@@ -109,16 +116,18 @@ SANDBOXE_NATIVE_DEF(__input_is_held) {
             // invalid input
             context.SetReturnValue(false);
         }
-    } else { // else mapped
-        context.SetReturnValue(Dynacoe::Input::IsHeld(std::string(arguments[0])));            
-    }    
+    }
+  
 }
 
 SANDBOXE_NATIVE_DEF(__input_is_released) {
     SANDBOXE_ASSERT__ARG_COUNT(1);
     // TODO: we need a switch for this!
-    int input = arguments[0];
-    if (input != 0) {
+    if (arguments[0].hint == Sandboxe::Script::Runtime::Primitive::TypeHint::StringT) {
+        context.SetReturnValue(Dynacoe::Input::IsReleased(std::string(arguments[0])));            
+    } else {
+        int input = arguments[0];
+
         if (input < 93) {
             context.SetReturnValue(Dynacoe::Input::IsReleased((Dynacoe::Keyboard)input));
         } else if (input < 96) {
@@ -127,13 +136,13 @@ SANDBOXE_NATIVE_DEF(__input_is_released) {
             // invalid input
             context.SetReturnValue(false);
         }
-    } else { // else mapped
-        context.SetReturnValue(Dynacoe::Input::IsReleased(std::string(arguments[0])));            
-    }    
+    }
+
 }
 
 SANDBOXE_NATIVE_DEF(__input_map_input) {
     SANDBOXE_ASSERT__ARG_COUNT(2);
+    if (arguments[1].hint == Sandboxe::Script::Runtime::Primitive::TypeHint::StringT) return;
     int input = arguments[1];
     if (input < 93) {
         Dynacoe::Input::MapInput(arguments[0], (Dynacoe::Keyboard)input);
@@ -154,15 +163,15 @@ SANDBOXE_NATIVE_DEF(__input_add_listener) {
     
     auto b = (Sandboxe::ButtonListenerObject*)(Sandboxe::Script::Runtime::Object*)arguments[0];
 
-    int input = arguments[1];
-    if (input != 0) {
+    if (arguments[1].hint == Sandboxe::Script::Runtime::Primitive::TypeHint::StringT) {
+        Dynacoe::Input::AddListener(b, std::string(arguments[1]));            
+    } else {
+        int input = arguments[1];
         if (input < 93) {
             Dynacoe::Input::AddListener(b, (Dynacoe::Keyboard)input);
         } else if (input < 96) {
             Dynacoe::Input::AddListener(b, (Dynacoe::MouseButtons)(input-93));
         }
-    } else { // else mapped
-        Dynacoe::Input::AddListener(b, std::string(arguments[1]));            
     }    
 }
 
