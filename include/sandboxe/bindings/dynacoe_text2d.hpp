@@ -53,13 +53,15 @@ SANDBOXE_NATIVE_DEF(__text2d_get_dimensions) {
 // managed properties
 
 SANDBOXE_NATIVE_DEF(__text2d_color_get) {
+    auto shape = (Sandboxe::Text2DObject*)source;
+    context.SetReturnValue(shape->localColor);
 }
 
 SANDBOXE_NATIVE_DEF(__text2d_color_set) {
     auto shape = (Sandboxe::Text2DObject*)source;
     Dynacoe::Color color;
-    argument_to_color_object(color, arguments[0]);
-    shape->SetTextColor(color);
+    argument_to_color_object(shape->localColor->color, arguments[0]);
+    shape->localColor->delta.Changed(shape->localColor);
 }
 
 

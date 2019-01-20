@@ -15,15 +15,22 @@ class Shape2DObject : public Dynacoe::Shape2D, public Sandboxe::ComponentAdaptor
     TransformObject * transform;
     Shape2DObject() : Sandboxe::ComponentAdaptor((int)Sandboxe::NativeType::Shape2DT) {
         transform = new TransformObject;
-        localColor = new Sandboxe::ColorObject;        
+        localColor = new Sandboxe::ColorObject;     
+        localColor->delta.Set(ColorChanged, this);   
         ReplaceTransform(&transform->transformReal);
     }
+
+    static void ColorChanged(ColorObject * object, void * data) {
+        Shape2DObject * t = (Shape2DObject*)data;
+        t->color = t->localColor->color;
+    }
+
+   
     
     Sandboxe::ColorObject * localColor;
-
+    
     
     void OnDraw() {
-        color = localColor->color;
         Dynacoe::Shape2D::OnDraw();
     }
     

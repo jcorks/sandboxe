@@ -128,6 +128,7 @@ SANDBOXE_NATIVE_DEF(__shape2d_color_get) {
 SANDBOXE_NATIVE_DEF(__shape2d_color_set) {
     auto shape = (Sandboxe::Shape2DObject*)source;
     argument_to_color_object(shape->localColor->color, arguments[0]);
+    shape->localColor->delta.Changed(shape->localColor);
 }
 
 

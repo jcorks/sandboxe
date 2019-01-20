@@ -18,12 +18,23 @@ class Text2DObject : public Dynacoe::Text2D, public Sandboxe::ComponentAdaptor {
         spacingMode = (int)Dynacoe::Text2D::SpacingMode::Kerned;
         transform = new TransformObject;
         ReplaceTransform(&transform->transformReal);
+        localColor = new Sandboxe::ColorObject;
+        localColor->color = "white";
+        localColor->delta.Set(ColorChanged, this);
     }
+
+    static void ColorChanged(ColorObject * object, void * data) {
+        Text2DObject * t = (Text2DObject*)data;
+        t->SetTextColor(t->localColor->color);
+    }
+
     
     Sandboxe::AssetIDObject * localFont;
     int fontSize;
     int spacingMode;
-    
+    Sandboxe::ColorObject * localColor;
+
+
     void OnDraw() {
         Dynacoe::Text2D::OnDraw();
     }
