@@ -221,7 +221,21 @@ function entity() {
      */
     this.node = 0;
 
-    
+    /**
+     * The global X position of this entity that considers all parents of this entity.
+     */
+    this.globalX = 0;    
+
+    /**
+     * The global Y position of this entity that considers all parents of this entity.
+     */
+    this.globalY = 0;    
+
+    /**
+     * The global Z position of this entity that considers all parents of this entity.
+     */
+    this.globalZ = 0;    
+
      
     return this;
 }

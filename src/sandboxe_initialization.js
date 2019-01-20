@@ -959,6 +959,7 @@ var sandboxe = {
          * Retrieves an asset object by name or disk path.
          * @param {String} extension The standard extension of the file. For example 'png' would be for PNG images. 
          * @param {String} path The path or name of the asset. If the path refers to a stored name within the trunk, raw data referring to the asset is used from within the binary and the disk is not otherwise accessed. If the asset has been loaded before using this function, the same asset reference is returned and a new one is NOT created. In the case that this argument is true and the name is not in the trunk, the disk is searched recursively from the path set from {@link sandboxe.assets.setSearchPath}. By default this is the binary directory.
+         * @param {Boolean} isName Optional. Says whether the path given is a filename only or a full path. If filename, the file will be searched recursively from the search path. Otherwise, the file is looked for directly.
          * @returns {asset} Reference to the asset.
          * @function 
          */
@@ -1301,19 +1302,21 @@ var sandboxe = {
         /**
          * Runs all the logic of the given file as if it were a source file.
          * This is unconditional.
-         * @param {String} path Path to file. This is relative to {@link sandboxe.assets.getSearchPath}
+         * @param {String} path Path to file. If absolute is false (which is the default), this is relative to {@link sandboxe.assets.getSearchPath}
+         * @params {Boolean} absolute Optional. Whether the path given should be interpreted as relative. The default is false.
          * @function
          */
-        run : __script_include,
+        run : function(script, b) {__script_include(script, 0, b==undefined?false:true);},
         
         /**
          * Similar to {@link sandboxe.script.run} except, a source file is only 
          * executabed the first time include() is called for that path. On subsequent calls
          * with the same path argument, no action is taken.
          * @param {String} path Path to file. This is relative to {@link sandboxe.assets.getSearchPath}
+         * @params {Boolean} absolute Optional. Whether the path given should be interpreted as relative. The default is false.
          * @function
          */
-        include : function(script) {__script_include(script, 1);}
+        include : function(script, b) {__script_include(script, 1, b==undefined?false:true);}
     },
 
     /**

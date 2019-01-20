@@ -87,7 +87,7 @@ std::string Sandboxe::Script::Runtime::Execute(const std::string & code, const s
 
 void Sandboxe::Script::Runtime::Load(const std::string & path) {
     //TODO: sanitize?
-    Execute(Dynacoe::Chain() << "__script_include(\"" << path << "\");\n");
+    Execute(Dynacoe::Chain() << "__script_include(\"" << path << "\", 1, true);\n");
 }
 
 void Sandboxe::Script::Runtime::ScriptError(const std::string & str) {

@@ -65,6 +65,17 @@ class Entity : public Dynacoe::Entity {
     }
     EntityObjectID * object;
 
+    float GetGlobalX() {
+        return GetGlobalTransform().Transform({0.f, 0.f, 0.f}).x;
+    }
+
+    float GetGlobalY() {
+        return GetGlobalTransform().Transform({0.f, 0.f, 0.f}).y;
+    }
+
+    float GetGlobalZ() {
+        return GetGlobalTransform().Transform({0.f, 0.f, 0.f}).z;
+    }
 
 
     Sandboxe::Script::Runtime::Object * onStepObject;

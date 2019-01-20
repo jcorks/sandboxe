@@ -22,15 +22,11 @@ static std::vector<std::vector<std::pair<std::string, std::pair<Function, Functi
 static std::set<std::string> includedScripts; 
 void runtime_include_script(Object *, const std::vector<Primitive> & args, Context & context) {
     //v8::HandleScope scopeMonitor;
-    if (args.size() < 1) {
-        return ScriptError((Dynacoe::Chain() << "Exactly one arg, dummy\n").ToString());
-    }
+    if (args.size() != 3) return;
     
     // having a second argument is a flag for only including rather than running.
-    bool pragmaOnce = false;
-    if (args.size() == 2) {
-        pragmaOnce = args[1];
-    }
+    bool pragmaOnce = args[1];
+    bool absolute   = args[2];
     
     std::string path = args[0];
 
@@ -48,7 +44,14 @@ void runtime_include_script(Object *, const std::vector<Primitive> & args, Conte
             Sandboxe::Trunk::ItemGet(path)
         );    
     } else {
-        id = Dynacoe::Assets::Load("", Dynacoe::Assets::GetSearchPath()+"/"+path, false);
+        id = Dynacoe::Assets::Load(
+            "", 
+            absolute ? 
+                path
+            :
+                Dynacoe::Assets::GetSearchPath()+"/"+path, 
+            false
+        );
     }
     if (!id.Valid()) {
         ScriptError((Dynacoe::Chain() << "File " << path << " could not be accessed.\n").ToString());

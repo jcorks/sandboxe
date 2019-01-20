@@ -482,6 +482,27 @@ SANDBOXE_NATIVE_DEF(__entity_set_on_draw) {
 }
 
 
+
+SANDBOXE_NATIVE_DEF(__entity_get_global_x) {
+    const Dynacoe::Entity::ID & id = ((EntityObjectID*)source)->id;
+    Sandboxe::Entity * e = id.IdentifyAs<Sandboxe::Entity>();
+    context.SetReturnValue(e->GetGlobalX());
+}
+
+SANDBOXE_NATIVE_DEF(__entity_get_global_y) {
+    const Dynacoe::Entity::ID & id = ((EntityObjectID*)source)->id;
+    Sandboxe::Entity * e = id.IdentifyAs<Sandboxe::Entity>();
+    context.SetReturnValue(e->GetGlobalY());
+}
+
+SANDBOXE_NATIVE_DEF(__entity_get_global_z) {
+    const Dynacoe::Entity::ID & id = ((EntityObjectID*)source)->id;
+    Sandboxe::Entity * e = id.IdentifyAs<Sandboxe::Entity>();
+    context.SetReturnValue(e->GetGlobalZ());
+}
+
+
+
 SANDBOXE_NATIVE_DEF(__entity_get_on_draw) {
     const Dynacoe::Entity::ID & id = ((EntityObjectID*)source)->id;
     Sandboxe::Entity * e = id.IdentifyAs<Sandboxe::Entity>();
@@ -562,6 +583,11 @@ void dynacoe_entity(std::vector<std::pair<std::string, Sandboxe::Script::Runtime
             {"id", {__entity_get_id, __entity_set_id}},
             {"name", {__entity_get_name, __entity_set_name}},
             {"node", {__entity_get_node, __entity_set_node}},
+
+            {"globalX", {__entity_get_global_x, SANDBOXE_NATIVE_EMPTY}},
+            {"globalY", {__entity_get_global_y, SANDBOXE_NATIVE_EMPTY}},
+            {"globalZ", {__entity_get_global_z, SANDBOXE_NATIVE_EMPTY}},
+
 
             {"onEnter",   {__entity_get_on_enter,    __entity_set_on_enter}},
             {"onDepart",  {__entity_get_on_depart,   __entity_set_on_depart}},
