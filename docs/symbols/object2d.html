@@ -257,6 +257,10 @@ ul.inheritsList
 	
 	<li><a href="../symbols/sandboxe.component.mutator.mutation.html">sandboxe.component.mutator.mutation</a></li>
 	
+	<li><a href="../symbols/sandboxe.component.object2d.html">sandboxe.component.object2d</a></li>
+	
+	<li><a href="../symbols/sandboxe.component.object2d.group.html">sandboxe.component.object2d.group</a></li>
+	
 	<li><a href="../symbols/sandboxe.component.render2d.html">sandboxe.component.render2d</a></li>
 	
 	<li><a href="../symbols/sandboxe.component.render2d.renderMode.html">sandboxe.component.render2d.renderMode</a></li>
@@ -338,6 +342,8 @@ ul.inheritsList
 	<li><a href="../symbols/stateControl.html">stateControl</a></li>
 	
 	<li><a href="../symbols/text2d.html">text2d</a></li>
+	
+	<li><a href="../symbols/unicodeListener.html">unicodeListener</a></li>
 	
 	<li><a href="../symbols/vector.html">vector</a></li>
 	
@@ -457,9 +463,30 @@ for the object.</div>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont">
+								<b><a href="../symbols/object2d.html#group">group</a></b>
+								</div>
+								<div class="description">Sets/Gets the collision group.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
 								<b><a href="../symbols/object2d.html#lastCollided">lastCollided</a></b>
 								</div>
 								<div class="description">Returns the entity that this object last collided with.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/object2d.html#lastPosition">lastPosition</a></b>
+								</div>
+								<div class="description">Returns the previous position that was used before the current position 
+when this object2d was attached.</div>
 							</td>
 						</tr>
 					
@@ -490,7 +517,7 @@ as the new position next frame.</div>
 								<div class="fixedFont">
 								<b><a href="../symbols/object2d.html#velocityX">velocityX</a></b>
 								</div>
-								<div class="description">Returns the signed, horizontal velocity of the object.</div>
+								<div class="description">Horizontal velocity of the object.</div>
 							</td>
 						</tr>
 					
@@ -500,7 +527,7 @@ as the new position next frame.</div>
 								<div class="fixedFont">
 								<b><a href="../symbols/object2d.html#velocityY">velocityY</a></b>
 								</div>
-								<div class="description">Returns the signed, vertical velocity of the object.</div>
+								<div class="description">Vertical velocity of the object.</div>
 							</td>
 						</tr>
 					
@@ -541,6 +568,33 @@ as the new position next frame.</div>
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/object2d.html#addVelocityTowards">addVelocityTowards</a></b>(factor, target)
+								</div>
+								<div class="description">Compounds a velocity vector with the current velocity towards a point.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/object2d.html#disableGroupInteraction">disableGroupInteraction</a></b>(src, dest)
+								</div>
+								<div class="description">Disables collisions between the given groups.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/object2d.html#enableGroupInteraction">enableGroupInteraction</a></b>(src, dest)
+								</div>
+								<div class="description">Enables collisions between the given groups.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/object2d.html#halt">halt</a></b>()
 								</div>
 								<div class="description">Reduces the speed of the Entity to 0.</div>
@@ -550,7 +604,25 @@ as the new position next frame.</div>
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/object2d.html#ResetMotion">ResetMotion</a></b>()
+								</div>
+								<div class="description">Stops continuous motion consideration for the collider for the next frame.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/object2d.html#setVelocity">setVelocity</a></b>(factor, direction)
+								</div>
+								<div class="description">Sets the velocity vector of an object.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/object2d.html#setVelocityTowards">setVelocityTowards</a></b>(factor, target)
 								</div>
 								<div class="description">Sets the velocity vector of an object.</div>
 							</td>
@@ -706,6 +778,29 @@ This is applied in the horizontal direction.
 
 					<hr />
 				
+					<a name="group"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>group</b>
+					
+					</div>
+					<div class="description">
+						Sets/Gets the collision group. Groups can be used to ignore sets of object2D colliders 
+efficently before collisions are processed. The default for all groups is sandboxe.object2d.group.a)
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name="lastCollided"> </a>
 					<div class="fixedFont">
 					
@@ -715,6 +810,29 @@ This is applied in the horizontal direction.
 					</div>
 					<div class="description">
 						Returns the entity that this object last collided with.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="lastPosition"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>lastPosition</b>
+					
+					</div>
+					<div class="description">
+						Returns the previous position that was used before the current position 
+when this object2d was attached.
 						
 						
 					</div>
@@ -782,7 +900,7 @@ as the new position next frame. Note that if the object moves by other means
 					
 					</div>
 					<div class="description">
-						Returns the signed, horizontal velocity of the object.
+						Horizontal velocity of the object.
 						
 						
 					</div>
@@ -804,7 +922,7 @@ as the new position next frame. Note that if the object moves by other means
 					
 					</div>
 					<div class="description">
-						Returns the signed, vertical velocity of the object.
+						Vertical velocity of the object.
 						
 						
 					</div>
@@ -868,6 +986,133 @@ as the new position next frame. Note that if the object moves by other means
 
 					<hr />
 				
+					<a name="addVelocityTowards"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>addVelocityTowards</b>(factor, target)
+					
+					</div>
+					<div class="description">
+						Compounds a velocity vector with the current velocity towards a point.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Number}</span> <b>factor</b>
+									
+								</dt>
+								<dd>The velocity amount to add. Can be negative.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/vector.html">vector</a>}</span> <b>target</b>
+									
+								</dt>
+								<dd>The point to add velocity towards</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="disableGroupInteraction"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>disableGroupInteraction</b>(src, dest)
+					
+					</div>
+					<div class="description">
+						Disables collisions between the given groups.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Number}</span> <b>src</b>
+									
+								</dt>
+								<dd>Group in question</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Number}</span> <b>dest</b>
+									
+								</dt>
+								<dd>Group to prevent collisions with in future collisions</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="enableGroupInteraction"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>enableGroupInteraction</b>(src, dest)
+					
+					</div>
+					<div class="description">
+						Enables collisions between the given groups. By default, all groups can collide 
+with all other groups, including itself.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Number}</span> <b>src</b>
+									
+								</dt>
+								<dd>Group in question</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Number}</span> <b>dest</b>
+									
+								</dt>
+								<dd>Group to collide with in future collisions</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name="halt"> </a>
 					<div class="fixedFont">
 					
@@ -877,6 +1122,31 @@ as the new position next frame. Note that if the object moves by other means
 					</div>
 					<div class="description">
 						Reduces the speed of the Entity to 0.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="ResetMotion"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>ResetMotion</b>()
+					
+					</div>
+					<div class="description">
+						Stops continuous motion consideration for the collider for the next frame.
 						
 						
 					</div>
@@ -933,6 +1203,48 @@ as the new position next frame. Note that if the object moves by other means
 						
 						
 
+					<hr />
+				
+					<a name="setVelocityTowards"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>setVelocityTowards</b>(factor, target)
+					
+					</div>
+					<div class="description">
+						Sets the velocity vector of an object.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Number}</span> <b>factor</b>
+									
+								</dt>
+								<dd>The velocity to set.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/vector.html">vector</a>}</span> <b>target</b>
+									
+								</dt>
+								<dd>The point to set velocity towards</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
 					
 				
 			
@@ -947,7 +1259,7 @@ as the new position next frame. Note that if the object moves by other means
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Thu Sep 13 2018 19:34:34 GMT-0400 (EDT)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Sun Feb 03 2019 18:30:56 GMT-0500 (EST)
 		</div>
 	</body>
 </html>

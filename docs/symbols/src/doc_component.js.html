@@ -21,176 +21,182 @@
 <span class='line'> 14</span>  * a new recognized event with the given name. Once installed, emitEvent() should be called 
 <span class='line'> 15</span>  * at the appropriate time user functions should be run. &lt;/br>&lt;/br>
 <span class='line'> 16</span>  *
-<span class='line'> 17</span>  * Built-in components, link {@link clock}, have their installed events marked in their 
-<span class='line'> 18</span>  * class descriptions.
-<span class='line'> 19</span>  * @example 
-<span class='line'> 20</span>  
-<span class='line'> 21</span>  
+<span class='line'> 17</span>  * All components will emit the 2 fallowing events:
+<span class='line'> 18</span>  * &lt;pre>
+<span class='line'> 19</span>  * - on-attach: Called when the component is attached to an entity.
+<span class='line'> 20</span>  * - on-detach: Called when the component is about to be destroyed.
+<span class='line'> 21</span>  * &lt;/pre>
 <span class='line'> 22</span>  *
-<span class='line'> 23</span>  */</span><span class="WHIT"> 
-<span class='line'> 24</span> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">component</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'> 25</span> 
-<span class='line'> 26</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'> 27</span>      * Does the naturally defined step iteration. This invokes the "onStep" property method
-<span class='line'> 28</span>      * if defined. For built-in components, this may trigger native code.
-<span class='line'> 29</span>      * For hosts that are part of the engine hierarchy, step() is called for you when 
-<span class='line'> 30</span>      * the entity step()s.
-<span class='line'> 31</span>      */</span><span class="WHIT">
-<span class='line'> 32</span> </span><span class="WHIT">    </span><span class="NAME">this.step</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 33</span> 
-<span class='line'> 34</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'> 35</span>      * Does the naturally defined draw iteration. This invokes the "onDraw" property method
-<span class='line'> 36</span>      * if defined. For built-in components, this may trigger native code.
-<span class='line'> 37</span>      * For hosts that are part of the engine hierarchy, draw() is called for you when 
-<span class='line'> 38</span>      * the entity draw()s.
-<span class='line'> 39</span>      */</span><span class="WHIT">
-<span class='line'> 40</span> </span><span class="WHIT">    </span><span class="NAME">this.draw</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 41</span> 
-<span class='line'> 42</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'> 43</span>      * Adds a new event to be recognized by the EventSystem.
-<span class='line'> 44</span>      *
-<span class='line'> 45</span>      * if mainHandler is undefined, the event is still added, but has no default
-<span class='line'> 46</span>      * handler is set. The default handler is always guaranteed to run last for the event.
-<span class='line'> 47</span>      * @param {String} eventName The name of the new event to install.
-<span class='line'> 48</span>      * @param {Function} mainHandler (optional) The default handler for this event. Always called first before any hooks. See {@link component.installHandler} for parameters passed to handler function objects.
-<span class='line'> 49</span>      */</span><span class="WHIT">
-<span class='line'> 50</span> </span><span class="WHIT">    </span><span class="NAME">this.installEvent</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">eventName</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">mainHandler</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 51</span> 
-<span class='line'> 52</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'> 53</span>      * Removes the event from the component.
-<span class='line'> 54</span>      * @param {String} event Event to remove.
+<span class='line'> 23</span>  * Built-in components, like {@link clock}, have their installed events marked in their 
+<span class='line'> 24</span>  * class descriptions.
+<span class='line'> 25</span>  * @example 
+<span class='line'> 26</span>  
+<span class='line'> 27</span>  
+<span class='line'> 28</span>  *
+<span class='line'> 29</span>  */</span><span class="WHIT"> 
+<span class='line'> 30</span> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">component</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 31</span> 
+<span class='line'> 32</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 33</span>      * Does the naturally defined step iteration. This invokes the "onStep" property method
+<span class='line'> 34</span>      * if defined. For built-in components, this may trigger native code.
+<span class='line'> 35</span>      * For hosts that are part of the engine hierarchy, step() is called for you when 
+<span class='line'> 36</span>      * the entity step()s.
+<span class='line'> 37</span>      */</span><span class="WHIT">
+<span class='line'> 38</span> </span><span class="WHIT">    </span><span class="NAME">this.step</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 39</span> 
+<span class='line'> 40</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 41</span>      * Does the naturally defined draw iteration. This invokes the "onDraw" property method
+<span class='line'> 42</span>      * if defined. For built-in components, this may trigger native code.
+<span class='line'> 43</span>      * For hosts that are part of the engine hierarchy, draw() is called for you when 
+<span class='line'> 44</span>      * the entity draw()s.
+<span class='line'> 45</span>      */</span><span class="WHIT">
+<span class='line'> 46</span> </span><span class="WHIT">    </span><span class="NAME">this.draw</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 47</span> 
+<span class='line'> 48</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 49</span>      * Adds a new event to be recognized by the EventSystem.
+<span class='line'> 50</span>      *
+<span class='line'> 51</span>      * if mainHandler is undefined, the event is still added, but has no default
+<span class='line'> 52</span>      * handler is set. The default handler is always guaranteed to run last for the event.
+<span class='line'> 53</span>      * @param {String} eventName The name of the new event to install.
+<span class='line'> 54</span>      * @param {Function} mainHandler (optional) The default handler for this event. Always called first before any hooks. See {@link component.installHandler} for parameters passed to handler function objects.
 <span class='line'> 55</span>      */</span><span class="WHIT">
-<span class='line'> 56</span> </span><span class="WHIT">    </span><span class="NAME">this.uninstallEvent</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">event</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 56</span> </span><span class="WHIT">    </span><span class="NAME">this.installEvent</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">eventName</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">mainHandler</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'> 57</span> 
 <span class='line'> 58</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'> 59</span>      * Triggers the specified event for this component.
-<span class='line'> 60</span>      *
-<span class='line'> 61</span>      * Returns whether the event was allowed to propogate all the
-<span class='line'> 62</span>      * way to the main handler (in other words, lets you know whether
-<span class='line'> 63</span>      * all the handlers allowed the event to happen)
-<span class='line'> 64</span>      * Source is passed to the handler and is usually the source of the event (but does not have to be)
-<span class='line'> 65</span>      * @param {String} eventName Name of the event. This should match the name that was installed.
-<span class='line'> 66</span>      * @param {entity} source (Optional) entity that indicates the source of the event. For example, in a collision, this may be the object collided with.
-<span class='line'> 67</span>      */</span><span class="WHIT">
-<span class='line'> 68</span> </span><span class="WHIT">    </span><span class="NAME">this.emitEvent</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">eventName</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">source</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 69</span> 
-<span class='line'> 70</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'> 71</span>      * Returns whether the given event is installed.
-<span class='line'> 72</span>      * @param {String} eventName The event to query.
+<span class='line'> 59</span>      * Removes the event from the component.
+<span class='line'> 60</span>      * @param {String} event Event to remove.
+<span class='line'> 61</span>      */</span><span class="WHIT">
+<span class='line'> 62</span> </span><span class="WHIT">    </span><span class="NAME">this.uninstallEvent</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">event</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 63</span> 
+<span class='line'> 64</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 65</span>      * Triggers the specified event for this component.
+<span class='line'> 66</span>      *
+<span class='line'> 67</span>      * Returns whether the event was allowed to propogate all the
+<span class='line'> 68</span>      * way to the main handler (in other words, lets you know whether
+<span class='line'> 69</span>      * all the handlers allowed the event to happen)
+<span class='line'> 70</span>      * Source is passed to the handler and is usually the source of the event (but does not have to be)
+<span class='line'> 71</span>      * @param {String} eventName Name of the event. This should match the name that was installed.
+<span class='line'> 72</span>      * @param {entity} source (Optional) entity that indicates the source of the event. For example, in a collision, this may be the object collided with.
 <span class='line'> 73</span>      */</span><span class="WHIT">
-<span class='line'> 74</span> </span><span class="WHIT">    </span><span class="NAME">this.canHandleEvent</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">eventName</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 74</span> </span><span class="WHIT">    </span><span class="NAME">this.emitEvent</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">eventName</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">source</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'> 75</span> 
 <span class='line'> 76</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'> 77</span>      * Adds a hook to the event. 
-<span class='line'> 78</span>      *
-<span class='line'> 79</span>      * A hook happens at the end of a given event after all the
-<span class='line'> 80</span>      * handlers have been run. Hooks occur regardless of event handler propogation.
-<span class='line'> 81</span>      * Hook function signatures contain the following parameters: &lt;/br>&lt;/br>
-<span class='line'> 82</span>      * &lt;pre>
-<span class='line'> 83</span>      * hook(component, componentHost, eventSource)
-<span class='line'> 84</span>      * &lt;/pre>&lt;/br>&lt;/br>
-<span class='line'> 85</span>      * Where component is the this component, componentHost is the host entity of this component 
-<span class='line'> 86</span>      * , and eventSource is the entity given from the emitEvent() call, if any.
-<span class='line'> 87</span>      * @param {String} eventName Name of the installed event.
-<span class='line'> 88</span>      * @param {Function} hook The hook to add. See class description for function signature.
-<span class='line'> 89</span>      */</span><span class="WHIT">
-<span class='line'> 90</span> </span><span class="WHIT">    </span><span class="NAME">this.installHook</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">eventName</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">hook</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 91</span> 
-<span class='line'> 92</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'> 93</span>      * Removes the given hook.
-<span class='line'> 94</span>      * @param {String} eventName
+<span class='line'> 77</span>      * Returns whether the given event is installed.
+<span class='line'> 78</span>      * @param {String} eventName The event to query.
+<span class='line'> 79</span>      */</span><span class="WHIT">
+<span class='line'> 80</span> </span><span class="WHIT">    </span><span class="NAME">this.canHandleEvent</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">eventName</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 81</span> 
+<span class='line'> 82</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 83</span>      * Adds a hook to the event. 
+<span class='line'> 84</span>      *
+<span class='line'> 85</span>      * A hook happens at the end of a given event after all the
+<span class='line'> 86</span>      * handlers have been run. Hooks occur regardless of event handler propogation.
+<span class='line'> 87</span>      * Hook function signatures contain the following parameters: &lt;/br>&lt;/br>
+<span class='line'> 88</span>      * &lt;pre>
+<span class='line'> 89</span>      * hook(component, componentHost, eventSource)
+<span class='line'> 90</span>      * &lt;/pre>&lt;/br>&lt;/br>
+<span class='line'> 91</span>      * Where component is the this component, componentHost is the host entity of this component 
+<span class='line'> 92</span>      * , and eventSource is the entity given from the emitEvent() call, if any.
+<span class='line'> 93</span>      * @param {String} eventName Name of the installed event.
+<span class='line'> 94</span>      * @param {Function} hook The hook to add. See class description for function signature.
 <span class='line'> 95</span>      */</span><span class="WHIT">
-<span class='line'> 96</span> </span><span class="WHIT">    </span><span class="NAME">this.uninstallHook</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">eventName</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 96</span> </span><span class="WHIT">    </span><span class="NAME">this.installHook</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">eventName</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">hook</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'> 97</span> 
 <span class='line'> 98</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'> 99</span>      * Adds a handler to an event. 
-<span class='line'>100</span>      *
-<span class='line'>101</span>      * Handlers that are added are run in LIFO order
-<span class='line'>102</span>      * and their return values dictate whether the event should propogate.
-<span class='line'>103</span>      * The last handler run for an event is always the main handler of the event. &lt;/br>
-<span class='line'>104</span>      * Handler function signatures contain the following parameters: &lt;/br>&lt;/br>
-<span class='line'>105</span>      * &lt;pre>
-<span class='line'>106</span>      * {boolean} handler(component, componentHost, eventSource)
-<span class='line'>107</span>      * &lt;/pre>&lt;/br>&lt;/br>
-<span class='line'>108</span>      * Where component is the this component, componentHost is the host entity of this component 
-<span class='line'>109</span>      * , and eventSource is the entity given from the emitEvent() call, if any. The return value 
-<span class='line'>110</span>      * is a boolean determining if the event should continue propogating. If no return value is given, 
-<span class='line'>111</span>      * the value is assumed true, meaning the event should propogate.
-<span class='line'>112</span>      * @param {String} eventName Name of the installed event to add a handler to
-<span class='line'>113</span>      * @param {Function} handler Function to add as the handler.
-<span class='line'>114</span>      */</span><span class="WHIT">
-<span class='line'>115</span> </span><span class="WHIT">    </span><span class="NAME">this.installHandler</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">eventName</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">handler</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>116</span> 
-<span class='line'>117</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>118</span>      * Removes a previously installed handler.
-<span class='line'>119</span>      * @param {String} eventName
+<span class='line'> 99</span>      * Removes the given hook.
+<span class='line'>100</span>      * @param {String} eventName
+<span class='line'>101</span>      */</span><span class="WHIT">
+<span class='line'>102</span> </span><span class="WHIT">    </span><span class="NAME">this.uninstallHook</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">eventName</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>103</span> 
+<span class='line'>104</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>105</span>      * Adds a handler to an event. 
+<span class='line'>106</span>      *
+<span class='line'>107</span>      * Handlers that are added are run in LIFO order
+<span class='line'>108</span>      * and their return values dictate whether the event should propogate.
+<span class='line'>109</span>      * The last handler run for an event is always the main handler of the event. &lt;/br>
+<span class='line'>110</span>      * Handler function signatures contain the following parameters: &lt;/br>&lt;/br>
+<span class='line'>111</span>      * &lt;pre>
+<span class='line'>112</span>      * {boolean} handler(component, componentHost, eventSource)
+<span class='line'>113</span>      * &lt;/pre>&lt;/br>&lt;/br>
+<span class='line'>114</span>      * Where component is the this component, componentHost is the host entity of this component 
+<span class='line'>115</span>      * , and eventSource is the entity given from the emitEvent() call, if any. The return value 
+<span class='line'>116</span>      * is a boolean determining if the event should continue propogating. If no return value is given, 
+<span class='line'>117</span>      * the value is assumed true, meaning the event should propogate.
+<span class='line'>118</span>      * @param {String} eventName Name of the installed event to add a handler to
+<span class='line'>119</span>      * @param {Function} handler Function to add as the handler.
 <span class='line'>120</span>      */</span><span class="WHIT">
-<span class='line'>121</span> </span><span class="WHIT">    </span><span class="NAME">this.uninstallHandler</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">eventName</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>121</span> </span><span class="WHIT">    </span><span class="NAME">this.installHandler</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">eventName</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">handler</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>122</span> 
 <span class='line'>123</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>124</span>      * Returns a list of all events installed that can be processed.
-<span class='line'>125</span>      * @returns {Array} An array of event name strings.
+<span class='line'>124</span>      * Removes a previously installed handler.
+<span class='line'>125</span>      * @param {String} eventName
 <span class='line'>126</span>      */</span><span class="WHIT">
-<span class='line'>127</span> </span><span class="WHIT">    </span><span class="NAME">this.getKnownEvents</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>127</span> </span><span class="WHIT">    </span><span class="NAME">this.uninstallHandler</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">eventName</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>128</span> 
-<span class='line'>129</span> 
-<span class='line'>130</span> 
-<span class='line'>131</span> 
-<span class='line'>132</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>133</span>      * Function called on the step iteration of the component.
-<span class='line'>134</span>      * @type {Function}
-<span class='line'>135</span>      */</span><span class="WHIT">
-<span class='line'>136</span> </span><span class="WHIT">    </span><span class="NAME">this.onStep</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>129</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>130</span>      * Returns a list of all events installed that can be processed.
+<span class='line'>131</span>      * @returns {Array} An array of event name strings.
+<span class='line'>132</span>      */</span><span class="WHIT">
+<span class='line'>133</span> </span><span class="WHIT">    </span><span class="NAME">this.getKnownEvents</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>134</span> 
+<span class='line'>135</span> 
+<span class='line'>136</span> 
 <span class='line'>137</span> 
 <span class='line'>138</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>139</span>     * Function called on the draw iteration of the component.
+<span class='line'>139</span>      * Function called on the step iteration of the component.
 <span class='line'>140</span>      * @type {Function}
 <span class='line'>141</span>      */</span><span class="WHIT">
-<span class='line'>142</span> </span><span class="WHIT">    </span><span class="NAME">this.onDraw</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>143</span> </span><span class="WHIT">    
-<span class='line'>144</span>     </span><span class="COMM">/**
-<span class='line'>145</span>      * Function called when the component is attached to a host.
+<span class='line'>142</span> </span><span class="WHIT">    </span><span class="NAME">this.onStep</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>143</span> 
+<span class='line'>144</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>145</span>     * Function called on the draw iteration of the component.
 <span class='line'>146</span>      * @type {Function}
 <span class='line'>147</span>      */</span><span class="WHIT">
-<span class='line'>148</span> </span><span class="WHIT">    </span><span class="NAME">this.onAttach</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>149</span> 
-<span class='line'>150</span> 
-<span class='line'>151</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>152</span>      * Identifying tag of the component. This is set at the creation of the component and 
-<span class='line'>153</span>      * is readonly. The tag can be used in access functions such as {@link entity.queryComponent}.
-<span class='line'>154</span>      * @type {String}
-<span class='line'>155</span>      */</span><span class="WHIT">
-<span class='line'>156</span> </span><span class="WHIT">    </span><span class="NAME">this.tag</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>157</span> 
-<span class='line'>158</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>159</span>      * Human-readable information on this component viable in the inspector/debugger. 
-<span class='line'>160</span>      * For built-in components, this usually contains stats and useful info regarding the current 
-<span class='line'>161</span>      * state of the component.
-<span class='line'>162</span>      * @type {String}
-<span class='line'>163</span>      */</span><span class="WHIT">
-<span class='line'>164</span> </span><span class="WHIT">    </span><span class="NAME">this.info</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>165</span> 
-<span class='line'>166</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>167</span>      * Whether this component should have its step() function called automatically by the engine. 
-<span class='line'>168</span>      * The default is true.
-<span class='line'>169</span>      * @type {Boolean}
-<span class='line'>170</span>      */</span><span class="WHIT">
-<span class='line'>171</span> </span><span class="WHIT">    </span><span class="NAME">this.isStepping</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>172</span> 
-<span class='line'>173</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>174</span>      * Whether this component should have its draw() function called automatically by the engine. 
-<span class='line'>175</span>      * The default is true.
-<span class='line'>176</span>      * @type {Boolean}
-<span class='line'>177</span>      */</span><span class="WHIT">
-<span class='line'>178</span> </span><span class="WHIT">    </span><span class="NAME">this.isDrawing</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>179</span> 
-<span class='line'>180</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>181</span>      * The current host entity of the component. See {@link entity.addComponent}.
-<span class='line'>182</span>      * @type {entity}
-<span class='line'>183</span>      */</span><span class="WHIT">
-<span class='line'>184</span> </span><span class="WHIT">    </span><span class="NAME">this.host</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>185</span> 
-<span class='line'>186</span> 
-<span class='line'>187</span> 
-<span class='line'>188</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>189</span> </span><span class="PUNC">}</span></pre></body></html>
+<span class='line'>148</span> </span><span class="WHIT">    </span><span class="NAME">this.onDraw</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>149</span> </span><span class="WHIT">    
+<span class='line'>150</span>     </span><span class="COMM">/**
+<span class='line'>151</span>      * Function called when the component is attached to a host.
+<span class='line'>152</span>      * @type {Function}
+<span class='line'>153</span>      */</span><span class="WHIT">
+<span class='line'>154</span> </span><span class="WHIT">    </span><span class="NAME">this.onAttach</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>155</span> 
+<span class='line'>156</span> 
+<span class='line'>157</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>158</span>      * Identifying tag of the component. The tag can be used in access functions such as {@link entity.queryComponent}.
+<span class='line'>159</span>      * @type {String}
+<span class='line'>160</span>      */</span><span class="WHIT">
+<span class='line'>161</span> </span><span class="WHIT">    </span><span class="NAME">this.tag</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>162</span> 
+<span class='line'>163</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>164</span>      * Human-readable information on this component viable in the inspector/debugger. 
+<span class='line'>165</span>      * For built-in components, this usually contains stats and useful info regarding the current 
+<span class='line'>166</span>      * state of the component.
+<span class='line'>167</span>      * @type {String}
+<span class='line'>168</span>      */</span><span class="WHIT">
+<span class='line'>169</span> </span><span class="WHIT">    </span><span class="NAME">this.info</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>170</span> 
+<span class='line'>171</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>172</span>      * Whether this component should have its step() function called automatically by the engine. 
+<span class='line'>173</span>      * The default is true.
+<span class='line'>174</span>      * @type {Boolean}
+<span class='line'>175</span>      */</span><span class="WHIT">
+<span class='line'>176</span> </span><span class="WHIT">    </span><span class="NAME">this.isStepping</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>177</span> 
+<span class='line'>178</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>179</span>      * Whether this component should have its draw() function called automatically by the engine. 
+<span class='line'>180</span>      * The default is true.
+<span class='line'>181</span>      * @type {Boolean}
+<span class='line'>182</span>      */</span><span class="WHIT">
+<span class='line'>183</span> </span><span class="WHIT">    </span><span class="NAME">this.isDrawing</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>184</span> 
+<span class='line'>185</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>186</span>      * The current host entity of the component. See {@link entity.addComponent}.
+<span class='line'>187</span>      * @type {entity}
+<span class='line'>188</span>      */</span><span class="WHIT">
+<span class='line'>189</span> </span><span class="WHIT">    </span><span class="NAME">this.host</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>190</span> 
+<span class='line'>191</span> 
+<span class='line'>192</span> 
+<span class='line'>193</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>194</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>195</span> </span></pre></body></html>

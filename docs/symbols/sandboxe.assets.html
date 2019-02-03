@@ -257,6 +257,10 @@ ul.inheritsList
 	
 	<li><a href="../symbols/sandboxe.component.mutator.mutation.html">sandboxe.component.mutator.mutation</a></li>
 	
+	<li><a href="../symbols/sandboxe.component.object2d.html">sandboxe.component.object2d</a></li>
+	
+	<li><a href="../symbols/sandboxe.component.object2d.group.html">sandboxe.component.object2d.group</a></li>
+	
 	<li><a href="../symbols/sandboxe.component.render2d.html">sandboxe.component.render2d</a></li>
 	
 	<li><a href="../symbols/sandboxe.component.render2d.renderMode.html">sandboxe.component.render2d.renderMode</a></li>
@@ -339,6 +343,8 @@ ul.inheritsList
 	
 	<li><a href="../symbols/text2d.html">text2d</a></li>
 	
+	<li><a href="../symbols/unicodeListener.html">unicodeListener</a></li>
+	
 	<li><a href="../symbols/vector.html">vector</a></li>
 	
 </ul>
@@ -414,7 +420,16 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">sandboxe.assets.<b><a href="../symbols/sandboxe.assets.html#.load">load</a></b>(extension, path)
+								<div class="fixedFont">sandboxe.assets.<b><a href="../symbols/sandboxe.assets.html#.getSearchPath">getSearchPath</a></b>()
+								</div>
+								<div class="description">Gets the base search path for loading assets.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">sandboxe.assets.<b><a href="../symbols/sandboxe.assets.html#.load">load</a></b>(extension, path, isName)
 								</div>
 								<div class="description">Retrieves an asset object by name or disk path.</div>
 							</td>
@@ -435,6 +450,15 @@ ul.inheritsList
 								<div class="fixedFont">sandboxe.assets.<b><a href="../symbols/sandboxe.assets.html#.query">query</a></b>(type, name)
 								</div>
 								<div class="description">Returns the asset of the given type and name, if any.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">sandboxe.assets.<b><a href="../symbols/sandboxe.assets.html#.setSearchPath">setSearchPath</a></b>(path)
+								</div>
+								<div class="description">Sets the base search path for loading assets.</div>
 							</td>
 						</tr>
 					
@@ -504,11 +528,43 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
+					<a name=".getSearchPath"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{String}</span>
+					<span class="light">sandboxe.assets.</span><b>getSearchPath</b>()
+					
+					</div>
+					<div class="description">
+						Gets the base search path for loading assets. The default is sandboxe.engine.getBaseDirectory().
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{String}</span> The path set as the searching root. See <a href="../symbols/sandboxe.assets.html#.load">sandboxe.assets.load</a>.</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
 					<a name=".load"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
 					<span class="light">{<a href="../symbols/asset.html">asset</a>}</span>
-					<span class="light">sandboxe.assets.</span><b>load</b>(extension, path)
+					<span class="light">sandboxe.assets.</span><b>load</b>(extension, path, isName)
 					
 					</div>
 					<div class="description">
@@ -533,7 +589,13 @@ ul.inheritsList
 									<span class="light fixedFont">{String}</span> <b>path</b>
 									
 								</dt>
-								<dd>The path or name of the asset. If the path refers to a stored name within the trunk, raw data referring to the asset is used from within the binary and the disk is not otherwise accessed. If the asset has been loaded before using this function, the same asset reference is returned and a new one is NOT created.</dd>
+								<dd>The path or name of the asset. If the path refers to a stored name within the trunk, raw data referring to the asset is used from within the binary and the disk is not otherwise accessed. If the asset has been loaded before using this function, the same asset reference is returned and a new one is NOT created. In the case that this argument is true and the name is not in the trunk, the disk is searched recursively from the path set from <a href="../symbols/sandboxe.assets.html#.setSearchPath">sandboxe.assets.setSearchPath</a>. By default this is the binary directory.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Boolean}</span> <b>isName</b>
+									
+								</dt>
+								<dd>Optional. Says whether the path given is a filename only or a full path. If filename, the file will be searched recursively from the search path. Otherwise, the file is looked for directly.</dd>
 							
 							</dl>
 						
@@ -657,6 +719,42 @@ ul.inheritsList
 
 					<hr />
 				
+					<a name=".setSearchPath"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">sandboxe.assets.</span><b>setSearchPath</b>(path)
+					
+					</div>
+					<div class="description">
+						Sets the base search path for loading assets. The default is sandboxe.engine.getBaseDirectory().
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>path</b>
+									
+								</dt>
+								<dd>The path to set as the searching root. See <a href="../symbols/sandboxe.assets.html#.load">sandboxe.assets.load</a>.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name=".supportedLoadExtensions"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
@@ -755,7 +853,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Thu Sep 13 2018 19:34:34 GMT-0400 (EDT)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Sun Feb 03 2019 18:30:56 GMT-0500 (EST)
 		</div>
 	</body>
 </html>

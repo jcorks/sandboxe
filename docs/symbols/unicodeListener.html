@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - sandboxe.mesh</title>
+		<title>JsDoc Reference - unicodeListener</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -356,7 +356,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Namespace sandboxe.mesh
+				Class unicodeListener
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -364,17 +364,17 @@ ul.inheritsList
 				
 				
 			
+				unicodeListener
 				
 				
-				
-					<br /><i>Defined in: </i> <a href="../symbols/src/doc_docbase.js.html">docbase.js</a>.
+					<br /><i>Defined in: </i> <a href="../symbols/src/doc_unicodeListener.js.html">unicodeListener.js</a>.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class sandboxe.mesh.">
-				<caption>Namespace Summary</caption>
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class unicodeListener.">
+				<caption>Class Summary</caption>
 				<thead>
 					<tr>
 						<th scope="col">Constructor Attributes</th>
@@ -386,9 +386,9 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/sandboxe.mesh.html#constructor">sandboxe.mesh</a></b>
+								<b><a href="../symbols/unicodeListener.html#constructor">unicodeListener</a></b>()
 							</div>
-							<div class="description">Collection of functions and references to work with <a href="../symbols/mesh.html">mesh</a> objects.</div>
+							<div class="description">An object to listen for typed characters.</div>
 						</td>
 					</tr>
 				</tbody>
@@ -399,6 +399,29 @@ ul.inheritsList
 			
 				
 				
+				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class unicodeListener.">
+					<caption>Field Summary</caption>
+					<thead>
+						<tr>
+							<th scope="col">Field Attributes</th>
+							<th scope="col">Field Name and Description</th>
+						</tr>
+					</thead>
+					<tbody>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/unicodeListener.html#onNewUnicode">onNewUnicode</a></b>
+								</div>
+								<div class="description">The user function to call when a new character is pressed / activated.</div>
+							</td>
+						</tr>
+					
+					</tbody>
+				</table>
+				
 				
 				
 			
@@ -407,7 +430,7 @@ ul.inheritsList
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class sandboxe.mesh.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class unicodeListener.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -418,29 +441,11 @@ ul.inheritsList
 					<tbody>
 					
 						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">sandboxe.mesh.<b><a href="../symbols/sandboxe.mesh.html#.create">create</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/unicodeListener.html#remove">remove</a></b>()
 								</div>
-								<div class="description">Creates a new mesh object, which hold raw 3d data to be given to <a href="../symbols/renderMesh.html">renderMesh</a> components for drawing.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">sandboxe.mesh.<b><a href="../symbols/sandboxe.mesh.html#.createCube">createCube</a></b>()
-								</div>
-								<div class="description">Returns a pre-build mesh representing a cube.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">sandboxe.mesh.<b><a href="../symbols/sandboxe.mesh.html#.createSquare">createSquare</a></b>()
-								</div>
-								<div class="description">Returns a pre-build mesh representing a flat square.</div>
+								<div class="description">Removes the button listener from sandboxe.</div>
 							</td>
 						</tr>
 					
@@ -457,15 +462,20 @@ ul.inheritsList
 			
 			<div class="details"><a name="constructor"> </a>
 				<div class="sectionTitle">
-					Namespace Detail
+					Class Detail
 				</div>
 				
 				<div class="fixedFont">
-						<b>sandboxe.mesh</b>
+						<b>unicodeListener</b>()
 				</div>
 				
 				<div class="description">
-					Collection of functions and references to work with <a href="../symbols/mesh.html">mesh</a> objects.
+					An object to listen for typed characters. See sandboxe.input.unicodeListener.create to instantiate 
+and enable it. </br></br>
+
+unicodeListener allows you to set up more detailed specific behavior as soon 
+as an input even is recorded for a frame, allowing you to avoid the classic 
+"query input every frame pattern". </br></br>
 					
 				</div>
 				
@@ -485,6 +495,33 @@ ul.inheritsList
 
 <!-- ============================== field details ========================== -->		
 			
+				<div class="sectionTitle">
+					Field Detail
+				</div>
+				
+					<a name="onNewUnicode"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>onNewUnicode</b>
+					
+					</div>
+					<div class="description">
+						The user function to call when a new character is pressed / activated.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					
+				
+			
 
 <!-- ============================== method details ========================= -->		
 			
@@ -492,47 +529,15 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name=".create"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					<span class="light">{<a href="../symbols/mesh.html">mesh</a>}</span>
-					<span class="light">sandboxe.mesh.</span><b>create</b>()
-					
-					</div>
-					<div class="description">
-						Creates a new mesh object, which hold raw 3d data to be given to <a href="../symbols/renderMesh.html">renderMesh</a> components for drawing.
-						
-						
-					</div>
+					<a name="remove"> </a>
+					<div class="fixedFont">
 					
 					
-					
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{<a href="../symbols/mesh.html">mesh</a>}</span> </dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name=".createCube"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					<span class="light">{<a href="../symbols/mesh.html">mesh</a>}</span>
-					<span class="light">sandboxe.mesh.</span><b>createCube</b>()
+					<b>remove</b>()
 					
 					</div>
 					<div class="description">
-						Returns a pre-build mesh representing a cube.
+						Removes the button listener from sandboxe.
 						
 						
 					</div>
@@ -543,45 +548,6 @@ ul.inheritsList
 						
 						
 						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{<a href="../symbols/mesh.html">mesh</a>}</span> A newly made mesh.</dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name=".createSquare"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					<span class="light">{<a href="../symbols/mesh.html">mesh</a>}</span>
-					<span class="light">sandboxe.mesh.</span><b>createSquare</b>()
-					
-					</div>
-					<div class="description">
-						Returns a pre-build mesh representing a flat square.
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{<a href="../symbols/mesh.html">mesh</a>}</span> A newly made mesh.</dd>
-							
-							</dl>
 						
 						
 						

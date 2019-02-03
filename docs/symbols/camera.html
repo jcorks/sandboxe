@@ -257,6 +257,10 @@ ul.inheritsList
 	
 	<li><a href="../symbols/sandboxe.component.mutator.mutation.html">sandboxe.component.mutator.mutation</a></li>
 	
+	<li><a href="../symbols/sandboxe.component.object2d.html">sandboxe.component.object2d</a></li>
+	
+	<li><a href="../symbols/sandboxe.component.object2d.group.html">sandboxe.component.object2d.group</a></li>
+	
 	<li><a href="../symbols/sandboxe.component.render2d.html">sandboxe.component.render2d</a></li>
 	
 	<li><a href="../symbols/sandboxe.component.render2d.renderMode.html">sandboxe.component.render2d.renderMode</a></li>
@@ -338,6 +342,8 @@ ul.inheritsList
 	<li><a href="../symbols/stateControl.html">stateControl</a></li>
 	
 	<li><a href="../symbols/text2d.html">text2d</a></li>
+	
+	<li><a href="../symbols/unicodeListener.html">unicodeListener</a></li>
 	
 	<li><a href="../symbols/vector.html">vector</a></li>
 	
@@ -452,7 +458,7 @@ using this camer as a render target.</div>
 				
 				
 				<dl class="inheritsList">
-				<dt>Fields borrowed from class <a href="../symbols/entity.html">entity</a>: </dt><dd><a href="../symbols/entity.html#id">id</a>, <a href="../symbols/entity.html#isDrawing">isDrawing</a>, <a href="../symbols/entity.html#isStepping">isStepping</a>, <a href="../symbols/entity.html#name">name</a>, <a href="../symbols/entity.html#node">node</a></dd>
+				<dt>Fields borrowed from class <a href="../symbols/entity.html">entity</a>: </dt><dd><a href="../symbols/entity.html#globalX">globalX</a>, <a href="../symbols/entity.html#globalY">globalY</a>, <a href="../symbols/entity.html#globalZ">globalZ</a>, <a href="../symbols/entity.html#id">id</a>, <a href="../symbols/entity.html#isDrawing">isDrawing</a>, <a href="../symbols/entity.html#isStepping">isStepping</a>, <a href="../symbols/entity.html#name">name</a>, <a href="../symbols/entity.html#node">node</a></dd>
 				</dl>
 				
 			
@@ -470,6 +476,24 @@ using this camer as a render target.</div>
 						</tr>
 					</thead>
 					<tbody>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/camera.html#copyBackVisual">copyBackVisual</a></b>()
+								</div>
+								<div class="description">Copies the current back visual of the camera as an image asset.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/camera.html#copyFrontVisual">copyFrontVisual</a></b>()
+								</div>
+								<div class="description">Copies the current front visual of the camera as an image asset.</div>
+							</td>
+						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -671,6 +695,76 @@ the default of 'true' is good.
 					Method Detail
 				</div>
 				
+					<a name="copyBackVisual"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{<a href="../symbols/asset.html">asset</a>}</span>
+					<b>copyBackVisual</b>()
+					
+					</div>
+					<div class="description">
+						Copies the current back visual of the camera as an image asset.
+In a double-buffered environment, the back buffer is usually the previous complete   
+frame that is currently visible on the screen.
+Note that when done, the asset should be removed. See <a href="../symbols/sandboxe.assets.html">sandboxe.assets</a>
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{<a href="../symbols/asset.html">asset</a>}</span> The image asset of the back visual.</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="copyFrontVisual"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{<a href="../symbols/asset.html">asset</a>}</span>
+					<b>copyFrontVisual</b>()
+					
+					</div>
+					<div class="description">
+						Copies the current front visual of the camera as an image asset.
+In a double-buffered environment, the front buffer is usually the currently incomplete   
+frame that is painted to as the scene is drawn.
+Note that when done, the asset should be removed. See <a href="../symbols/sandboxe.assets.html">sandboxe.assets</a>
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{<a href="../symbols/asset.html">asset</a>}</span> The image asset of the front visual.</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
 					<a name="refresh"> </a>
 					<div class="fixedFont">
 					
@@ -870,7 +964,7 @@ so a distance from the viewpoint is needed.</dd>
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Thu Sep 13 2018 19:34:33 GMT-0400 (EDT)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Sun Feb 03 2019 18:30:56 GMT-0500 (EST)
 		</div>
 	</body>
 </html>

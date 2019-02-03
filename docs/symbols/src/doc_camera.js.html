@@ -64,36 +64,58 @@
 <span class='line'> 57</span>      */</span><span class="WHIT">
 <span class='line'> 58</span> </span><span class="WHIT">    </span><span class="NAME">this.transformWorldToScreen</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">point</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'> 59</span> 
-<span class='line'> 60</span> 
-<span class='line'> 61</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'> 62</span>      * Width of the camera's output framebuffer
-<span class='line'> 63</span>      * @type {Number}
-<span class='line'> 64</span>      */</span><span class="WHIT">
-<span class='line'> 65</span> </span><span class="WHIT">    </span><span class="NAME">this.width</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 66</span> 
-<span class='line'> 67</span> 
-<span class='line'> 68</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'> 69</span>      * Height of the camera's output framebuffer
-<span class='line'> 70</span>      * @type {Number}
-<span class='line'> 71</span>      */</span><span class="WHIT">
-<span class='line'> 72</span> </span><span class="WHIT">    </span><span class="NAME">this.height</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 73</span> 
-<span class='line'> 74</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'> 75</span>      * Type of the camera. See {@link sandboxe.camera.type}.
-<span class='line'> 76</span>      * @type {Number}
-<span class='line'> 77</span>      */</span><span class="WHIT">
-<span class='line'> 78</span> </span><span class="WHIT">    </span><span class="NAME">this.type</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 60</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 61</span>      * Copies the current front visual of the camera as an image asset.
+<span class='line'> 62</span>      * In a double-buffered environment, the front buffer is usually the currently incomplete   
+<span class='line'> 63</span>      * frame that is painted to as the scene is drawn.
+<span class='line'> 64</span>      * Note that when done, the asset should be removed. See {@link sandboxe.assets}
+<span class='line'> 65</span>      * @returns {asset} The image asset of the front visual. 
+<span class='line'> 66</span>      */</span><span class="WHIT">
+<span class='line'> 67</span> </span><span class="WHIT">    </span><span class="NAME">this.copyFrontVisual</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 68</span> 
+<span class='line'> 69</span> 
+<span class='line'> 70</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 71</span>      * Copies the current back visual of the camera as an image asset.
+<span class='line'> 72</span>      * In a double-buffered environment, the back buffer is usually the previous complete   
+<span class='line'> 73</span>      * frame that is currently visible on the screen.
+<span class='line'> 74</span>      * Note that when done, the asset should be removed. See {@link sandboxe.assets}
+<span class='line'> 75</span>      * @returns {asset} The image asset of the back visual. 
+<span class='line'> 76</span>      */</span><span class="WHIT">
+<span class='line'> 77</span> </span><span class="WHIT">    </span><span class="NAME">this.copyBackVisual</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 78</span> 
 <span class='line'> 79</span> 
 <span class='line'> 80</span> 
-<span class='line'> 81</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'> 82</span>      * Whether the engine should handle clearing the framebuffer for you when 
-<span class='line'> 83</span>      * using this camer as a render target. Unless you're doing something very special,
-<span class='line'> 84</span>      * the default of 'true' is good.
-<span class='line'> 85</span>      * @type {Boolean}
-<span class='line'> 86</span>      */</span><span class="WHIT">
-<span class='line'> 87</span> </span><span class="WHIT">    </span><span class="NAME">this.autoRefresh</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 81</span> 
+<span class='line'> 82</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 83</span>      * Width of the camera's output framebuffer
+<span class='line'> 84</span>      * @type {Number}
+<span class='line'> 85</span>      */</span><span class="WHIT">
+<span class='line'> 86</span> </span><span class="WHIT">    </span><span class="NAME">this.width</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 87</span> 
 <span class='line'> 88</span> 
-<span class='line'> 89</span> </span><span class="WHIT">    
-<span class='line'> 90</span>      
-<span class='line'> 91</span>     </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 92</span> </span><span class="PUNC">}</span></pre></body></html>
+<span class='line'> 89</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 90</span>      * Height of the camera's output framebuffer
+<span class='line'> 91</span>      * @type {Number}
+<span class='line'> 92</span>      */</span><span class="WHIT">
+<span class='line'> 93</span> </span><span class="WHIT">    </span><span class="NAME">this.height</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 94</span> 
+<span class='line'> 95</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 96</span>      * Type of the camera. See {@link sandboxe.camera.type}.
+<span class='line'> 97</span>      * @type {Number}
+<span class='line'> 98</span>      */</span><span class="WHIT">
+<span class='line'> 99</span> </span><span class="WHIT">    </span><span class="NAME">this.type</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>100</span> 
+<span class='line'>101</span> 
+<span class='line'>102</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>103</span>      * Whether the engine should handle clearing the framebuffer for you when 
+<span class='line'>104</span>      * using this camer as a render target. Unless you're doing something very special,
+<span class='line'>105</span>      * the default of 'true' is good.
+<span class='line'>106</span>      * @type {Boolean}
+<span class='line'>107</span>      */</span><span class="WHIT">
+<span class='line'>108</span> </span><span class="WHIT">    </span><span class="NAME">this.autoRefresh</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>109</span> 
+<span class='line'>110</span> </span><span class="WHIT">    
+<span class='line'>111</span>      
+<span class='line'>112</span>     </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>113</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>114</span> </span></pre></body></html>
