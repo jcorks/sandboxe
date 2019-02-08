@@ -560,24 +560,6 @@ var sandboxe = {
             },
 
 
-           /**
-             * Flags for etching modes
-             * @namespace
-             */
-            etchMode : {
-                /** This is the default. No etching is done or considered. */
-                etchIgnore : 0,
-            
-                /** Along with drawing any visual, all drawn areas are enabled to be etched until the end of the frame. That is, visuals with the etchIn etching setting will show in these regions. */
-                etchDefine : 1,
-
-                /** Along with drawing any visual, any drawn areas with etching enabled gets set back to the default, un-etchable state. */
-                etchUndefine : 2,
-
-                /** Only draws the visual in areas where etching has been defined */
-                etchIn : 3,
-
-            }
  
         },
 

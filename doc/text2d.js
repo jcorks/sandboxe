@@ -68,13 +68,6 @@ function text2d() {
      */
      this.mode = 0;
 
-    /** 
-     * The etching mode. See {@link sandboxe.component.render2d.etchMode}
-     * @type {Number} 
-     */
-     this.etch = 0;
-
-
 
      /**
       * Whether the shape should be drawn using the absolute positions 

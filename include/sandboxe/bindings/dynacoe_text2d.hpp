@@ -128,19 +128,6 @@ SANDBOXE_NATIVE_DEF(__text2d_mode_set) {
 }
 
 
-SANDBOXE_NATIVE_DEF(__text2d_etch_get) {
-    auto shape = (Sandboxe::Text2DObject*)source;
-    context.SetReturnValue((int)shape->etch);
-}
-
-SANDBOXE_NATIVE_DEF(__text2d_etch_set) {
-    auto shape = (Sandboxe::Text2DObject*)source;
-    int arg = arguments[0];
-    if (arg < 0 || arg > (int)Dynacoe::Render2D::EtchMode::EtchIn) return;
-    shape->etch = (Dynacoe::Render2D::EtchMode)arg;
-}
-
-
 
 
 
@@ -221,7 +208,6 @@ void dynacoe_text2d(std::vector<std::pair<std::string, Sandboxe::Script::Runtime
             {"spacingMode", {__text2d_spacing_mode_get, __text2d_spacing_mode_set}},
             {"font", {__text2d_font_get, __text2d_font_set}},
             {"mode", {__text2d_mode_get, __text2d_mode_set}},
-            {"etch", {__text2d_etch_get, __text2d_etch_set}},
             {"absolute", {__text2d_absolute_get, __text2d_absolute_set}},
             {"node", {__text2d_node_get, __text2d_node_set}}
 
