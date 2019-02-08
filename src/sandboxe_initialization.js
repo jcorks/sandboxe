@@ -547,9 +547,38 @@ var sandboxe = {
             renderMode : {
                 /** This is the default. Colors are interpreted as you would normally expect with the alpha channle being expressed as a transparency value.*/
                 normal : 0,
+            
+                /** Ignores all transparency */
+                opaque : 1,
+
                 /** Translucency is a way of expressing transparency. When a rasterization is translucent, the vertices colors are added to whatever is drawn underneath it. This is referred to in some places as additive blending. */
-                translucent : 1,
+                translucent : 2,
+
+                /** Ignores all color output. Etching information will still be output if applicable */
+                none : 3,
+
+            },
+
+
+           /**
+             * Flags for etching modes
+             * @namespace
+             */
+            etchMode : {
+                /** This is the default. No etching is done or considered. */
+                etchIgnore : 0,
+            
+                /** Along with drawing any visual, all drawn areas are enabled to be etched until the end of the frame. That is, visuals with the etchIn etching setting will show in these regions. */
+                etchDefine : 1,
+
+                /** Along with drawing any visual, any drawn areas with etching enabled gets set back to the default, un-etchable state. */
+                etchUndefine : 2,
+
+                /** Only draws the visual in areas where etching has been defined */
+                etchIn : 3,
+
             }
+ 
         },
 
 

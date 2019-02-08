@@ -63,10 +63,17 @@ function text2d() {
 
 
     /** 
-     * The rendering mode. See {@link sandboxe.render2d.renderMode}
+     * The rendering mode. See {@link sandboxe.component.render2d.renderMode}
      * @type {Number} 
      */
      this.mode = 0;
+
+    /** 
+     * The etching mode. See {@link sandboxe.component.render2d.etchMode}
+     * @type {Number} 
+     */
+     this.etch = 0;
+
 
 
      /**
