@@ -372,6 +372,7 @@ SANDBOXE_NATIVE_DEF(__entity_set_name) {
 
 
 SANDBOXE_NATIVE_DEF(__entity_set_on_enter) {
+    SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceNonNativeT);
     const Dynacoe::Entity::ID & id = ((EntityObjectID*)source)->id;
     Sandboxe::Entity * e = id.IdentifyAs<Sandboxe::Entity>();
     Sandboxe::Script::Runtime::Object * object = arguments[0];    
@@ -389,6 +390,7 @@ SANDBOXE_NATIVE_DEF(__entity_get_on_enter) {
 
 
 SANDBOXE_NATIVE_DEF(__entity_set_on_depart) {
+    SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceNonNativeT);
     const Dynacoe::Entity::ID & id = ((EntityObjectID*)source)->id;
     Sandboxe::Entity * e = id.IdentifyAs<Sandboxe::Entity>();
     Sandboxe::Script::Runtime::Object * object = arguments[0];    
@@ -406,6 +408,7 @@ SANDBOXE_NATIVE_DEF(__entity_get_on_depart) {
 
 
 SANDBOXE_NATIVE_DEF(__entity_set_on_remove) {
+    SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceNonNativeT);
     const Dynacoe::Entity::ID & id = ((EntityObjectID*)source)->id;
     Sandboxe::Entity * e = id.IdentifyAs<Sandboxe::Entity>();
     Sandboxe::Script::Runtime::Object * object = arguments[0];    
@@ -423,6 +426,7 @@ SANDBOXE_NATIVE_DEF(__entity_get_on_remove) {
 
 
 SANDBOXE_NATIVE_DEF(__entity_set_on_pre_step) {
+    SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceNonNativeT);
     const Dynacoe::Entity::ID & id = ((EntityObjectID*)source)->id;
     Sandboxe::Entity * e = id.IdentifyAs<Sandboxe::Entity>();
     Sandboxe::Script::Runtime::Object * object = arguments[0];    
@@ -441,6 +445,7 @@ SANDBOXE_NATIVE_DEF(__entity_get_on_pre_step) {
 
 
 SANDBOXE_NATIVE_DEF(__entity_set_on_step) {
+    SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceNonNativeT);
     const Dynacoe::Entity::ID & id = ((EntityObjectID*)source)->id;
     Sandboxe::Entity * e = id.IdentifyAs<Sandboxe::Entity>();
     Sandboxe::Script::Runtime::Object * object = arguments[0];    
@@ -458,6 +463,7 @@ SANDBOXE_NATIVE_DEF(__entity_get_on_step) {
 
 
 SANDBOXE_NATIVE_DEF(__entity_set_on_pre_draw) {
+    SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceNonNativeT);
     const Dynacoe::Entity::ID & id = ((EntityObjectID*)source)->id;
     Sandboxe::Entity * e = id.IdentifyAs<Sandboxe::Entity>();
     Sandboxe::Script::Runtime::Object * object = arguments[0];    
@@ -474,6 +480,7 @@ SANDBOXE_NATIVE_DEF(__entity_get_on_pre_draw) {
 
 
 SANDBOXE_NATIVE_DEF(__entity_set_on_draw) {
+    SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceNonNativeT);
     const Dynacoe::Entity::ID & id = ((EntityObjectID*)source)->id;
     Sandboxe::Entity * e = id.IdentifyAs<Sandboxe::Entity>();
     Sandboxe::Script::Runtime::Object * object = arguments[0];    
