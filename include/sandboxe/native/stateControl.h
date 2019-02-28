@@ -90,6 +90,11 @@ class StateControlObject : public Dynacoe::StateControl, public Sandboxe::Compon
         block->drawSrc = (drawSrcP.hint == Sandboxe::Script::Runtime::Primitive::TypeHint::ObjectReferenceNonNativeT) ? (Sandboxe::Script::Runtime::Object *)drawSrcP : nullptr;
         block->initSrc = (initSrcP.hint == Sandboxe::Script::Runtime::Primitive::TypeHint::ObjectReferenceNonNativeT) ? (Sandboxe::Script::Runtime::Object *)initSrcP : nullptr;
 
+        // remove any non-callable objects
+        if (block->stepSrc && !block->stepSrc->IsCallable()) block->stepSrc = nullptr;
+        if (block->drawSrc && !block->drawSrc->IsCallable()) block->drawSrc = nullptr;
+        if (block->initSrc && !block->initSrc->IsCallable()) block->initSrc = nullptr;
+
         if (block->stepSrc) AddNonNativeReference(block->stepSrc);        
         if (block->drawSrc) AddNonNativeReference(block->drawSrc);        
         if (block->initSrc) AddNonNativeReference(block->initSrc);        
@@ -99,12 +104,19 @@ class StateControlObject : public Dynacoe::StateControl, public Sandboxe::Compon
         loopReal.Draw = block->drawSrc ? NativeHandler_Draw : nullptr;
         loopReal.Init = block->initSrc ? NativeHandler_Init : nullptr;
         loopReal.data = block;
+
+        /*
+        if (!block->initSrc) {
+            Dynacoe::Console::Info() << (std::string)tag << " has no init!\n";
+        }
         
+    
         if (loopReal.Step == loopReal.Draw &&
             loopReal.Step == loopReal.Init) {
             
             Sandboxe::Script::Runtime::ScriptError("State " + std::string(tag) + " has neither onStep, onDraw, nor onInit defined.");
         }
+        */
         
         loops.push_back(block);
         

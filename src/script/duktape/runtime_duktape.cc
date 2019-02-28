@@ -146,6 +146,9 @@ Primitive Object::CallMethod(const std::string & name, const std::vector<Primiti
     return data->CallMethod(name, args);
 }
 
+bool Object::IsCallable() const {
+    return data->IsCallable();
+}
 
 bool Object::IsNative() const {
     return data->GetTypeID() > 0;

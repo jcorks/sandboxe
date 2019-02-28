@@ -128,6 +128,18 @@ Primitive Object_Internal::CallMethod(const std::string & name, const std::vecto
     return out;
 }
 
+bool Object_Internal::IsCallable() const {
+    auto source = DTContext::Get()->GetCTX();
+    int stackSz = duk_get_top(source);
+
+    duk_push_heapptr(DTContext::Get()->GetCTX(), heapRef);    
+    int result = duk_is_callable(DTContext::Get()->GetCTX(), -1);
+
+    duk_pop(DTContext::Get()->GetCTX());
+    assert(stackSz == duk_get_top(source));
+    return result!=0;
+}
+
 bool Object_Internal::IsNative() const {
     return true;
 }

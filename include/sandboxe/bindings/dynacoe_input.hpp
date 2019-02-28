@@ -222,7 +222,10 @@ SANDBOXE_NATIVE_DEF(__input_set_on_press) {
     auto b = (Sandboxe::ButtonListenerObject*)(Sandboxe::Script::Runtime::Object*)source;
     SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceNonNativeT);
     b->onPress = arguments[0];
-
+    if (b->onPress && !b->onPress->IsCallable()) {
+        b->onPress = nullptr;
+        return;
+    }
     b->AddNonNativeReference(b->onPress);
 }
 
@@ -230,6 +233,10 @@ SANDBOXE_NATIVE_DEF(__input_set_on_hold) {
     auto b = (Sandboxe::ButtonListenerObject*)(Sandboxe::Script::Runtime::Object*)source;
     SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceNonNativeT);
     b->onHold = arguments[0];
+    if (b->onHold && !b->onHold->IsCallable()) {
+        b->onHold = nullptr;
+        return;
+    }
 
     b->AddNonNativeReference(b->onHold);
 }
@@ -238,6 +245,11 @@ SANDBOXE_NATIVE_DEF(__input_set_on_release) {
     auto b = (Sandboxe::ButtonListenerObject*)(Sandboxe::Script::Runtime::Object*)source;
     SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceNonNativeT);
     b->onRelease = arguments[0];
+    if (b->onRelease && !b->onRelease->IsCallable()) {
+        b->onRelease = nullptr;
+        return;
+    }
+
 
     b->AddNonNativeReference(b->onRelease);
 }
@@ -246,12 +258,20 @@ SANDBOXE_NATIVE_DEF(__input_set_on_new_unicode) {
     auto b = (Sandboxe::UnicodeListenerObject*)(Sandboxe::Script::Runtime::Object*)source;
     SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceNonNativeT);
     b->onNewUnicode = arguments[0];
+    if (b->onNewUnicode && !b->onNewUnicode->IsCallable()) {
+        b->onNewUnicode = nullptr;
+        return;
+    }
 
     b->AddNonNativeReference(b->onNewUnicode);
 }
 
 
-
+SANDBOXE_NATIVE_DEF(__input_show_virtual_keyboard) {
+    SANDBOXE_ASSERT__ARG_COUNT(1);
+    bool b = arguments[0];
+    Dynacoe::Input::ShowVirtualKeyboard(b);
+}
 
 
 void dynacoe_input(std::vector<std::pair<std::string, Sandboxe::Script::Runtime::Function>> & fns) {
@@ -321,6 +341,7 @@ void dynacoe_input(std::vector<std::pair<std::string, Sandboxe::Script::Runtime:
     //fns.push_back({"__input_add_listener", __input_add_listener});
     //fns.push_back({"__input_remove_listener", __input_remove_listener});
     fns.push_back({"__input_get_last_unicode", __input_get_last_unicode});
+    fns.push_back({"__input_show_virtual_keyboard", __input_show_virtual_keyboard});
 }
 
 }

@@ -58,6 +58,7 @@ class Object_Internal {
     Primitive Get(const std::string & name);
     void Set(const std::string & name, const Primitive &);
     Primitive CallMethod(const std::string & name = "", const std::vector<Primitive> & args = {});
+    bool IsCallable() const;
     bool IsNative() const;
     int GetTypeID() const;
 

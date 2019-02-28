@@ -1163,7 +1163,14 @@ var sandboxe = {
          * @returns {Number} 
          * @function 
          */
-        getLastUnicode : __input_get_last_unicode
+        getLastUnicode : __input_get_last_unicode,
+
+
+        /**
+         * Attempts to open/close a virtual keyboard on the system if available.
+         * @param {Boolean} show Whether to show or hide the virtual keyboard.
+         */
+        showVirtualKeyboard : __input_show_virtual_keyboard
     },
     
     /**

@@ -182,7 +182,7 @@ class Object {
     // object itself is attempted to be called as a function
     Primitive CallMethod(const std::string & name = "", const std::vector<Primitive> & args = {});
     
-    bool IsCallable();
+    bool IsCallable() const;
     
     // Returns whether the object is native. NonNative objects 
     // have restricted functionality.

@@ -114,6 +114,7 @@ Primitive::operator std::string() const {
           case TypeHint::StringT:
             break;
           case TypeHint::UInt32T:
+          case TypeHint::UInt64T:
           case TypeHint::IntegerT:
             snprintf(format_buffer_s, 255, "%" PRIu64, intData);
             *((std::string*)&data) = std::string(format_buffer_s);
