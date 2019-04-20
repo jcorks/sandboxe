@@ -560,6 +560,29 @@ var sandboxe = {
             },
 
 
+
+            /**
+             * Flags for etching modes. Etching allwos for defining regions where 2D visuals are allowed to be displayed. These regions are defined by rendering with "etchMode.define". Once regions are defined, using the "etchMode.in" flag will only allow that rendering to appear in the defined regions.
+             * @namespace
+             */
+            etchMode : {
+
+                /** This is the default. Etching is ignored entirely.*/
+                ignore : 0,
+            
+                /** Defines an etching region. Note that visual information may still be displayed. */
+                define : 1,
+
+                /** Reverts a region back to a non-defined etching space, undoing an etched region.*/
+                undefine : 2,
+        
+                /** Only shows rendering results of pixels that fall within a defined etch region. */
+                in : 3,
+
+                /** Only shows rendering results of pixels that fall outside a defined etch region. */                
+                out : 4
+            },
+
  
         },
 

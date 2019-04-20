@@ -148,6 +148,18 @@ SANDBOXE_NATIVE_DEF(__shape2d_mode_set) {
 
 
 
+SANDBOXE_NATIVE_DEF(__shape2d_etch_get) {
+    auto shape = (Sandboxe::Shape2DObject*)source;
+    context.SetReturnValue((int)shape->etch);
+}
+
+SANDBOXE_NATIVE_DEF(__shape2d_etch_set) {
+    auto shape = (Sandboxe::Shape2DObject*)source;
+    int arg = arguments[0];
+    if (arg < 0 || arg > (int)Dynacoe::Render2D::EtchMode::EtchOut) return;
+    shape->etch = (Dynacoe::Render2D::EtchMode)arg;
+}
+
 SANDBOXE_NATIVE_DEF(__shape2d_absolute_get) {
     auto shape = (Sandboxe::Shape2DObject*)source;
     context.SetReturnValue(shape->GetAbsolute());
@@ -225,6 +237,7 @@ void dynacoe_shape2d(std::vector<std::pair<std::string, Sandboxe::Script::Runtim
 
             {"color", {__shape2d_color_get, __shape2d_color_set}},
             {"mode", {__shape2d_mode_get, __shape2d_mode_set}},
+            {"etch", {__shape2d_etch_get, __shape2d_etch_set}},
             {"absolute", {__shape2d_absolute_get, __shape2d_absolute_set}},
             {"node", {__shape2d_node_get, __shape2d_node_set}},
 

@@ -69,6 +69,13 @@ function text2d() {
      this.mode = 0;
 
 
+    /** 
+     * The etching mode. See {@link sandboxe.render2d.etchMode}
+     * @type {Number} 
+     */
+     this.etch = 0;
+
+
      /**
       * Whether the shape should be drawn using the absolute positions 
       * of its geometry. If absolute, node information is ignored.

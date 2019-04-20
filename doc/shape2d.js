@@ -104,6 +104,12 @@ function shape2d() {
      this.mode = 0;
 
 
+    /** 
+     * The etching mode. See {@link sandboxe.render2d.etchMode}
+     * @type {Number} 
+     */
+     this.etch = 0;
+
 
 
     return this;
