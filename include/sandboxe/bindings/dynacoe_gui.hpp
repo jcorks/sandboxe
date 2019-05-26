@@ -59,10 +59,6 @@ SANDBOXE_NATIVE_DEF(__gui_hovered_get) {
     context.SetReturnValue(gui->IsHovered());
 }
 
-SANDBOXE_NATIVE_DEF(__gui_clicked_get) {
-    auto gui = (Sandboxe::GUIObject*)source;    
-    context.SetReturnValue(gui->IsClicked());
-}
 
 SANDBOXE_NATIVE_DEF(__gui_being_dragged_get) {
     auto gui = (Sandboxe::GUIObject*)source;    
@@ -185,7 +181,6 @@ void dynacoe_gui(std::vector<std::pair<std::string, Sandboxe::Script::Runtime::F
             {"height", {__gui_height_get, __gui_height_set}},
             {"focused", {__gui_focused_get, SANDBOXE_NATIVE_EMPTY}},
             {"hovered", {__gui_hovered_get, SANDBOXE_NATIVE_EMPTY}},
-            {"clicked", {__gui_clicked_get, SANDBOXE_NATIVE_EMPTY}},
             {"beingDragged", {__gui_being_dragged_get, SANDBOXE_NATIVE_EMPTY}},
             {"node", {__gui_node_get, SANDBOXE_NATIVE_EMPTY}}
 

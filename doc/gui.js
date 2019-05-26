@@ -10,6 +10,7 @@
  * - "on-click"
  * - "on-enter"
  * - "on-leave"
+ * - "on-hover"
  * - "on-drag"
  * - "on-focus"
  * - "on-unfocus"
@@ -68,12 +69,6 @@ function gui() {
      * @type {Boolean}
      */
     this.hovered = false;
-
-    /**
-     * Whether the pointer clicked in this gui's rectangular region. The property is read-only.
-     * @type {Number}
-     */
-    this.clicked = false;
 
     /**
      * Returns whether the user is attempting to drag this gui.

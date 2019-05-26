@@ -140,6 +140,17 @@ SANDBOXE_NATIVE_DEF(__display_get_height) {
 }
 
 
+SANDBOXE_NATIVE_DEF(__view_manager_get_clipboard) {
+    context.SetReturnValue(Dynacoe::ViewManager::GetCurrentClipboardAsString());
+}
+
+SANDBOXE_NATIVE_DEF(__view_manager_set_clipboard) {
+    Dynacoe::ViewManager::SetCurrentClipboardAsString(arguments[0]);
+
+}
+
+
+
 
 SANDBOXE_NATIVE_DEF(__view_manager_create_display) {
     std::string name = "";
@@ -216,7 +227,7 @@ void dynacoe_display(std::vector<std::pair<std::string, Sandboxe::Script::Runtim
             {"width", {__display_get_width, SANDBOXE_NATIVE_EMPTY}},
             {"height", {__display_get_height, SANDBOXE_NATIVE_EMPTY}},
             {"x", {__display_get_x, SANDBOXE_NATIVE_EMPTY}},
-            {"y", {__display_get_y, SANDBOXE_NATIVE_EMPTY}}
+            {"y", {__display_get_y, SANDBOXE_NATIVE_EMPTY}},
 
         } 
     );
@@ -224,6 +235,8 @@ void dynacoe_display(std::vector<std::pair<std::string, Sandboxe::Script::Runtim
     fns.push_back({"__display_destroy", __view_manager_destroy_display});
     fns.push_back({"__display_set_main", __view_manager_set_main});
     fns.push_back({"__display_get_main", __view_manager_get_main});
+    fns.push_back({"__display_set_clipboard", __view_manager_set_clipboard});
+    fns.push_back({"__display_get_clipboard", __view_manager_get_clipboard});
  
 }
     

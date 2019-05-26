@@ -228,8 +228,45 @@ var sandboxe = {
          *
          * @returns {display}
          * @function
+        
+         * Tells sandboxe which display to update and draw to. Once set as a main display,
+         * this display will receive all update requests from the renderer. In addition,
+         * sandboxe will use this display as the source of input from the user on systems 
+         * where input comes form the display (i.e. WINAPI or X11).
+         *
+         * @param {display} display Display to set as the main.
+         * @function
+         */
+        setMain : __display_set_main,
+        
+        /**
+         * Returns the current main display for sandboxe in use, if any.
+         *
+         * @returns {display}
+         * @function
          */
         getMain : __display_get_main,
+
+
+        /**
+         * Returns the current string contents of the system/ current display's clipboard, if applicable.
+         * On systems where the clipbaord is either inaccessible, unavailable, or does not 
+         * exits, an empty string is returned.
+         * 
+         * @returns {String}
+         * @function
+         */
+        getClipboard : __display_get_clipboard,
+
+
+        /**
+         * Attempts to set clipboard data of the current system / current dusplay's clipboard.
+         * The setting of the clipboard cant be guaranteed.
+         * 
+         * @param {String}
+         * @function
+         */
+        setClipboard : __display_set_clipboard,
 
         
         /**
