@@ -218,6 +218,12 @@ SANDBOXE_NATIVE_DEF(__input_get_on_new_unicode) {
 }
 
 
+SANDBOXE_NATIVE_DEF(__input_get_on_repeat_unicode) {
+    auto b = (Sandboxe::UnicodeListenerObject*)(Sandboxe::Script::Runtime::Object*)source;
+    if (b->onRepeatUnicode)
+        context.SetReturnValue(b->onRepeatUnicode);
+}
+
 SANDBOXE_NATIVE_DEF(__input_set_on_press) {
     auto b = (Sandboxe::ButtonListenerObject*)(Sandboxe::Script::Runtime::Object*)source;
     SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceNonNativeT);
@@ -264,6 +270,19 @@ SANDBOXE_NATIVE_DEF(__input_set_on_new_unicode) {
     }
 
     b->AddNonNativeReference(b->onNewUnicode);
+}
+
+
+SANDBOXE_NATIVE_DEF(__input_set_on_repeat_unicode) {
+    auto b = (Sandboxe::UnicodeListenerObject*)(Sandboxe::Script::Runtime::Object*)source;
+    SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceNonNativeT);
+    b->onRepeatUnicode = arguments[0];
+    if (b->onRepeatUnicode && !b->onRepeatUnicode->IsCallable()) {
+        b->onRepeatUnicode = nullptr;
+        return;
+    }
+
+    b->AddNonNativeReference(b->onRepeatUnicode);
 }
 
 
@@ -319,6 +338,7 @@ void dynacoe_input(std::vector<std::pair<std::string, Sandboxe::Script::Runtime:
         // managed properties,
         {
             {"onNewUnicode", {__input_get_on_new_unicode, __input_set_on_new_unicode}},
+            {"onRepeatUnicode", {__input_get_on_repeat_unicode, __input_set_on_repeat_unicode}},
 
 
         }

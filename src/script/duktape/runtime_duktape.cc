@@ -94,6 +94,14 @@ void Sandboxe::Script::Runtime::ScriptError(const std::string & str) {
     DTContext::Get()->ThrowErrorObject(str); 
 }
 
+std::string Sandboxe::Script::Runtime::GetContextInfo() {
+    return DTContext::Get()->InspectCallstackEntryAsString();
+}
+
+static void ccdt_pinfo() {
+    std::cout << Sandboxe::Script::Runtime::GetContextInfo() << std::endl;;
+}
+
 void Sandboxe::Script::Runtime::PerformGarbageCollection() {
     //??
 }

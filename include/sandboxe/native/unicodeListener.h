@@ -9,11 +9,12 @@ class UnicodeListenerObject : public Dynacoe::UnicodeListener, public Sandboxe::
         Sandboxe::Script::Runtime::Object((int)Sandboxe::NativeType::UnicodeListenerT)
     {
         onNewUnicode = nullptr;
-
+        onRepeatUnicode = nullptr;
     }
     
 
     Sandboxe::Script::Runtime::Object * onNewUnicode;
+    Sandboxe::Script::Runtime::Object * onRepeatUnicode;
 
 
     void OnGarbageCollection() {
@@ -26,6 +27,10 @@ class UnicodeListenerObject : public Dynacoe::UnicodeListener, public Sandboxe::
       
     void OnNewUnicode(int unicode) {
         if (onNewUnicode) onNewUnicode->CallMethod("", {unicode});
+    }
+
+    void OnRepeatUnicode(int unicode) {
+        if (onRepeatUnicode) onRepeatUnicode->CallMethod("", {unicode});
     }
 
 

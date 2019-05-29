@@ -21,6 +21,9 @@ class Text2DObject : public Dynacoe::Text2D, public Sandboxe::ComponentAdaptor {
         localColor = new Sandboxe::ColorObject;
         localColor->color = "white";
         localColor->delta.Set(ColorChanged, this);
+
+        localCharPosition = new Sandboxe::VectorObject();
+        localDimensions = new Sandboxe::VectorObject();
     }
 
     static void ColorChanged(ColorObject * object, void * data) {
@@ -40,7 +43,7 @@ class Text2DObject : public Dynacoe::Text2D, public Sandboxe::ComponentAdaptor {
     }
     
     void OnGarbageCollection() {
-        
+        // delete local objects?? maybe??
     }
     
     
@@ -48,6 +51,8 @@ class Text2DObject : public Dynacoe::Text2D, public Sandboxe::ComponentAdaptor {
         return "Text2D";
     }
 
+    Sandboxe::VectorObject * localCharPosition;
+    Sandboxe::VectorObject * localDimensions;
     
     #include "component_implementation_common"
     

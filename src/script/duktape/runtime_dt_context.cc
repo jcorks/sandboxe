@@ -190,6 +190,54 @@ void DTContext::ThrowErrorObject(const std::string & err) {
     duk_throw(source);
 }
 
+std::string DTContext::InspectCallstackEntryAsString() {
+    int stackSize = duk_get_top(source);
+
+    int level = -1;   
+    duk_inspect_callstack_entry(source, level);
+    std::vector<std::string> fns;
+    std::vector<std::string> lineNumbers;
+    std::string empty;
+    while(true) {
+        TObject current(source);
+    
+        if (std::string(current.ThisAsPrimitive()) == empty) {
+            duk_pop(source);
+            break;
+        } else {
+            level--;
+            std::string fn = "<unknown>";
+            std::string lineNumber = current.Get("lineNumber");
+
+            duk_get_prop_string(source, -1, "function");
+            {
+                TObject nameObject(source);
+                std::string temp = nameObject.Get("name");
+                if (temp != "") {
+                    fn = temp;
+                }
+            }
+            duk_pop(source);
+
+
+            fns.push_back(fn);
+            lineNumbers.push_back(lineNumber);
+            duk_pop(source);
+            duk_inspect_callstack_entry(source, level);
+        }
+    }
+
+    Dynacoe::Chain out = "Backtrace:\n";
+    for(uint32_t i = 0; i < fns.size(); ++i) {
+        out = out <<  "    (#" << i << ") -> " << fns[i] <<  "() @ Line " << lineNumbers[i] << "\n"; 
+    }
+
+
+    assert(duk_get_top(source) == stackSize);
+    return out;
+
+}
+
 
 static duk_ret_t object_finalizer(duk_context * source) {
     // the object SHOULD be the first on the stack

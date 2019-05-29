@@ -55,12 +55,18 @@ class DTContext {
     // should not be used after this call.
     void RemoveHeapEntry(uint32_t);
 
+
+    // Inspects the duktape stack and returns a basic backtrace
+    std::string InspectCallstackEntryAsString();
+
  
     // Return context
     duk_context * GetCTX() {return source;}
 
     // Gets the singleton reference;
     static DTContext * Get() {return global;}
+
+    
     
   private:
     duk_context * source;

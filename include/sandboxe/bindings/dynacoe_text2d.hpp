@@ -26,22 +26,20 @@ namespace Bindings {
 SANDBOXE_NATIVE_DEF(__text2d_get_char_position) {
     SANDBOXE_ASSERT__ARG_COUNT(1);
     auto shape = (Sandboxe::Text2DObject*)source;
-    auto out = new Sandboxe::VectorObject();
-    *out->vector = shape->GetCharPosition(arguments[0]);
-    context.SetReturnValue(out);
+    *shape->localCharPosition->vector = shape->GetCharPosition(arguments[0]);
+    context.SetReturnValue(shape->localCharPosition);
 }
 
 SANDBOXE_NATIVE_DEF(__text2d_get_dimensions) {
     auto shape = (Sandboxe::Text2DObject*)source;
-    auto out = new Sandboxe::VectorObject();
 
     if (arguments.size() == 0) {
-        *out->vector = shape->GetDimensions();
+        *shape->localDimensions->vector = shape->GetDimensions();
     } else {
-        *out->vector = shape->GetDimensions(arguments[0].Data());
+        *shape->localDimensions->vector = shape->GetDimensions(arguments[0].Data());
     }
     
-    context.SetReturnValue(out);
+    context.SetReturnValue(shape->localDimensions);
 }
 
 
