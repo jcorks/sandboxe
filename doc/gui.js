@@ -8,6 +8,8 @@
  * Known {@link component} events:</br>
  * <pre>
  * - "on-click"
+ * - "on-press"
+ * - "on-release"
  * - "on-enter"
  * - "on-leave"
  * - "on-hover"
