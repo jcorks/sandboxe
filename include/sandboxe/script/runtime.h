@@ -135,11 +135,6 @@ void Load(const std::string & path);
 void ScriptError(const std::string & str);
 
 
-// Attempts to get debugging information of the current calling context.
-// No guarantee on the contents of the string. Some imeplementations may choose 
-// not to implement this function for security reasons or limitations.
-std::string GetContextInfo();
-
 // call occasionally to cleanup built-up data generated for management 
 // of communicating with the scripting language
 void PerformGarbageCollection();

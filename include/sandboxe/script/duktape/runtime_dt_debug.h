@@ -17,6 +17,8 @@ class DTDebugger {
   public:
     DTDebugger(DTContext *);
 
+    std::string GetBacktraceString() const;
+
 
     void Pause();
 

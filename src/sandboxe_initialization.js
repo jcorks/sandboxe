@@ -228,6 +228,17 @@ var sandboxe = {
         create : __display_create,
 
         /**
+         * Convenience function: equavalent to creating a display and setting it as the main display. See {@link display}.
+         *
+         * @param {String} name Optional: A name for the display. The default is "sandboxe"
+         * @param {Number} width Optional: Width for the display. The default is 640
+         * @param {Number} height Optional: Height for the display. The default is 480
+         * @returns {display} 
+         * @function
+         */
+        createMain : function(name, w, h) {var d=__display_create(name, w, h); __display_set_main(d); return d;},
+
+        /**
          * Destroys a display object.
          *
          * @param {display} display Display to remove from the system.
