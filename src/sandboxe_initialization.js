@@ -185,7 +185,30 @@ var sandboxe = {
          */
         assert : function(assertion) {
             if (!assertion) throw 'Assertion failure.';
-        }
+        },
+
+        /**
+         * Pauses the engine and opens the debugger. The callstack is frozen in this context until {@link sandboxe.debug.resume} is called.
+         *
+         * @function
+         */
+        pause : __debug_pause,
+
+        /**
+         * If currently paused, breaks the resumes the engine and closes the debugger.
+         *
+         * @function
+         */
+        resume : __debug_resume,
+
+        /**
+         * Returns a summary of the current callstack
+         *
+         * @function
+         */
+        backtrace : __debug_backtrace
+
+
     },
 
     /**
@@ -1396,6 +1419,9 @@ var sandboxe = {
          */
         include : function(script, b) {__script_include(script, 1, b==undefined?false:true);}
     },
+
+    
+
 
     /**
      * @namespace 

@@ -5,6 +5,7 @@
 ./src/script/duktape/runtime_dt_object.cc
 ./src/script/duktape/runtime_dt_tobject.cc
 ./src/script/duktape/runtime_dt_context.cc
+./src/script/duktape/runtime_dt_debug.cc
 ./src/trunk.cc
 
 ./src/native/component.cc

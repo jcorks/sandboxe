@@ -5,6 +5,8 @@
 #include <sandboxe/entity/terminal.h>
 #include <Dynacoe/Library.h>
 #include <Dynacoe/RawData.h>
+#include <sandboxe/script/duktape/runtime_dt_debug.h>
+
 
 #include <cassert>
 
@@ -79,7 +81,23 @@ void runtime_include_script(Object *, const std::vector<Primitive> & args, Conte
 }
 
 
+#ifdef SANDBOXE_DT_DEBUG
+static DTDebugger * debugger = nullptr;
+void runtime_debug_pause(Object *, const std::vector<Primitive> & args, Context & context) {
+    debugger->Pause();
+}
 
+void runtime_debug_resume(Object *, const std::vector<Primitive> & args, Context & context) {
+    debugger->Resume();
+}
+
+void runtime_debug_backtrace(Object *, const std::vector<Primitive> & args, Context & context) {
+    Dynacoe::Console::Warning() << 
+        DTContext::Get()->InspectCallstackEntryAsString() << "\n";
+
+}
+
+#endif
 
   
 DTContext::DTContext() {
@@ -101,6 +119,16 @@ DTContext::DTContext() {
     duk_push_global_object(source);
     TObject global(source);
         global.SetFunction("__script_include", runtime_include_script);
+
+        #ifdef SANDBOXE_DT_DEBUG
+        debugger = new DTDebugger(DTContext::Get());
+        global.SetFunction("__debug_pause", runtime_debug_pause);
+        global.SetFunction("__debug_resume", runtime_debug_resume);
+        global.SetFunction("__debug_backtrace", runtime_debug_backtrace);
+
+        #endif
+
+
     duk_pop(source);
     
 
@@ -197,6 +225,8 @@ std::string DTContext::InspectCallstackEntryAsString() {
     duk_inspect_callstack_entry(source, level);
     std::vector<std::string> fns;
     std::vector<std::string> lineNumbers;
+    std::vector<std::string> filenames;
+
     std::string empty;
     while(true) {
         TObject current(source);
@@ -208,11 +238,13 @@ std::string DTContext::InspectCallstackEntryAsString() {
             level--;
             std::string fn = "<unknown>";
             std::string lineNumber = current.Get("lineNumber");
+            std::string filename = "";
 
             duk_get_prop_string(source, -1, "function");
             {
                 TObject nameObject(source);
                 std::string temp = nameObject.Get("name");
+                filename = nameObject.Get("fileName");
                 if (temp != "") {
                     fn = temp;
                 }
@@ -222,6 +254,7 @@ std::string DTContext::InspectCallstackEntryAsString() {
 
             fns.push_back(fn);
             lineNumbers.push_back(lineNumber);
+            filenames.push_back(filename);
             duk_pop(source);
             duk_inspect_callstack_entry(source, level);
         }
@@ -229,7 +262,7 @@ std::string DTContext::InspectCallstackEntryAsString() {
 
     Dynacoe::Chain out = "Backtrace:\n";
     for(uint32_t i = 0; i < fns.size(); ++i) {
-        out = out <<  "    (#" << i << ") -> " << fns[i] <<  "() @ Line " << lineNumbers[i] << "\n"; 
+        out = out <<  "    (#" << i << ") -> " << fns[i] <<  "() " << filenames[i] << " @ Line " << lineNumbers[i] << "\n"; 
     }
 
 

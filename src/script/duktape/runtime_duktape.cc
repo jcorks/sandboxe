@@ -37,6 +37,8 @@ void Sandboxe::Script::Runtime::Initialize() {
     DTContext::Get()->ApplyGlobalFunctions(Sandboxe::Script::GatherNativeBindings());
 }  
 
+
+
 void Sandboxe::Script::Runtime::Start() {
     // innitialize dynacoe shell extension
     Sandboxe::Script::Shell::Initialize();
@@ -68,8 +70,6 @@ void Sandboxe::Script::Runtime::Start() {
         << "Backend status:\n\n";
 
     Dynacoe::Console::OverlayMessageMode(Dynacoe::Console::MessageMode::Standard);
-
-
 
 
       
