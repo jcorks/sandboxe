@@ -11,5 +11,4 @@
 ./src/native/component.cc
 ./src/native/entity.cc
 ./src/native/display.cc
-./duktape-src-debug/duktape.c
-./duktape-src-debug/duk_trans_dvalue.c
+./duktape-src/duktape.c
