@@ -24,7 +24,16 @@ class DTDebugger {
 
     void Resume();
 
-
+    void StepInto();
+    
+    void StepOver();
+    
+    void StepOut();
+    
+    void AddBreak(const std::string & filename, int line);
+    
+    
+    
     
     int GetCurrentLine() const;
 

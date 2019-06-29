@@ -9,118 +9,154 @@ using namespace Sandboxe::Script::Runtime;
 
 
 static DTContext * ctx_attached = nullptr;
+static duk_trans_dvalue_ctx * trans_ctx = nullptr;
+static std::vector<std::string> messagesPending;
+static DTDebugger * debugger = nullptr;
 
 
+enum DTCommand{
+    DT_COMMAND__NONE,
+    DT_COMMAND__INIT,
+    DT_COMMAND__PAUSE,
+    DT_COMMAND__RESUME,
+    DT_COMMAND__STEP_INTO,
+    DT_COMMAND__STEP_OVER,
+    DT_COMMAND__STEP_OUT,
+    DT_COMMAND__ADD_BREAK,
+    DT_COMMAND__GET_CALL_STACK,
+
+
+};
+
+static DTCommand lastCommand;
+
+
+
+static void sandboxe_dt_trans_command__pause(duk_trans_dvalue_ctx * ctx) {
+    duk_trans_dvalue_send_req(ctx);
+    duk_trans_dvalue_send_integer(ctx, 0x12);  
+    duk_trans_dvalue_send_eom(ctx);
+    lastCommand = DT_COMMAND__PAUSE;
+}
+
+
+static void sandboxe_dt_trans_command__resume(duk_trans_dvalue_ctx * ctx) {
+    duk_trans_dvalue_send_req(ctx);
+    duk_trans_dvalue_send_integer(ctx, 0x13);  
+    duk_trans_dvalue_send_eom(ctx);
+    lastCommand = DT_COMMAND__RESUME;
+    
+}
+
+
+static void sandboxe_dt_trans_command__step_into(duk_trans_dvalue_ctx * ctx) {
+    duk_trans_dvalue_send_req(ctx);
+    duk_trans_dvalue_send_integer(ctx, 0x14);  
+    duk_trans_dvalue_send_eom(ctx);
+    lastCommand = DT_COMMAND__STEP_INTO;
+}
+
+static void sandboxe_dt_trans_command__step_over(duk_trans_dvalue_ctx * ctx) {
+    duk_trans_dvalue_send_req(ctx);
+    duk_trans_dvalue_send_integer(ctx, 0x15);  
+    duk_trans_dvalue_send_eom(ctx);
+    lastCommand = DT_COMMAND__STEP_OVER;
+}
+
+static void sandboxe_dt_trans_command__step_out(duk_trans_dvalue_ctx * ctx) {
+    duk_trans_dvalue_send_req(ctx);
+    duk_trans_dvalue_send_integer(ctx, 0x16);  
+    duk_trans_dvalue_send_eom(ctx);
+    lastCommand = DT_COMMAND__STEP_OUT;
+}
+
+static void sandboxe_dt_trans_command__add_break(duk_trans_dvalue_ctx * ctx, const std::string & filename, int line) {
+    duk_trans_dvalue_send_req(ctx);
+    duk_trans_dvalue_send_integer(ctx, 0x18);  
+    duk_trans_dvalue_send_string(ctx, filename.c_str());
+    duk_trans_dvalue_send_integer(ctx, line);
+    duk_trans_dvalue_send_eom(ctx);
+    lastCommand = DT_COMMAND__ADD_BREAK;
+}
+
+static void sandboxe_dt_trans_command__get_call_stack(duk_trans_dvalue_ctx * ctx) {
+    duk_trans_dvalue_send_req(ctx);
+    duk_trans_dvalue_send_integer(ctx, 0x1c);  
+    duk_trans_dvalue_send_eom(ctx);
+    lastCommand = DT_COMMAND__GET_CALL_STACK;
+    
+}
+
+ 
 void sandboxe_dt_trans_received(duk_trans_dvalue_ctx * ctx, duk_dvalue * dv) {
     char output[DUK_DVALUE_TOSTRING_BUFLEN];    
     duk_dvalue_to_string(dv, output);
     printf("dvalue received: %s\n", output);
+    messagesPending.push_back(output);
+    fflush(stdout);
 }
 
 void sandboxe_dt_trans_cooperate(duk_trans_dvalue_ctx * ctx, int block) {
-    static int first_blocked = 1;
+    
+    if (messagesPending.size() && messagesPending[messagesPending.size()-1] == "EOM") {
+        switch(lastCommand) {
+          case DT_COMMAND__ADD_BREAK:
+            if (messagesPending[0] == "ERR") {
+                Dynacoe::Console::Error() << "Could not add breakpoint! (" << messagesPending[2] << "\n";
+            } else {
+                Dynacoe::Console::Info() << "Added breakpoint " << messagesPending[0] << "\n";
+            }
+            break;
+          
+        
+            
+          case DT_COMMAND__RESUME:
+            Dynacoe::Console::Show(false);
+            Dynacoe::Engine::Resume();
+            printf("Received resume response.\n"); fflush(stdout);
+            break;
+            
+          case DT_COMMAND__GET_CALL_STACK:
+            {
+                Dynacoe::Console::Info() << "Callstack:\n";
 
-    if (!block) {
-        /* Duktape is not blocked; you can cooperate with e.g. a user
-         * interface here and send dvalues to Duktape, but don't block.
-         */
-        return;
-    }
+                for(size_t i = 0; i < messagesPending.size()/4; ++i) {
+                    Dynacoe::Console::Info() <<
+                        messagesPending[i*4 + 1] << "()\t" <<
+                        messagesPending[i*4 + 0] << ":" <<
+                        messagesPending[i*4 + 2] << "\n";
+                }
+            }
+            break;
 
-    /* Duktape is blocked on a read and won't continue until debug
-     * command(s) are sent.
-     *
-     * Normally you'd enter your own event loop here, and process
-     * events until something needs to be sent to Duktape.  For
-     * example, the user might press a "Step over" button in the
-     * UI which would cause dvalues to be sent.  You can then
-     * return from this callback.
-     *
-     * The code below sends some example messages for testing the
-     * dvalue handling of the transport.
-     *
-     * If you create dvalues manually and send them using
-     * duk_trans_dvalue_send(), you must free the dvalues after
-     * the send call returns using duk_dvalue_free().
-     */
 
-    if (first_blocked) {
-        char *tmp;
-        int i;
-
-        /* First time Duktape becomes blocked, send DumpHeap which
-         * exercises a lot of parsing code.
-         *
-         * NOTE: Valgrind may complain about reading uninitialized
-         * bytes.  This is caused by the DumpHeap command writing out
-         * verbatim duk_tval values which are intentionally not
-         * always fully initialized for performance reasons.
-         */
-        first_blocked = 0;
-
-        fprintf(stderr, "Duktape is blocked, send DumpHeap\n");
-        fflush(stderr);
-
-        duk_trans_dvalue_send_req(ctx);
-        duk_trans_dvalue_send_integer(ctx, 0x20);  /* DumpHeap */
-        duk_trans_dvalue_send_eom(ctx);
-
-        /* Also send a dummy TriggerStatus request with trailing dvalues
-         * ignored by Duktape; Duktape will parse the dvalues to be able to
-         * skip them, so that the dvalue encoding is exercised.
-         */
-
-        tmp =(char*) malloc(100000);  /* long buffer, >= 65536 chars */
-        for (i = 0; i < 100000; i++) {
-            tmp[i] = (char) i;
+          default:
+            sandboxe_dt_trans_command__get_call_stack(ctx);
+            printf("Received %d messages.\n", messagesPending.size());
+            fflush(stdout);
         }
-        duk_trans_dvalue_send_req(ctx);
-        duk_trans_dvalue_send_integer(ctx, 0x11);  /* TriggerStatus */
-        duk_trans_dvalue_send_string(ctx, "dummy");  /* short, <= 31 chars */
-        duk_trans_dvalue_send_string(ctx, "123456789012345678901234567890foobar");  /* medium, >= 32 chars */
-        duk_trans_dvalue_send_lstring(ctx, (const char *) tmp, 65535UL);
-        duk_trans_dvalue_send_lstring(ctx, (const char *) tmp, 65536UL);
-        duk_trans_dvalue_send_lstring(ctx, (const char *) tmp, 100000UL);
-        duk_trans_dvalue_send_buffer(ctx, (const char *) tmp, 255U);
-        duk_trans_dvalue_send_buffer(ctx, (const char *) tmp, 65535UL);
-        duk_trans_dvalue_send_buffer(ctx, (const char *) tmp, 65536UL);
-        duk_trans_dvalue_send_buffer(ctx, (const char *) tmp, 100000UL);
-        duk_trans_dvalue_send_unused(ctx);
-        duk_trans_dvalue_send_undefined(ctx);
-        duk_trans_dvalue_send_null(ctx);
-        duk_trans_dvalue_send_true(ctx);
-        duk_trans_dvalue_send_false(ctx);
-        duk_trans_dvalue_send_number(ctx, 123.456);
-        duk_trans_dvalue_send_object(ctx, 12 /*classnum*/, (const char *) tmp, 8);  /* fake ptr len */
-        duk_trans_dvalue_send_pointer(ctx, (const char *) tmp, 8);  /* fake ptr len */
-        duk_trans_dvalue_send_lightfunc(ctx, 0xdabc /*lf_flags*/, (const char *) tmp, 8);  /* fake ptr len */
-        duk_trans_dvalue_send_heapptr(ctx, (const char *) tmp, 8);  /* fake ptr len */
+        messagesPending.clear();
 
-        duk_trans_dvalue_send_eom(ctx);
+    
     }
+    if (!block) return; // still receiving messages
 
-    fprintf(stderr, "Duktape is blocked, send Eval and StepInto to resume execution\n");
-    fflush(stderr);
+    
+    Dynacoe::Engine::Iterate();
 
-    /* duk_trans_dvalue_send_req_cmd() sends a REQ dvalue followed by
-     * an integer dvalue (command) for convenience.
-     */
-
-    duk_trans_dvalue_send_req_cmd(ctx, 0x1e);  /* 0x1e = Eval */
-    duk_trans_dvalue_send_string(ctx, "8+8");
-    duk_trans_dvalue_send_eom(ctx);
-
-    duk_trans_dvalue_send_req_cmd(ctx, 0x14);  /* 0x14 = StepOver */
-    duk_trans_dvalue_send_eom(ctx);
 }
 
 
 void sandboxe_dt_trans_handshake(duk_trans_dvalue_ctx * ctx, const char * handshake) {
     printf("handshake: %s\n", handshake);
+    fflush(stdout);
+
 }
 
 void sandboxe_dt_trans_detached(duk_trans_dvalue_ctx * ctx) {
     printf("was detached!\n");
+    fflush(stdout);
+
 }
 
 DTDebugger::DTDebugger(DTContext * context) {
@@ -133,13 +169,14 @@ void DTDebugger::Pause() {
         return;
     }
 
-    duk_trans_dvalue_ctx * trans_ctx = duk_trans_dvalue_init();
+    trans_ctx = duk_trans_dvalue_init();
     if (!trans_ctx) {
         return;
     }
 
 
     ctx_attached = ctx;
+    debugger = this;
     paused = true;
 
     Dynacoe::Console::Show(true);
@@ -166,13 +203,13 @@ void DTDebugger::Pause() {
         duk_trans_dvalue_detached_cb,
         (void *) trans_ctx
     );
-
     
     while(Dynacoe::Engine::IsPaused()) {
-        Dynacoe::Engine::Iterate();
         duk_debugger_cooperate(ctx->GetCTX());
+        Dynacoe::Engine::Iterate();
     }
-    duk_debugger_detach(ctx->GetCTX());
+    
+
     paused = false;
     Dynacoe::Engine::Resume();
 
@@ -184,10 +221,36 @@ void DTDebugger::Pause() {
 void DTDebugger::Resume() {
     if (!ctx_attached) return;
     // send request
-    //duk_debugger_cooperate(ctx_attached->GetCTX());
-    Dynacoe::Console::Show(false);
-    Dynacoe::Engine::Resume();
+    sandboxe_dt_trans_command__resume(trans_ctx);
+
 }
+
+
+void DTDebugger::StepInto() {
+    if (!ctx_attached) return;
+    // send request
+    sandboxe_dt_trans_command__step_into(trans_ctx);
+}
+
+void DTDebugger::StepOver() {
+    if (!ctx_attached) return;
+    // send request
+    sandboxe_dt_trans_command__step_over(trans_ctx);
+}
+
+void DTDebugger::StepOut() {
+    if (!ctx_attached) return;
+    // send request
+    sandboxe_dt_trans_command__step_out(trans_ctx);
+}
+
+void DTDebugger::AddBreak(const std::string & filename, int line) {
+    if (!ctx_attached) return;
+    // send request
+    sandboxe_dt_trans_command__add_break(trans_ctx, filename, line);
+}
+
+
 
 
 std::string DTDebugger::GetBacktraceString() const {

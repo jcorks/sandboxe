@@ -206,7 +206,13 @@ var sandboxe = {
          *
          * @function
          */
-        backtrace : __debug_backtrace
+        backtrace : __debug_backtrace,
+
+
+        stepInto : __debug_step_into,
+        stepOver : __debug_step_over,
+        stepOut : __debug_step_out,
+        addBreak : __debug_step_add_break
 
 
     },

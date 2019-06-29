@@ -104,6 +104,35 @@ void runtime_debug_backtrace(Object *, const std::vector<Primitive> & args, Cont
 }
 
 
+void runtime_debug_step_into(Object *, const std::vector<Primitive> & args, Context & context) {
+    #ifdef SANDBOXE_DT_DEBUG
+    debugger->StepInto();
+    #endif
+}
+
+void runtime_debug_step_over(Object *, const std::vector<Primitive> & args, Context & context) {
+    #ifdef SANDBOXE_DT_DEBUG
+    debugger->StepOver();
+    #endif
+}
+
+
+void runtime_debug_step_out(Object *, const std::vector<Primitive> & args, Context & context) {
+    #ifdef SANDBOXE_DT_DEBUG
+    debugger->StepOut();
+    #endif
+}
+
+void runtime_debug_add_break(Object *, const std::vector<Primitive> & args, Context & context) {
+    #ifdef SANDBOXE_DT_DEBUG
+    if (args.size() >= 2) {
+        debugger->AddBreak(args[0], args[1]);
+    }
+    #endif
+}
+
+
+
   
 DTContext::DTContext() {
     managedProperties_types.push_back({});
@@ -127,6 +156,10 @@ DTContext::DTContext() {
         global.SetFunction("__debug_pause", runtime_debug_pause);
         global.SetFunction("__debug_resume", runtime_debug_resume);
         global.SetFunction("__debug_backtrace", runtime_debug_backtrace);
+        global.SetFunction("__debug_step_into", runtime_debug_step_into);
+        global.SetFunction("__debug_step_over", runtime_debug_step_over);
+        global.SetFunction("__debug_step_out", runtime_debug_step_out);
+        global.SetFunction("__debug_step_add_break", runtime_debug_add_break);
 
         #ifdef SANDBOXE_DT_DEBUG
         debugger = new DTDebugger(DTContext::Get());
