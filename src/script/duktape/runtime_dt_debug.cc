@@ -15,7 +15,16 @@ static duk_trans_dvalue_ctx * trans_ctx = nullptr;
 static std::vector<std::string> messagesPending;
 static DTDebugger * debugger = nullptr;
 static bool paused = false;
+static int level = 0;
 
+static std::unordered_map<std::string, std::vector<std::string>> registeredFiles;
+
+struct StackFrame {
+    std::string function;
+    int line;
+    std::string file;
+};
+static std::vector<StackFrame> callstack;
 enum DTCommand{
     DT_COMMAND__NONE,
     DT_COMMAND__INIT,
@@ -26,7 +35,11 @@ enum DTCommand{
     DT_COMMAND__STEP_OUT,
     DT_COMMAND__ADD_BREAK,
     DT_COMMAND__GET_CALL_STACK,
-
+    DT_COMMAND__EVAL,
+    
+    // special symbolic commands. Doesnt require a round trip with the debugger 
+    DT_COMMAND__SYMBOLIC_UP,
+    DT_COMMAND__SYMBOLIC_DOWN
 
 };
 
@@ -71,7 +84,7 @@ static void sandboxe_dt_trans_command__step_into(duk_trans_dvalue_ctx * ctx) {
     duk_trans_dvalue_send_eom(ctx);
     printf("sent step into request\n");
     lastCommand.push(DT_COMMAND__STEP_INTO);
-
+    Dynacoe::Console::Lock(true);
 }
 
 static void sandboxe_dt_trans_command__step_over(duk_trans_dvalue_ctx * ctx) {
@@ -80,6 +93,8 @@ static void sandboxe_dt_trans_command__step_over(duk_trans_dvalue_ctx * ctx) {
     duk_trans_dvalue_send_eom(ctx);
     printf("sent step over request\n");
     lastCommand.push(DT_COMMAND__STEP_OVER);
+    Dynacoe::Console::Lock(true);
+
 
 }
 
@@ -89,6 +104,8 @@ static void sandboxe_dt_trans_command__step_out(duk_trans_dvalue_ctx * ctx) {
     duk_trans_dvalue_send_eom(ctx);
     printf("sent step out request\n");
     lastCommand.push(DT_COMMAND__STEP_OUT);
+    Dynacoe::Console::Lock(true);
+
 }
 
 static void sandboxe_dt_trans_command__add_break(duk_trans_dvalue_ctx * ctx, const std::string & filename, int line) {
@@ -103,13 +120,74 @@ static void sandboxe_dt_trans_command__add_break(duk_trans_dvalue_ctx * ctx, con
 }
 
 
-void sandboxe_dt_trans_received(duk_trans_dvalue_ctx * ctx, duk_dvalue * dv) {
-    char output[DUK_DVALUE_TOSTRING_BUFLEN];    
-    duk_dvalue_to_string(dv, output);
-    printf("dvalue received: %s\n", output);
-    messagesPending.push_back(output);
+static void sandboxe_dt_trans_command__eval(duk_trans_dvalue_ctx * ctx, const std::string & eval, int callstackLevel) {
+    duk_trans_dvalue_send_req(ctx);
+    duk_trans_dvalue_send_integer(ctx, 0x1e);  
+    duk_trans_dvalue_send_integer(ctx, callstackLevel);
+    duk_trans_dvalue_send_string(ctx, eval.c_str());
+    duk_trans_dvalue_send_eom(ctx);
+    printf("sent eval request\n");
+
+    lastCommand.push(DT_COMMAND__EVAL);
+}
+
+
+
+static void sandboxe_dt_trans_received(duk_trans_dvalue_ctx * ctx, duk_dvalue * dv) {
+    static std::vector<char> bufferSrc;
+    int len = std::max((int)(dv->len+1), DUK_DVALUE_TOSTRING_BUFLEN+1);
+    if (bufferSrc.size() <= len) bufferSrc.resize(len);
+    duk_dvalue_to_string(dv, &bufferSrc[0]);
+    printf("dvalue received: %s\n", &bufferSrc[0]);
+    messagesPending.push_back(&bufferSrc[0]);
     fflush(stdout);
 }
+
+static std::string sandboxe_get_stackframe_string(const StackFrame & frame, int stackIndex) {
+    std::string out;
+    std::string stackIndexStr = stackIndex < 0 ? Dynacoe::Chain("") : Dynacoe::Chain() << stackIndex;
+    if (frame.function == "" && frame.file == "undefined") {
+        out = Dynacoe::Chain() << "| " << stackIndexStr  << "\t " << "<internal call>";
+        
+    } else {
+        out = Dynacoe::Chain() << "| " << stackIndexStr << "\t " << frame.function << "()\t" << frame.file << ":" << frame.line;
+    }
+    return out;
+}
+
+static std::string sandboxe_get_stackframe_level_string(int level) {
+    if (level >= callstack.size()) return "";
+    return sandboxe_get_stackframe_string(callstack[level], level);
+}
+
+static std::string sandboxe_get_nearby_lines(std::string & filename, int targetLine) {
+    targetLine-=1; // convert from line number to a line index
+    std::vector<std::string> & lines = registeredFiles[filename];
+    if (lines.size() == 0) {
+        return "  |...........................\n  |....(No lines available)...\n  |...........................";
+    }
+    
+    if (targetLine < 0 || targetLine >= lines.size()) {
+        return "  |...........................\n  |....(Line mismatch?).......\n  |...........................";        
+    }
+    
+    std::string out;
+    const int range = 3;
+    for(int i = targetLine - range; i <= targetLine + range; ++i) {
+        if (i < 0 || i >= lines.size()) {
+            out+="  |...........................\n";
+        } else {
+            if (i == targetLine) {
+                out += "->| " + lines[i] + "\n";                
+            } else {
+                out += "  | " + lines[i] + "\n";
+            }
+        }
+    }
+
+    return out;
+}
+
 
 void sandboxe_dt_trans_cooperate(duk_trans_dvalue_ctx * ctx, int block) {
     
@@ -132,21 +210,34 @@ void sandboxe_dt_trans_cooperate(duk_trans_dvalue_ctx * ctx, int block) {
         // notify from debugger (status)
         if (messages[0] == "NFY") {
             if (messages[1] == "1") {
+                sandboxe_dt_trans_command__get_call_stack(ctx);
                 if (messages[2] == "1" && paused == false) { // paused state
                     Dynacoe::Console::Show(true);
+                    if (Dynacoe::Console::IsLocked()) {
+                        Dynacoe::Console::Lock(false);
+                    } else {
+                        Dynacoe::Console::Info() << "Entered paused state\n";   
+                    }
                     paused = true;
-                    Dynacoe::Engine::Pause();
-                    Dynacoe::Console::Info() << "Entered paused state @\n";
-                    Dynacoe::Console::Info() << "->| -\t" <<
-                        messages[4] << "()\t" <<
-                        messages[3] << ":" << messages[5] << "\t" <<
-                        "\n";
+                    
+                    
+                    StackFrame frame;
+                    frame.function = messages[4];
+                    frame.file = messages[3];
+                    frame.line = atoi(messages[5].c_str());
+                    Dynacoe::Console::Info() << sandboxe_get_stackframe_string(frame, -1) << "\n\n";
+                    Dynacoe::Console::Info() << sandboxe_get_nearby_lines(frame.file, frame.line) << "\n";
 
-                } else if (messages[2] == "0" && paused == true) {
+                    
+                } else if (messages[2] == "0" && paused == true) { // resume
+                    if (!Dynacoe::Console::IsLocked()) {
+                        Dynacoe::Console::Info() << "Entered resume state\n";
+                    }
                     Dynacoe::Console::Show(false);
                     paused = false;
-                    Dynacoe::Engine::Resume();
-                    Dynacoe::Console::Info() << "Resuming execution\n";
+                    
+                    // likely from the step-oriented commands
+                    Dynacoe::Console::Lock(false);
 
                 }
                 
@@ -161,7 +252,7 @@ void sandboxe_dt_trans_cooperate(duk_trans_dvalue_ctx * ctx, int block) {
             switch(command) {
               case DT_COMMAND__ADD_BREAK:
                 if (messages[0] == "ERR") {
-                    Dynacoe::Console::Error() << "Could not add breakpoint! (" << messages[2] << "\n";
+                    Dynacoe::Console::Error() << "Could not add breakpoint! (" << messages[2] << "\n\n";
                 } else {
                     Dynacoe::Console::Info() << "Added breakpoint " << messages[1] << "\n";
                 }
@@ -169,28 +260,47 @@ void sandboxe_dt_trans_cooperate(duk_trans_dvalue_ctx * ctx, int block) {
               
               case DT_COMMAND__PAUSE:
                 printf("Received pause response.\n"); fflush(stdout);
+                level = 0;
+
 
 
                 break;
                 
               case DT_COMMAND__RESUME:
                 printf("Received resume response.\n"); fflush(stdout);
+                Dynacoe::Console::Info() << "Resuming execution\n";
+                level = 0;
+
                 break;
                 
+              case DT_COMMAND__EVAL:
+                if (messages[1] == "0") {
+                    Dynacoe::Console::Info() << messages[2] << "\n";
+                } else {
+                    Dynacoe::Console::Info() << "Error evaluating expresssion:\n" + messages[2];                    
+                }
+                break;
+              case DT_COMMAND__STEP_INTO:
+              case DT_COMMAND__STEP_OUT:
+              case DT_COMMAND__STEP_OVER:
+                level = 0;
+                printf("Processed-step action\n");
+                break;
+              
               case DT_COMMAND__GET_CALL_STACK:
                 {
                     messages.erase(messages.begin()+0);
                     messages.erase(messages.begin()+(messages.size()-1));
 
-                    for(size_t i = 0; i < messages.size()/4; ++i) {
-                        std::string function = messages[i*4 + 1];
-                        if (function == "undefined") function = "";                    
-                        Dynacoe::Console::Info() <<
-                            "  | " << i << "\t " <<
-                            (function.empty() ? std::string("\t") : (function + "()\t")) <<
+                    callstack.clear();
 
-                            messages[i*4 + 0] << ":" <<
-                            messages[i*4 + 2] << "\n";
+                    StackFrame frame;
+                    for(size_t i = 0; i < messages.size()/4; ++i) {
+                        frame.function = messages[i*4+1];
+                        frame.line = atoi(messages[i*4+2].c_str());
+                        frame.file = messages[i*4 + 0];
+                        
+                        callstack.push_back(frame);
                     }
                 }
                 break;
@@ -237,10 +347,46 @@ class DTDebugger_ConsoleCommand : public Dynacoe::Interpreter::Command {
           case DT_COMMAND__STEP_INTO:   sandboxe_dt_trans_command__step_into(ctx); break;
           case DT_COMMAND__STEP_OUT:    sandboxe_dt_trans_command__step_out(ctx); break;
           case DT_COMMAND__STEP_OVER:   sandboxe_dt_trans_command__step_over(ctx); break;
-          case DT_COMMAND__GET_CALL_STACK:   sandboxe_dt_trans_command__get_call_stack(ctx); break;
+          case DT_COMMAND__GET_CALL_STACK:
+        
+            for(int i = 0; i < callstack.size(); ++i) {
+                Dynacoe::Console::Info() << (i == level ? "->" : "  ") << sandboxe_get_stackframe_level_string(i) << "\n";
+            }
+            break;
+          case DT_COMMAND__EVAL:        
+            if (argvec.size() > 1) {
+                std::string expression;
+                for(int i = 1; i < argvec.size(); ++i) {
+                    expression += argvec[i] + " ";
+                }
+                sandboxe_dt_trans_command__eval(ctx, expression, (level+1) * -1);
+            }
+            break;
           case DT_COMMAND__ADD_BREAK:   
             if (argvec.size() != 3) return Help();
             sandboxe_dt_trans_command__add_break(ctx, argvec[1], atoi(argvec[2].c_str())); break;
+
+          case DT_COMMAND__SYMBOLIC_UP:
+            level++;
+            if (level >= ((int)callstack.size())) level = ((int)callstack.size())-1;
+            Dynacoe::Console::Info() << sandboxe_get_stackframe_level_string(level) << "\n\n";
+            {
+                StackFrame & frame = callstack[level];
+                Dynacoe::Console::Info() << sandboxe_get_nearby_lines(frame.file, frame.line) << "\n";
+            }
+            break;
+
+          case DT_COMMAND__SYMBOLIC_DOWN:
+            level--;
+            if (level < 0) level = 0;
+            Dynacoe::Console::Info() << sandboxe_get_stackframe_level_string(level) << "\n\n";
+            {
+                StackFrame & frame = callstack[level];
+                Dynacoe::Console::Info() << sandboxe_get_nearby_lines(frame.file, frame.line) << "\n";
+            }
+
+            break;
+
 
           default:;
         };
@@ -255,9 +401,12 @@ class DTDebugger_ConsoleCommand : public Dynacoe::Interpreter::Command {
           case DT_COMMAND__STEP_INTO:  return "Steps into the current function";
           case DT_COMMAND__STEP_OUT:  return "Steps out of the current function";
           case DT_COMMAND__STEP_OVER:  return "Steps over the current function";
-          case DT_COMMAND__ADD_BREAK:  return "Adds a breakpoint. Format: `break [filename] [line number]`";
+          case DT_COMMAND__ADD_BREAK:  return "Adds a breakpoint. Format: `break [filename] [line number]` OR `break [line number]` to break in the current inspection context.";
+          case DT_COMMAND__EVAL:  return "Prints an expression. Format: `print [expression]`";
           case DT_COMMAND__GET_CALL_STACK:  return "Prints the callstack";
-
+          case DT_COMMAND__SYMBOLIC_UP: return "Puts the printing context in the call above";
+          case DT_COMMAND__SYMBOLIC_DOWN: return "Puts the printing context in the call below";
+          
           default: return "ERROR!";
         }
     }
@@ -334,111 +483,59 @@ DTDebugger::DTDebugger(DTContext * context) {
 
     Dynacoe::Console::AddCommand("bt", new DTDebugger_ConsoleCommand(trans_ctx, DT_COMMAND__GET_CALL_STACK));
     Dynacoe::Console::AddCommand("backtrace", new DTDebugger_ConsoleCommand(trans_ctx, DT_COMMAND__GET_CALL_STACK));
+
+    Dynacoe::Console::AddCommand("p", new DTDebugger_ConsoleCommand(trans_ctx, DT_COMMAND__EVAL));
+    Dynacoe::Console::AddCommand("print", new DTDebugger_ConsoleCommand(trans_ctx, DT_COMMAND__EVAL));
+
+    Dynacoe::Console::AddCommand("up", new DTDebugger_ConsoleCommand(trans_ctx, DT_COMMAND__SYMBOLIC_UP));
+    Dynacoe::Console::AddCommand("down", new DTDebugger_ConsoleCommand(trans_ctx, DT_COMMAND__SYMBOLIC_DOWN));
+
     
 }
 
-void DTDebugger::Pause() {
-    sandboxe_dt_trans_command__pause(trans_ctx);
-    while(!lastCommand.empty())
-        duk_debugger_cooperate(ctx->GetCTX());
-}
-
-
-void DTDebugger::Resume() {
-    // send request
-    sandboxe_dt_trans_command__resume(trans_ctx);
-    duk_debugger_cooperate(ctx->GetCTX());
-
-
-}
-
-
-void DTDebugger::StepInto() {
-    // send request
-    sandboxe_dt_trans_command__step_into(trans_ctx);
-    duk_debugger_cooperate(ctx->GetCTX());
-
-}
-
-void DTDebugger::StepOver() {
-    // send request
-    sandboxe_dt_trans_command__step_over(trans_ctx);
-    duk_debugger_cooperate(ctx->GetCTX());
-
-}
-
-void DTDebugger::StepOut() {
-    // send request
-    sandboxe_dt_trans_command__step_out(trans_ctx);
-    duk_debugger_cooperate(ctx->GetCTX());
-}
-
-void DTDebugger::AddBreak(const std::string & filename, int line) {
-    // send request
-    sandboxe_dt_trans_command__add_break(trans_ctx, filename, line);
-    //while(lastCommand)
-    duk_debugger_cooperate(ctx->GetCTX());
-
-}
 
 
 
 
-std::string DTDebugger::GetBacktraceString() const {
-    duk_context * source = ctx->GetCTX();
-    int stackSize = duk_get_top(source);
 
-    int level = -1;   
-    duk_inspect_callstack_entry(source, level);
-    std::vector<std::string> fns;
-    std::vector<std::string> lineNumbers;
-    std::vector<std::string> filenames;
+static bool getNext(const char ** ptr, std::string & str) {
+    const char * in = *ptr;
+    if (!*in) return false;
 
-    std::string empty;
-    while(true) {
-        TObject current(source);
+    if (*in == '\n') {
+        (*ptr)++;
+        return true;
+    }
     
-        if (std::string(current.ThisAsPrimitive()) == empty) {
-            duk_pop(source);
-            break;
-        } else {
-            level--;
-            std::string fn = "";
-            std::string lineNumber = current.Get("lineNumber");
-            std::string filename = "";
+    if (*in && (*in == '\r' && *in == '\n')) {
+        (*ptr)+=2;
+        return true;
+    }
 
-            duk_get_prop_string(source, -1, "function");
-            {
-                TObject nameObject(source);
-                std::string temp = nameObject.Get("name");
-                filename = nameObject.Get("fileName");
-                if (temp != "") {
-                    fn = temp + "()";
-                }
-            }
-            duk_pop(source);
+    str += *in;
+    
+    (*ptr)++; in = *ptr;
 
-            if (!(lineNumber == "0" && filename == "undefined")) {
-                fns.push_back(fn);
-                lineNumbers.push_back(lineNumber);
-                filenames.push_back(filename);
-            }
-            duk_pop(source);
-            duk_inspect_callstack_entry(source, level);
+    
+    return false;
+}
+
+void DTDebugger::RegisterFile(const std::string & name, const std::string & code) {
+    std::vector<std::string> & lines = registeredFiles[name];
+    std::string line;
+    lines.clear();
+    
+    const char * ptr = code.c_str();
+    while(*ptr) {
+        if (getNext(&ptr, line)) {
+            lines.push_back(line);
+            line = "";
         }
     }
-
-    Dynacoe::Chain out = "Backtrace:\n";
-    for(uint32_t i = 0; i < fns.size(); ++i) {
-        out = out <<  "    (#" << i << ") -> " << fns[i] <<  "" << filenames[i] << " @ Line " << lineNumbers[i] << "\n"; 
-    }
-
-
-    assert(duk_get_top(source) == stackSize);
-    return out;
+    
+    printf("Registered %s (%d lines)\n", name.c_str(), (int)lines.size());
+    
 }
-
-
 
 
 #endif

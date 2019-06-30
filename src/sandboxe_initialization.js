@@ -188,25 +188,6 @@ var sandboxe = {
         },
 
 
-        /**
-         * If currently paused, breaks the resumes the engine and closes the debugger.
-         *
-         * @function
-         */
-        resume : __debug_resume,
-
-        /**
-         * Returns a summary of the current callstack
-         *
-         * @function
-         */
-        backtrace : __debug_backtrace,
-
-
-        stepInto : __debug_step_into,
-        stepOver : __debug_step_over,
-        stepOut : __debug_step_out,
-
 
     },
 
@@ -1440,39 +1421,6 @@ var sandboxe = {
      * 
      */
     console : {
-        /**
-         * Returns whether the console is currently visible
-         * @returns {boolean} 
-         * @function
-         */
-        isVisible : __console_is_visible,
-    
-        /** 
-         * Sets whether to show the console. 
-         * The console is also showable through the keyboard shortcut Shift+Tab
-         * @param {boolean} showConsole  If true, shows the console; if false, hides it.
-         * @function
-         */
-        show : __console_show,
-
-        /**
-         * Returns whether the console is locked. If locked, the console cannot 
-         * be shown or hidden through either the keyboard shortcut or the showConsole 
-         * function.
-         * @returns {boolean} 
-         * @function
-\         */
-        isLocked : __console_is_locked,
-
-        /** 
-         * Returns whether to lock or unlock the console.
-         * The default is false.
-         * @param {boolean} lockConsole If true, the console is locked (see isLocked)
-         * @function
-         */ 
-        lock : __console_lock,
-        
-        
         //var add command 
         /** 
          * Returns the number of lines of output

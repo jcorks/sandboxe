@@ -84,52 +84,6 @@ void runtime_include_script(Object *, const std::vector<Primitive> & args, Conte
 static DTDebugger * debugger = nullptr;
 #endif 
 
-void runtime_debug_pause(Object *, const std::vector<Primitive> & args, Context & context) {
-    #ifdef SANDBOXE_DT_DEBUG
-    debugger->Pause();
-    #endif
-}
-
-void runtime_debug_resume(Object *, const std::vector<Primitive> & args, Context & context) {
-    #ifdef SANDBOXE_DT_DEBUG
-    debugger->Resume();
-    #endif
-}
-
-void runtime_debug_backtrace(Object *, const std::vector<Primitive> & args, Context & context) {
-    #ifdef SANDBOXE_DT_DEBUG
-    Dynacoe::Console::Warning() << 
-        debugger->GetBacktraceString() << "\n";
-    #endif
-}
-
-
-void runtime_debug_step_into(Object *, const std::vector<Primitive> & args, Context & context) {
-    #ifdef SANDBOXE_DT_DEBUG
-    debugger->StepInto();
-    #endif
-}
-
-void runtime_debug_step_over(Object *, const std::vector<Primitive> & args, Context & context) {
-    #ifdef SANDBOXE_DT_DEBUG
-    debugger->StepOver();
-    #endif
-}
-
-
-void runtime_debug_step_out(Object *, const std::vector<Primitive> & args, Context & context) {
-    #ifdef SANDBOXE_DT_DEBUG
-    debugger->StepOut();
-    #endif
-}
-
-void runtime_debug_add_break(Object *, const std::vector<Primitive> & args, Context & context) {
-    #ifdef SANDBOXE_DT_DEBUG
-    if (args.size() >= 2) {
-        debugger->AddBreak(args[0], args[1]);
-    }
-    #endif
-}
 
 
 
@@ -153,12 +107,6 @@ DTContext::DTContext() {
     duk_push_global_object(source);
     TObject global(source);
         global.SetFunction("__script_include", runtime_include_script);
-        global.SetFunction("__debug_pause", runtime_debug_pause);
-        global.SetFunction("__debug_resume", runtime_debug_resume);
-        global.SetFunction("__debug_backtrace", runtime_debug_backtrace);
-        global.SetFunction("__debug_step_into", runtime_debug_step_into);
-        global.SetFunction("__debug_step_over", runtime_debug_step_over);
-        global.SetFunction("__debug_step_out", runtime_debug_step_out);
 
         #ifdef SANDBOXE_DT_DEBUG
         debugger = new DTDebugger(DTContext::Get());
@@ -234,12 +182,17 @@ std::string DTContext::Execute(const std::string & code, const std::string & nam
     if (duk_pcompile(source, 0)) {
         ProcessErrorObject();
     } else {
+        #ifdef SANDBOXE_DT_DEBUG
+            DTDebugger::RegisterFile(name, code);
+        #endif
+
         if (duk_pcall(source, 0)) {
             ProcessErrorObject();
         } else {
             const char * result = duk_safe_to_string(source, -1);
             out = (result ? result : "<null>");
             duk_pop(source);
+            
         }
     }
     

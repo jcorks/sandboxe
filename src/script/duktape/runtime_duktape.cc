@@ -46,7 +46,6 @@ void Sandboxe::Script::Runtime::Start() {
 
     Sandboxe::Script::ApplyPostBindings();
     
-
     Dynacoe::Engine::AttachManager(Dynacoe::Entity::Create<Sandboxe::GarbageCollector>());
 
     // finally, load in base logic for sandboxe bindings
@@ -70,7 +69,7 @@ void Sandboxe::Script::Runtime::Start() {
         << "Backend status:\n\n";
 
     Dynacoe::Console::OverlayMessageMode(Dynacoe::Console::MessageMode::Standard);
-
+    
 
       
     

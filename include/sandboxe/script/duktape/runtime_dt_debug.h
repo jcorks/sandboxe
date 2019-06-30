@@ -17,27 +17,9 @@ class DTDebugger {
   public:
     DTDebugger(DTContext *);
 
-    std::string GetBacktraceString() const;
 
+    static void RegisterFile(const std::string & stringName, const std::string & data);
 
-    void Pause();
-
-    void Resume();
-
-    void StepInto();
-    
-    void StepOver();
-    
-    void StepOut();
-    
-    void AddBreak(const std::string & filename, int line);
-    
-    
-    
-    
-    int GetCurrentLine() const;
-
-    std::string GetCurrentFile() const;
   private:
     DTContext * ctx;
 };  

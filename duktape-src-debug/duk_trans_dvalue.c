@@ -73,6 +73,10 @@ static void duk__dvalue_bufesc(duk_dvalue *dv, char *buf, size_t maxbytes, int s
 	for (i = 0; i < limit; i++) {
 		unsigned char c = dv->buf[i];
 		if (stresc) {
+            sprintf(buf, "%c", c);
+            buf++;
+
+            /*
 			if (c >= 0x20 && c <= 0x7e && c != (char) '"' && c != (char) '\'') {
 				sprintf(buf, "%c", c);
 				buf++;
@@ -80,6 +84,7 @@ static void duk__dvalue_bufesc(duk_dvalue *dv, char *buf, size_t maxbytes, int s
 				sprintf(buf, "\\x%02x", (unsigned int) c);
 				buf += 4;
 			}
+            */
 		} else {
 			sprintf(buf, "%02x", (unsigned int) c);
 			buf += 2;
@@ -120,9 +125,7 @@ void duk_dvalue_to_string(duk_dvalue *dv, char *buf) {
 		sprintf(buf, "%d", dv->i);
 		break;
 	case DUK_DVALUE_STRING:
-		duk__dvalue_bufesc(dv, hexbuf, 32, 1);
-		//sprintf(buf, "str:%ld:\"%s\"", (long) dv->len, hexbuf);
-        sprintf(buf, "%s", hexbuf);
+		duk__dvalue_bufesc(dv, buf, dv->len, 1);
 		break;
 	case DUK_DVALUE_BUFFER:
 		duk__dvalue_bufesc(dv, hexbuf, 32, 0);

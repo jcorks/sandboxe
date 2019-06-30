@@ -6,24 +6,7 @@
 namespace Sandboxe {
 namespace Bindings {
 
-SANDBOXE_NATIVE_DEF(__console_is_visible) {
-    context.SetReturnValue(Dynacoe::Console::IsVisible());
-}
 
-SANDBOXE_NATIVE_DEF(__console_show) {
-    SANDBOXE_ASSERT__ARG_COUNT(1);
-    Dynacoe::Console::Show(arguments[0]);
-}
-
-
-SANDBOXE_NATIVE_DEF(__console_is_locked) {
-    context.SetReturnValue(Dynacoe::Console::IsLocked());
-}
-
-SANDBOXE_NATIVE_DEF(__console_lock) {
-    SANDBOXE_ASSERT__ARG_COUNT(1);
-    Dynacoe::Console::Lock(arguments[0]);
-}    
 
 SANDBOXE_NATIVE_DEF(__console_get_num_lines) {
     context.SetReturnValue(Dynacoe::Console::GetNumLines());
@@ -73,10 +56,6 @@ SANDBOXE_NATIVE_DEF(__console_stream_warning) {
 
 
 void dynacoe_console(std::vector<std::pair<std::string, Sandboxe::Script::Runtime::Function>> & fns) {
-    fns.push_back({"__console_is_visible", __console_is_visible});
-    fns.push_back({"__console_show", __console_show});
-    fns.push_back({"__console_is_locked", __console_is_locked});
-    fns.push_back({"__console_lock", __console_lock});
     fns.push_back({"__console_get_num_lines", __console_get_num_lines});
     fns.push_back({"__console_get_line", __console_get_line});
     fns.push_back({"__console_clear", __console_clear});
