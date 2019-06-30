@@ -10,6 +10,6 @@ DynacoeEvent(console_script_router) {
 }
 
 void Sandboxe::Script::Shell::Initialize() {
-    Dynacoe::Console::SetCommandCallback(console_script_router);
+    //Dynacoe::Console::SetCommandCallback(console_script_router);
     Dynacoe::Console::Clear();
 }

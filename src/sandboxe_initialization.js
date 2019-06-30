@@ -187,12 +187,6 @@ var sandboxe = {
             if (!assertion) throw 'Assertion failure.';
         },
 
-        /**
-         * Pauses the engine and opens the debugger. The callstack is frozen in this context until {@link sandboxe.debug.resume} is called.
-         *
-         * @function
-         */
-        pause : __debug_pause,
 
         /**
          * If currently paused, breaks the resumes the engine and closes the debugger.
@@ -212,7 +206,6 @@ var sandboxe = {
         stepInto : __debug_step_into,
         stepOver : __debug_step_over,
         stepOut : __debug_step_out,
-        addBreak : __debug_step_add_break
 
 
     },

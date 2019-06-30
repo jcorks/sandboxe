@@ -159,7 +159,6 @@ DTContext::DTContext() {
         global.SetFunction("__debug_step_into", runtime_debug_step_into);
         global.SetFunction("__debug_step_over", runtime_debug_step_over);
         global.SetFunction("__debug_step_out", runtime_debug_step_out);
-        global.SetFunction("__debug_step_add_break", runtime_debug_add_break);
 
         #ifdef SANDBOXE_DT_DEBUG
         debugger = new DTDebugger(DTContext::Get());

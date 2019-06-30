@@ -40,7 +40,6 @@ class DTDebugger {
     std::string GetCurrentFile() const;
   private:
     DTContext * ctx;
-    bool paused;
 };  
 
 
