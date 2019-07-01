@@ -56,7 +56,7 @@ void Sandboxe::Script::Runtime::Start() {
         );
         Sandboxe::Trunk::AddItem("sandboxe_initialization", initData);
     }
-    
+    Dynacoe::Console::EnableHotkey(false);
     Sandboxe::Script::Runtime::Load("sandboxe_initialization");
     Dynacoe::Console::OverlayMessageMode(Dynacoe::Console::MessageMode::Disabled);
     Dynacoe::Console::Info() 

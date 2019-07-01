@@ -184,7 +184,7 @@ var sandboxe = {
          * @function
          */
         assert : function(assertion) {
-            if (!assertion) throw 'Assertion failure.';
+            if (!assertion) debugger;
         },
 
 
