@@ -59,13 +59,13 @@ void Sandboxe::Script::Runtime::Start() {
     Dynacoe::Console::EnableHotkey(false);
     Sandboxe::Script::Runtime::Load("sandboxe_initialization");
     Dynacoe::Console::OverlayMessageMode(Dynacoe::Console::MessageMode::Disabled);
-    Dynacoe::Console::Info() 
+    Dynacoe::Console::Info(Dynacoe::Color("#9AB8D7")) 
         << "                         ____                  \n"
         << "   _________ _____  ____/ / /_  ____  _  _____ \n"
         << "  / ___/ __ `/ __ \\/ __  / __ \\/ __ \\| |/_/ _ \\\n"
         << " (__  ) /_/ / / / / /_/ / /_/ / /_/ />  </  __/\n"
         << "/____/\\__,_/_/ /_/\\__,_/_.___/\\____/_/|_|\\___/ \n"
-        << "Johnathan Corkery, 2018 (jcorks.github.io/sandboxe)\n\n"
+        << "Johnathan Corkery, 2019 (jcorks.github.io/sandboxe)\n\n"
         << "Backend status:\n\n";
 
     Dynacoe::Console::OverlayMessageMode(Dynacoe::Console::MessageMode::Standard);
