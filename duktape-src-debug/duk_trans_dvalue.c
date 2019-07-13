@@ -128,8 +128,7 @@ void duk_dvalue_to_string(duk_dvalue *dv, char *buf) {
 		duk__dvalue_bufesc(dv, buf, dv->len, 1);
 		break;
 	case DUK_DVALUE_BUFFER:
-		duk__dvalue_bufesc(dv, hexbuf, 32, 0);
-		sprintf(buf, "buf:%ld:%s", (long) dv->len, hexbuf);
+		sprintf(buf, "%s", "[Buffer]");
 		break;
 	case DUK_DVALUE_UNUSED:
 		sprintf(buf, "undefined");
@@ -158,20 +157,18 @@ void duk_dvalue_to_string(duk_dvalue *dv, char *buf) {
 		}
 		break;
 	case DUK_DVALUE_OBJECT:
-		duk__dvalue_bufesc(dv, hexbuf, 32, 0);
-		sprintf(buf, "obj:%d:%s", (int) dv->i, hexbuf);
+        sprintf(buf, "%s", "[Object]");
+		//duk__dvalue_bufesc(dv, hexbuf, 32, 0);
+		//sprintf(buf, "obj:%d:%s", (int) dv->i, hexbuf);
 		break;
 	case DUK_DVALUE_POINTER:
-		duk__dvalue_bufesc(dv, hexbuf, 32, 0);
-		sprintf(buf, "ptr:%s", hexbuf);
+		sprintf(buf, "%s", "[Pointer]");
 		break;
 	case DUK_DVALUE_LIGHTFUNC:
-		duk__dvalue_bufesc(dv, hexbuf, 32, 0);
-		sprintf(buf, "lfunc:%04x:%s", (unsigned int) dv->i, hexbuf);
+		sprintf(buf, "%s", "[L-Function]");
 		break;
 	case DUK_DVALUE_HEAPPTR:
-		duk__dvalue_bufesc(dv, hexbuf, 32, 0);
-		sprintf(buf, "heapptr:%s", hexbuf);
+		sprintf(buf, "%s", "[H-Pointer]");
 		break;
 	default:
 		sprintf(buf, "unknown:%d", (int) dv->tag);
