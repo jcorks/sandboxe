@@ -1482,7 +1482,9 @@ var sandboxe = {
          * @param {String} content
          * @function
          */
-        error   : __console_stream_error,
+        error   : function() {
+            __console_stream_error; debugger;
+        },
 
         /**
          * Prints console output as a warning message. If the overlay mode is 
