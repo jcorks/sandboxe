@@ -1112,7 +1112,7 @@ var sandboxe = {
          * @returns {asset} The new asset to be created.
          * @function
          */
-        new : __assets_new
+        create : __assets_new
     },
     
     

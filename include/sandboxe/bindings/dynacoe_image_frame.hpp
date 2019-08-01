@@ -73,7 +73,7 @@ SANDBOXE_NATIVE_DEF(__image_frame_set_data) {
     std::vector<uint8_t> data(src->size());
 
     for(uint32_t i = 0; i < src->size(); ++i) {
-        data.push_back((int)(*src)[i]);
+        data[i] = (int)(*src)[i];
     }
     
     frame->SetData(data);
