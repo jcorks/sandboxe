@@ -49,7 +49,8 @@ enum class NativeType {
     InputBufferT,
     OutputBufferT,
     ModelT,
-    UnicodeListenerT
+    UnicodeListenerT,
+    FilesysT
 };
 
 

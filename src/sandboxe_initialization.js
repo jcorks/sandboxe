@@ -1510,6 +1510,21 @@ var sandboxe = {
 
 
     },
+
+    /**
+     * @namespace 
+     * @description
+     * Collection of references that work with the {@link filesys} object.
+     * 
+     */
+    filesys : {
+        /**
+         * Creates a new filesys object. See {@link filesys} for more details.
+         * @returns {filesys}
+         * @function
+         */
+        create : __filesys_create_new,
+    },
     
     /** 0 */
     key_0 : -1, 

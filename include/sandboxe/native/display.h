@@ -67,7 +67,7 @@ class DisplayObject : public Sandboxe::Script::Runtime::Object {
     
     
     const char * GetObjectName() const {
-        return "StateControl";
+        return "Display";
     }
     
 };
