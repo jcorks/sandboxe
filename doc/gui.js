@@ -26,7 +26,7 @@ function gui() {
      * Attempts to grab the input focus for this GUI.
      *
      * If a GUI grabs the input focus, other GUI's will not have input events pushed 
-     * to them. See {@link sandboxe.gui.ungrabInput} to ungab input from all gui objects globally.
+     * to them. See {@link sandboxe.component.gui.ungrabInput} to ungab input from all gui objects globally.
      */
     this.grabInput = function(){};
 

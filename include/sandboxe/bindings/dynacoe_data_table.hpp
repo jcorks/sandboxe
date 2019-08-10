@@ -92,17 +92,15 @@ SANDBOXE_NATIVE_DEF(__data_table_write_state) {
 }
 
 SANDBOXE_NATIVE_DEF(__data_table_read_state) {
-    SANDBOXE_ASSERT__ARG_COUNT(2);
+    SANDBOXE_ASSERT__ARG_COUNT(1);
     auto data = (Sandboxe::DataTableObject*)source;
     std::vector<uint8_t> bytes;
-    data->ReadState(bytes);
-    
-    std::vector<Sandboxe::Script::Runtime::Primitive> out(bytes.size());
-    for(uint32_t i = 0; i < bytes.size(); ++i) {
-        out[i] = (int)bytes[i];
+    auto input = context.GetArrayArgument(0);
+    bytes.resize(input->size());
+    for(uint32_t i = 0; i < input->size(); ++i) {
+        bytes[i] = (int)(*input)[i];
     }
-
-    context.SetReturnArray(out);
+    data->ReadState(bytes);
 }
 
 
