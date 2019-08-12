@@ -35,7 +35,7 @@ createSparks = function(around, direction, force) {
 
                         shape.color.a *= .84;
                         if (shape.color.a < .06) {
-                            game.root.detach(entity);
+                            entity.detach();
 
                         }
                         

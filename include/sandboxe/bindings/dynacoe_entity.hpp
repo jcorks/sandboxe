@@ -12,6 +12,7 @@
         - Entity::ID and Entity are one object in scripting
         - The variable interface is currently not supported
         - QueryComponent instead gets the component of the given tag
+        - detach() works on the child and takes no argument. It implicitly calls GetParent().Detach(self)
 
 
  */
@@ -74,17 +75,11 @@ SANDBOXE_NATIVE_DEF(__entity_attach) {
 }
 
 SANDBOXE_NATIVE_DEF(__entity_detach) {
-    SANDBOXE_ASSERT__ARG_COUNT(1);
-    SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceT);
-    SANDBOXE_ASSERT__ARG_NATIVE(0, EntityObjectID);
-
-
     const Dynacoe::Entity::ID & id = ((EntityObjectID*)source)->id;
     Dynacoe::Entity * e = id.Identify();    
     if (!e) return;
-    
-    const Dynacoe::Entity::ID & other = ((EntityObjectID*)((Sandboxe::Script::Runtime::Object*)arguments[0]))->id;
-    e->Detach(other);
+    if (!e->HasParent()) return;  
+    e->GetParent().Detach(id);
 }
 
 SANDBOXE_NATIVE_DEF(__entity_get_num_children) {
