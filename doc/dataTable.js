@@ -96,7 +96,7 @@ function dataTable() {
      * the dataTable across program invocations. Along with writing the exact state of 
      * the dataTable, the data includes header and checksum data to improve parity across 
      * execution states.
-     * @returns {Array} An array of byte values to later be re-read with setState()
+     * @returns {String} A string of hexified byte values to later be re-read with setState()
      */
     this.getState = function(){};
 
@@ -109,7 +109,7 @@ function dataTable() {
      * If not, or corruption on some device has occurred, 
      * there is a good chance that this function will detect it before applying the data. 
      * In the case that an error does occur, false will be returned and no action taken.
-     * @param {Array} byteArray An array of byte values assumed to be from getState().
+     * @param {String} data A string of hexified byte data from getState()
      */
     this.setState = function(){};
     

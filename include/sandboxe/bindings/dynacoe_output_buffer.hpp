@@ -37,7 +37,7 @@ SANDBOXE_NATIVE_DEF(__output_buffer_commit) {
     if (arguments.size() > 1)
         append = arguments[1];
     Sandboxe::OutputBufferObject * v = (Sandboxe::OutputBufferObject*)source;
-    v->localIO.CommitToFile(arguments[0], append);
+    v->localIO.CommitToFile(Dynacoe::Chain() << Dynacoe::Assets::GetSearchPath().c_str() << "/" << (std::string)arguments[0], append);
 }
 
 SANDBOXE_NATIVE_DEF(__output_buffer_write_string) {
