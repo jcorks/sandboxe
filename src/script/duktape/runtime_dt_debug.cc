@@ -17,6 +17,16 @@ static DTDebugger * debugger = nullptr;
 static bool paused = false;
 static int level = 0;
 
+
+static std::vector<std::string> errors;
+static std::vector<std::string> newErrors;
+
+
+void DTDebugger::ReportError(const std::string & str) {
+    errors.push_back(str);
+    newErrors.push_back(str);
+}
+
 static std::unordered_map<std::string, std::vector<std::string>> registeredFiles;
 
 struct StackFrame {
@@ -36,12 +46,16 @@ enum DTCommand{
     DT_COMMAND__ADD_BREAK,
     DT_COMMAND__GET_CALL_STACK,
     DT_COMMAND__EVAL,
+    DT_COMMAND__EVAL_KEYS,
+    DT_COMMAND__EVAL_ARR,
     DT_COMMAND__LIST_BREAKPOINTS,
     DT_COMMAND__DELETE_BREAKPOINT,
     
     // special symbolic commands. Doesnt require a round trip with the debugger 
     DT_COMMAND__SYMBOLIC_UP,
     DT_COMMAND__SYMBOLIC_DOWN,
+    DT_COMMAND__SYMBOLIC_LIST_ERRORS,
+
 
 };
 
@@ -189,6 +203,33 @@ static void sandboxe_dt_trans_command__eval(duk_trans_dvalue_ctx * ctx, const st
     lastCommand.push(DT_COMMAND__EVAL);
 }
 
+static void sandboxe_dt_trans_command__eval_keys(duk_trans_dvalue_ctx * ctx, const std::string & eval, int callstackLevel) {
+    duk_trans_dvalue_send_req(ctx);
+    duk_trans_dvalue_send_integer(ctx, 0x1e);  
+    duk_trans_dvalue_send_integer(ctx, callstackLevel);
+    duk_trans_dvalue_send_string(ctx, 
+        std::string(std::string()+"(function(){var __out=''; var __arr = Object.keys("+eval+"); __out+='Object has '+__arr.length+' keys: '; for(var i = 0; i < __arr.length; ++i) {__out+='' + __arr[i] + ', ';}return __out})()").c_str()
+    );
+    duk_trans_dvalue_send_eom(ctx);
+    printf("sent eval-keys request\n");
+
+    lastCommand.push(DT_COMMAND__EVAL_KEYS);
+}
+
+
+static void sandboxe_dt_trans_command__eval_array(duk_trans_dvalue_ctx * ctx, const std::string & eval, int callstackLevel) {
+    duk_trans_dvalue_send_req(ctx);
+    duk_trans_dvalue_send_integer(ctx, 0x1e);  
+    duk_trans_dvalue_send_integer(ctx, callstackLevel);
+    duk_trans_dvalue_send_string(ctx, 
+        std::string(std::string()+"(function(){var __out=''; var __arr = ("+eval+"); __out+='Array has '+__arr.length+' objects: '; for(var i = 0; i < __arr.length; ++i) {__out+='' + __arr[i] + ', ';}return __out})()").c_str()
+    );
+    duk_trans_dvalue_send_eom(ctx);
+    printf("sent eval-array request\n");
+
+    lastCommand.push(DT_COMMAND__EVAL_ARR);
+}
+
 
 
 static void sandboxe_dt_trans_received(duk_trans_dvalue_ctx * ctx, duk_dvalue * dv) {
@@ -196,7 +237,7 @@ static void sandboxe_dt_trans_received(duk_trans_dvalue_ctx * ctx, duk_dvalue * 
     int len = std::max((int)(dv->len+1), DUK_DVALUE_TOSTRING_BUFLEN+1);
     if (bufferSrc.size() <= len) bufferSrc.resize(len);
     duk_dvalue_to_string(dv, &bufferSrc[0]);
-    printf("dvalue received: %s\n", &bufferSrc[0]);
+    //printf("dvalue received: %s\n", &bufferSrc[0]);
     messagesPending.push_back(&bufferSrc[0]);
     fflush(stdout);
 }
@@ -230,11 +271,11 @@ static std::string sandboxe_get_nearby_lines(const std::string & filename, int t
     char line[6];
 
     if (lines.size() == 0) {
-        return "  |...........................\n  |....(No lines available)...\n  |...........................";
+        return "  |...........................\n  |....(No lines available)...\n  |...........................\n";
     }
     
     if (targetLine < 0 || targetLine >= lines.size()+1) { // allow exceeding one line
-        return "  |...........................\n  |....(Line mismatch?).......\n  |...........................";        
+        return "  |...........................\n  |....(Line mismatch?).......\n  |...........................\n";        
     }
     
     std::string current;
@@ -285,6 +326,20 @@ static void sandboxe_dt_print_context(const StackFrame & frame, int level) {
     Dynacoe::Console::Info("#807F5F") << before;
     Dynacoe::Console::Info("#F0DFAF") << current;
     Dynacoe::Console::Info("#807F5F") << after;
+
+    if (newErrors.size()) {
+        Dynacoe::Console::Info("#ff1111") << 
+            "\n\nThe following NEW errors have been detected:\n\n";
+        for(uint32_t i = 0; i < newErrors.size(); ++i) {
+            Dynacoe::Console::Info("#ff6666") << Dynacoe::Chain() <<
+                "Error #" << i << ":\n" << newErrors[i] << "\n\n";
+        }
+        if (newErrors.size() != errors.size()) {
+            Dynacoe::Console::Info("#ff1111") << 
+                "\n\n(run the command `errors` to list all encountered errors (" << errors.size() << " total)\n\n";            
+        }
+        newErrors.clear();
+    }
     
 }
 
@@ -312,7 +367,7 @@ void sandboxe_dt_trans_cooperate(duk_trans_dvalue_ctx * ctx, int block) {
             if (messages[1] == "1") {
                 sandboxe_dt_trans_command__get_call_stack(ctx);
                 if (messages[2] == "1" && paused == false) { // paused state
-                    timeoutConsoleOff->Cancel();
+                    //timeoutConsoleOff->Cancel();
                     if (!Dynacoe::Console::IsVisible()) {
                         Dynacoe::Console::Show(true);
                         Dynacoe::Console::Info() << "Debugger entered paused state\n";   
@@ -332,8 +387,10 @@ void sandboxe_dt_trans_cooperate(duk_trans_dvalue_ctx * ctx, int block) {
                 } else if (messages[2] == "0" && paused == true) { // resume
                     if (Dynacoe::Console::IsVisible()) {
                         Dynacoe::Console::Info() << "Resuming state...\n";
+                        Dynacoe::Console::Show(false);
+
                     }
-                    timeoutConsoleOff->Start(500);
+                    //timeoutConsoleOff->Start(500);
 
                     paused = false;
                     
@@ -378,6 +435,22 @@ void sandboxe_dt_trans_cooperate(duk_trans_dvalue_ctx * ctx, int block) {
                     Dynacoe::Console::Info() << "Error evaluating expresssion:\n" + messages[2] + "\n";                    
                 }
                 break;
+              case DT_COMMAND__EVAL_KEYS:
+                if (messages[1] == "0") {
+                    Dynacoe::Console::Info() << messages[2] << "\n";
+                } else {
+                    Dynacoe::Console::Info() << "Error printing object keys.\n";                    
+                }
+                break;
+
+              case DT_COMMAND__EVAL_ARR:
+                if (messages[1] == "0") {
+                    Dynacoe::Console::Info() << messages[2] << "\n";
+                } else {
+                    Dynacoe::Console::Info() << "Error printing array.\n";                    
+                }
+                break;
+
               case DT_COMMAND__STEP_INTO:
               case DT_COMMAND__STEP_OUT:
               case DT_COMMAND__STEP_OVER:
@@ -470,7 +543,11 @@ class DTDebugger_ConsoleCommand : public Dynacoe::Interpreter::Command {
             sandboxe_dt_trans_command__delete_breakpoint(ctx, atoi(argvec[1].c_str())); break;
             break;
           case DT_COMMAND__GET_CALL_STACK:
-        
+            if (callstack.size() == 0) {
+                Dynacoe::Console::Info(Dynacoe::Color("#DFAF8F")) << "[Callstack empty or unknown.]\n";
+                break;
+
+            }
             for(int i = 0; i < callstack.size(); ++i) {
                 Dynacoe::Console::Info(Dynacoe::Color("#DFAF8F")) << (i == level ? "-> " : "   ") << sandboxe_get_stackframe_level_string(i) << "\n";
             }
@@ -482,6 +559,24 @@ class DTDebugger_ConsoleCommand : public Dynacoe::Interpreter::Command {
                     expression += argvec[i] + " ";
                 }
                 sandboxe_dt_trans_command__eval(ctx, expression, (level+1) * -1);
+            }
+            break;
+          case DT_COMMAND__EVAL_KEYS:        
+            if (argvec.size() > 1) {
+                std::string expression;
+                for(int i = 1; i < argvec.size(); ++i) {
+                    expression += argvec[i] + " ";
+                }
+                sandboxe_dt_trans_command__eval_keys(ctx, expression, (level+1) * -1);
+            }
+            break;
+          case DT_COMMAND__EVAL_ARR:        
+            if (argvec.size() > 1) {
+                std::string expression;
+                for(int i = 1; i < argvec.size(); ++i) {
+                    expression += argvec[i] + " ";
+                }
+                sandboxe_dt_trans_command__eval_array(ctx, expression, (level+1) * -1);
             }
             break;
           case DT_COMMAND__ADD_BREAK:
@@ -513,6 +608,12 @@ class DTDebugger_ConsoleCommand : public Dynacoe::Interpreter::Command {
                         return Help();
                     }
                 }
+            } else if (argvec.size() == 1) {
+                sandboxe_dt_trans_command__add_break(
+                    ctx,
+                    callstack[level].file,
+                    callstack[level].line
+                ); 
             } else {
                 if (argvec.size() != 3) return Help();
                 sandboxe_dt_trans_command__add_break(ctx, argvec[1], atoi(argvec[2].c_str()));
@@ -540,6 +641,15 @@ class DTDebugger_ConsoleCommand : public Dynacoe::Interpreter::Command {
 
             break;
 
+          case DT_COMMAND__SYMBOLIC_LIST_ERRORS:
+            Dynacoe::Console::Info("#ff1111") << 
+                "\n\nThe following runtime errors have been logged:\n\n";
+            for(uint32_t i = 0; i < errors.size(); ++i) {
+                Dynacoe::Console::Info("#ff6666") << Dynacoe::Chain() <<
+                    "Error #" << i << ":\n" << errors[i] << "\n\n";
+            }
+            break;
+
           default:;
         };
         return "";
@@ -557,9 +667,12 @@ class DTDebugger_ConsoleCommand : public Dynacoe::Interpreter::Command {
           case DT_COMMAND__LIST_BREAKPOINTS: return "Lists all currently set breakpoints.";
           case DT_COMMAND__DELETE_BREAKPOINT: return "Deletes a breakpoint. Format: `delete [breakpoint index]`";
           case DT_COMMAND__EVAL:  return "Prints an expression. Format: `print [expression]`";
+          case DT_COMMAND__EVAL_KEYS:  return "Prints an object's keys. Format: `print-keys [expression]`";
+          case DT_COMMAND__EVAL_ARR:  return "Prints an array's contents. Format: `print-array [expression]`";
           case DT_COMMAND__GET_CALL_STACK:  return "Prints the callstack";
           case DT_COMMAND__SYMBOLIC_UP: return "Puts the printing context in the call above";
           case DT_COMMAND__SYMBOLIC_DOWN: return "Puts the printing context in the call below";
+          case DT_COMMAND__SYMBOLIC_LIST_ERRORS: return "Lists all encountered runtime errors in order of occurrence";
           
           default: return "ERROR!";
         }
@@ -574,7 +687,20 @@ class DTDebugger_Updater : public Dynacoe::Entity {
   public:
     duk_context * ctx;
     void OnStep() {
+        if (
+            !Dynacoe::Console::IsVisible() &&
+
+            (Dynacoe::Input::GetState(Dynacoe::Keyboard::Key_lctrl) || 
+             Dynacoe::Input::GetState(Dynacoe::Keyboard::Key_rctrl))
+            &&
+            Dynacoe::Input::GetState(Dynacoe::Keyboard::Key_c)
+            ) {
+            sandboxe_dt_trans_command__pause(trans_ctx);
+        }
+
+
         duk_debugger_cooperate(ctx);
+
 
     }
 };
@@ -657,6 +783,10 @@ DTDebugger::DTDebugger(DTContext * context) {
     Dynacoe::Console::AddCommand("l", new DTDebugger_ConsoleCommand(trans_ctx, DT_COMMAND__LIST_BREAKPOINTS));
     Dynacoe::Console::AddCommand("list", new DTDebugger_ConsoleCommand(trans_ctx, DT_COMMAND__LIST_BREAKPOINTS));
 
+    Dynacoe::Console::AddCommand("e", new DTDebugger_ConsoleCommand(trans_ctx, DT_COMMAND__SYMBOLIC_LIST_ERRORS));
+    Dynacoe::Console::AddCommand("errors", new DTDebugger_ConsoleCommand(trans_ctx, DT_COMMAND__SYMBOLIC_LIST_ERRORS));
+
+
     Dynacoe::Console::AddCommand("bt", new DTDebugger_ConsoleCommand(trans_ctx, DT_COMMAND__GET_CALL_STACK));
     Dynacoe::Console::AddCommand("backtrace", new DTDebugger_ConsoleCommand(trans_ctx, DT_COMMAND__GET_CALL_STACK));
 
@@ -666,6 +796,12 @@ DTDebugger::DTDebugger(DTContext * context) {
 
     Dynacoe::Console::AddCommand("p", new DTDebugger_ConsoleCommand(trans_ctx, DT_COMMAND__EVAL));
     Dynacoe::Console::AddCommand("print", new DTDebugger_ConsoleCommand(trans_ctx, DT_COMMAND__EVAL));
+
+    Dynacoe::Console::AddCommand("pk", new DTDebugger_ConsoleCommand(trans_ctx, DT_COMMAND__EVAL_KEYS));
+    Dynacoe::Console::AddCommand("print-keys", new DTDebugger_ConsoleCommand(trans_ctx, DT_COMMAND__EVAL_KEYS));
+
+    Dynacoe::Console::AddCommand("pa", new DTDebugger_ConsoleCommand(trans_ctx, DT_COMMAND__EVAL_ARR));
+    Dynacoe::Console::AddCommand("print-array", new DTDebugger_ConsoleCommand(trans_ctx, DT_COMMAND__EVAL_ARR));
 
     Dynacoe::Console::AddCommand("up", new DTDebugger_ConsoleCommand(trans_ctx, DT_COMMAND__SYMBOLIC_UP));
     Dynacoe::Console::AddCommand("down", new DTDebugger_ConsoleCommand(trans_ctx, DT_COMMAND__SYMBOLIC_DOWN));

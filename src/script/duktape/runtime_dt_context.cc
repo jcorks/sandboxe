@@ -398,6 +398,7 @@ void DTContext::RemoveHeapEntry(uint32_t i) {
 void DTContext::fatal_error(void * data, const char * msg) {
     Sandboxe::Script::Terminal * term = terminal.IdentifyAs<Sandboxe::Script::Terminal>();
     term->ReportError(msg);
+    DTDebugger::ReportError(msg);
 
 
 }
@@ -438,7 +439,6 @@ void DTContext::ProcessErrorObject() {
 
 
     //Dynacoe::Console::Show(true);
-    
     TObject errObj(source);        
     std::string name = errObj.Get("name");    
     std::string message = errObj.Get("message");    
@@ -490,10 +490,35 @@ void DTContext::ProcessErrorObject() {
     }
     
     
-    
+
 
     Sandboxe::Script::Terminal * term = terminal.IdentifyAs<Sandboxe::Script::Terminal>();
     term->ReportError(msg);
+    DTDebugger::ReportError(msg);
+
+    {
+        int stackSize = duk_get_top(source);
+
+
+        duk_push_string(source, "debugger;");
+        duk_push_string(source, "<null>");
+
+        std::string out;
+        if (duk_pcompile(source, 0)) {
+        } else {
+            if (duk_pcall(source, 0)) {
+            } else {
+                const char * result = duk_safe_to_string(source, -1);
+                out = (result ? result : "<null>");
+            }
+            duk_pop(source);
+
+        }
+        
+        
+        assert(duk_get_top(source) == stackSize);
+
+    }
 
     duk_pop(source);
     

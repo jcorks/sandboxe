@@ -20,6 +20,8 @@ class DTDebugger {
 
     static void RegisterFile(const std::string & stringName, const std::string & data);
 
+    static void ReportError(const std::string &);
+        
   private:
     DTContext * ctx;
 };  

@@ -1408,7 +1408,9 @@ var sandboxe = {
          * @params {Boolean} absolute Optional. Whether the path given should be interpreted as relative. The default is false.
          * @function
          */
-        include : function(script, b) {__script_include(script, 1, b==undefined?false:true);}
+        include : function(script, b) {__script_include(script, 1, b==undefined?false:true);},
+
+        onError : function(){}
     },
 
     
