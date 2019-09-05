@@ -219,8 +219,10 @@ SANDBOXE_NATIVE_DEF(__object2d_get_group) {
 
 
 SANDBOXE_NATIVE_DEF(__object2d_set_group) {
-    auto o2d = (Sandboxe::Object2DObject*)source;            
-    o2d->SetGroup(Dynacoe::Object2D::Group((int)arguments[0]));
+    auto o2d = (Sandboxe::Object2DObject*)source; 
+    int group = (int)arguments[0];
+    if (group < 0 || group > (int)Dynacoe::Object2D::Group::ID_Z) return;
+    o2d->SetGroup(Dynacoe::Object2D::Group(group));
 }
 
 
