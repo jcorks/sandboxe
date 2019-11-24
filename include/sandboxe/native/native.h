@@ -19,7 +19,7 @@ enum class NativeType {
     ComponentT,
     VectorT,
     TransformT,
-    ButtonListenerT,
+    InputListenerT,
     AssetIDT,
     ByteArrayT,
     ColorT,

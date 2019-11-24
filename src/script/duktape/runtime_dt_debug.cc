@@ -690,10 +690,10 @@ class DTDebugger_Updater : public Dynacoe::Entity {
         if (
             !Dynacoe::Console::IsVisible() &&
 
-            (Dynacoe::Input::GetState(Dynacoe::Keyboard::Key_lctrl) || 
-             Dynacoe::Input::GetState(Dynacoe::Keyboard::Key_rctrl))
+            (Dynacoe::Input::GetState(Dynacoe::UserInput::Key_lctrl) || 
+             Dynacoe::Input::GetState(Dynacoe::UserInput::Key_rctrl))
             &&
-            Dynacoe::Input::GetState(Dynacoe::Keyboard::Key_c)
+            Dynacoe::Input::GetState(Dynacoe::UserInput::Key_c)
             ) {
             sandboxe_dt_trans_command__pause(trans_ctx);
         }

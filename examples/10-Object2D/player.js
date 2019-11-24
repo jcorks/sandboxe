@@ -96,30 +96,36 @@ createPlayer = function(position, diameter) {
 
 
     // lets add movement using object2d velocities mapped to arrow keys
-    var listenerUp = sandboxe.input.buttonListener.create(sandboxe.key_up);
-    var listenerDown = sandboxe.input.buttonListener.create(sandboxe.key_down);
-    var listenerLeft = sandboxe.input.buttonListener.create(sandboxe.key_left);
-    var listenerRight = sandboxe.input.buttonListener.create(sandboxe.key_right);
-    var listenerMouse = sandboxe.input.buttonListener.create(sandboxe.mouse_left);
+    sandboxe.input.addKeyListener().onActive = function(key) {
+        switch(key) {
+          case sandboxe.key_up:
+            object2d.addVelocity(.3, -90);
+            break;
+
+          case sandboxe.key_down:
+            object2d.addVelocity(.3, 90);
+            break;
+
+          case sandboxe.key_left:
+            object2d.addVelocity(.3, 180);
+            break;
+
+          case sandboxe.key_right:
+            object2d.addVelocity(.3, 0);
+            break;
+
     
-    listenerUp.onHold = function() {
-        object2d.addVelocity(.3, -90);
+        }
     }
 
-    listenerMouse.onHold = function() {
-        object2d.addVelocityTowards(1, ''+sandboxe.input.mouseX()+','+sandboxe.input.mouseY());
-    }
-    listenerDown.onHold = function() {
-        object2d.addVelocity(.3, 90);
-    }
-
-    listenerLeft.onHold = function() {
-        object2d.addVelocity(.3, 180);
+    sandboxe.input.addPointerListener().onActive = function(button) {
+        switch(button) {
+          case sandboxe.mouse_left:
+            object2d.addVelocityTowards(1, ''+sandboxe.input.mouseX()+','+sandboxe.input.mouseY());
+            break;        
+        }
     }
 
-    listenerRight.onHold = function() {
-        object2d.addVelocity(.3, 0);
-    }
 
 
     entity.onRemove = function() {

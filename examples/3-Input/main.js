@@ -38,25 +38,27 @@ inputExample.visual.color = 'white';
 // call specified functions once the input is picked up by the system. 
 
 // First, create the listener
-listenerLeft = sandboxe.input.buttonListener.create(sandboxe.key_left);
+listenerLeft = sandboxe.input.addKeyListener();
 
-// Populate the onPres, onRelease, and /or onHold properties.
+// Populate the onPress, onChange, onActive and /or onHold properties.
 // Here we only care about onHold
-listenerLeft.onHold = function() {
-    inputExample.node.position.x -= 2;
+listenerLeft.onActive = function(key) {
+    switch(key) {
+      case sandboxe.key_left:
+        inputExample.node.position.x -= 2;
+        break;
+
+
+      case sandboxe.key_right:
+        inputExample.node.position.x += 2;
+        break;
+
+
+    }
+    if (key == sandboxe.key_left);
 }
 
 
-
-
-// Repeat same steps for the right key 
-listenerRight = sandboxe.input.buttonListener.create(sandboxe.key_right);
-
-// Populate the onPres, onRelease, and /or onHold properties.
-// Here we only care about onHold
-listenerRight.onHold = function() {
-    inputExample.node.position.x += 2;
-}
 
 
 
@@ -66,7 +68,7 @@ listenerRight.onHold = function() {
 inputExample.onStep = function() {
     
     // lets make it so that you can drag the box horizontally
-    if (sandboxe.input.isHeld(sandboxe.mouse_left)) {
+    if (sandboxe.input.getState(sandboxe.mouse_left)) {
         inputExample.node.position.x = sandboxe.input.mouseX();
     }
 }

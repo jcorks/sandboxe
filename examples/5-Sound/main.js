@@ -53,33 +53,35 @@ clangShape.node.position.y = sandboxe.graphics.getRenderCamera().height  * .75;
 
 
 
-
-
-
-
-
 var kickSample = undefined;
 var snareSample = undefined;
 var clangSample = undefined;
-entity.onStep = function() {
-    
-    
-    // To actually play a sound, we can call PlayAudio() to immediately hear it. 
-    // The Sound modules handles all audio. We're using the simple frame-based input querying 
-    // though, inputListeners are usually recommended.
-    // We've mapped each sound to a key.
-    if (sandboxe.input.isPressed(sandboxe.key_q)) {
+
+
+
+// To actually play a sound, we can call PlayAudio() to immediately hear it. 
+// The Sound modules handles all audio. We're using the simple frame-based input querying 
+// though, inputListeners are usually recommended.
+// We've mapped each sound to a key.
+
+sandboxe.input.addKeyListener().onPress = function(key) {
+    switch(key) {
+      case sandboxe.key_q:
         kickSample = sandboxe.sound.playAudio(kickSound);
-    }
+        break;
 
-    if (sandboxe.input.isPressed(sandboxe.key_w)) {
+      case sandboxe.key_w:
         snareSample = sandboxe.sound.playAudio(snareSound);
-    }
+        break;
 
-    if (sandboxe.input.isPressed(sandboxe.key_e)) {
+      case sandboxe.key_e:
         clangSample = sandboxe.sound.playAudio(clangSound);
+        break;       
     }
+}
 
+
+entity.onStep = function() {
 
 
     // Now, we're going to add some "spice" to make it more interesting.

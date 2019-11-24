@@ -42,10 +42,11 @@ game = (function(){
 
     // For additional ease of use, lets map this reset function to run 
     // when the space bar is pressed
-    var resetter = sandboxe.input.buttonListener.create(sandboxe.key_space);
-    resetter.onPress = function() {
-        obj.reset();
-    };
+    sandboxe.input.addKeyListener().onPress = function(key) {
+        if (key == sandboxe.key_space) {
+            obj.reset();
+        }
+    }
 
 
     // never forget to set the root!!

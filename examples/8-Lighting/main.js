@@ -28,6 +28,10 @@ sandboxe.engine.setRoot(root);
 
 
 
+
+
+
+
 // Let's start with the camera.
 // Since we're working in 3D space, it will be helpful to let the user 
 // move around where they want. We are mapping the controls to WASD and EQ
@@ -51,12 +55,36 @@ camera = (function(){
     
     // Here we quickly define the key mappings for X Y Z movement.
     // This should be review from the input tutorial.
-    buttonListener.create(sandboxe.key_w).onHold = function(){target.y += .4;};
-    buttonListener.create(sandboxe.key_s).onHold = function(){target.y -= .4;};
-    buttonListener.create(sandboxe.key_a).onHold = function(){target.x -= .4;};
-    buttonListener.create(sandboxe.key_d).onHold = function(){target.x += .4;};
-    buttonListener.create(sandboxe.key_e).onHold = function(){target.z -= .4;};
-    buttonListener.create(sandboxe.key_q).onHold = function(){target.z += .4;};
+    sandboxe.input.addKeyListener().onActive = function(key) {
+        switch(key) {
+          case sandboxe.key_w:
+            target.y += 0.4;
+            break;
+
+          case sandboxe.key_s:
+            target.y -= 0.4;
+            break;
+
+
+          case sandboxe.key_a:
+            target.x -= 0.4;
+            break;
+
+          case sandboxe.key_d:
+            target.x += 0.4;
+            break;
+
+
+          case sandboxe.key_e:
+            target.z -= 0.4;
+            break;
+
+          case sandboxe.key_q:
+            target.z += 0.4;
+            break;
+
+        }
+    }
 
 
     // On the step function, we will have the camera "ease" toward the camera.

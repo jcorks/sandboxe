@@ -26,6 +26,8 @@ particle.name = 'particle';
 var filtered = true;
 var translucent = true;
 
+
+
 particle.onStep = function() {
     // Lets have the emitter always match the mouse's position  
     particle.node.position.x = sandboxe.input.mouseX();
@@ -36,27 +38,35 @@ particle.onStep = function() {
         particle.emitter.emitParticle(particle.asset);
     }
     
-    
-    
-    // Pressing 'tab' should toggle whether to enable texture filtering for particles.
-    // When texture filtering is enabled, the pixels of the image of the particle are 
-    // blended together. When it's disabled, it tends to give a grainy look, but 
-    // will also run faster on some machines. The default when emitting is to use 
-    // filtering.
-    if (sandboxe.input.isPressed(sandboxe.key_tab)) {
+}
+
+
+
+sandboxe.input.addKeyListener().onPress = function(key) {
+    switch(key) {
+        // Pressing 'tab' should toggle whether to enable texture filtering for particles.
+        // When texture filtering is enabled, the pixels of the image of the particle are 
+        // blended together. When it's disabled, it tends to give a grainy look, but 
+        // will also run faster on some machines. The default when emitting is to use 
+        // filtering.
+      case sandboxe.key_tab:
         particle.emitter.filtered = !particle.emitter.filtered;
         sandboxe.console.info((particle.emitter.filtered ? "Enabled" : "Disabled") + " filtering!\n");
-    }
+        break;
 
-    // Pressing the spacebar will toggle whether to draw the particles in a translicent manner.
-    // In this context, "translucency" is equivalent to additive blending, where transparent colors
-    // are added together. The event is layered, transparent images appear lighter in color to more 
-    // are drawn in one place. The default when emitting is to draw translucently.
-    if (sandboxe.input.isPressed(sandboxe.key_space)) {
+
+        // Pressing the spacebar will toggle whether to draw the particles in a translicent manner.
+        // In this context, "translucency" is equivalent to additive blending, where transparent colors
+        // are added together. The event is layered, transparent images appear lighter in color to more 
+        // are drawn in one place. The default when emitting is to draw translucently.
+      case sandboxe.key_space:
         particle.emitter.translucent = !particle.emitter.translucent;
         sandboxe.console.info((particle.emitter.translucent ? "Enabled" : "Disabled") + " translucency!\n");
+
+        break;
     }
 }
+
 
 
 sandboxe.engine.setRoot(particle);

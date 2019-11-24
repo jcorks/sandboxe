@@ -25,49 +25,65 @@ object.text.text = 'Try typing!';
 object.text.spacingMode = sandboxe.component.text2d.spacingMode.monospace;
 
 var text = "";
-object.onStep = function() {
+
+
+unicode = sandboxe.input.unicodeListener.create();
+unicode.onNewUnicode = function(character) {
     // This controls when to add additional characters to 
     // this displayed string. GetLastUnicode() is a nifty function for 
     // retrieving the last character the user typed. This takes into 
     // account Shift.
-    if (character = sandboxe.input.getLastUnicode()) {
-        if (character == 8) { // backspace
-            text = text.substr(0, text.length-1);
-        } else {
-            text += String.fromCharCode(character);
-        }
-        object.text.text =  text + '|';
-    }
-    
 
+    if (character == 8) { // backspace
+        text = text.substr(0, text.length-1);
+    } else {
+        text += String.fromCharCode(character);
+    }
+    object.text.text =  text + '|';
+}
+
+unicode.onRepeatUnicode = function(character) {
+    unicode.onNewUnicode(character);
+}
+
+// Add controls for modifying the presentation of
+// of the text
+sandboxe.input.addKeyListener().onPress = function(key) {
+
+
+    switch(key) {
     
     // Text rendering with Dynacoe gives you a few options to 
     // display character spacings. 'Kerned' text draws the text 
     // using the natural spacing determined by the font. This is the 
     // most aesthetically pleasing, but is more work to predict 
     // how much real estate the text will require.
-    if (sandboxe.input.isPressed(sandboxe.key_right)) {
+      case sandboxe.key_right:
         object.text.spacingMode = sandboxe.component.text2d.spacingMode.kerned;
         sandboxe.console.info("Changed spacing mode to: Kerned\n");
-    } 
+        break;
+
+
 
     // 'Bitmap' text will draw the text with spacing determined from 
     // just the visual. Rarely useful, but you never know!
-    if (sandboxe.input.isPressed(sandboxe.key_left)) {
+      case sandboxe.key_left:
         object.text.spacingMode = sandboxe.component.text2d.spacingMode.bitmap;
         sandboxe.console.info("Changed spacing mode to: Bitmap\n");
-    } 
+        break;
+
+
 
     // 'Monospace' text will draw the text with the same spacing 
     // regardless of the character. This is very useful because, in this mode, 
     // you can predict the space usage of the text to be drawn just by 
     // the character count.
-    if (sandboxe.input.isPressed(sandboxe.key_up)) {
+      case sandboxe.key_up:
         object.text.spacingMode = sandboxe.component.text2d.spacingMode.monospace;
         sandboxe.console.info("Changed spacing mode to: Monospace\n");
-    } 
-    
-}
+        break;
+    }
+};
 
 
 sandboxe.engine.setRoot(object);

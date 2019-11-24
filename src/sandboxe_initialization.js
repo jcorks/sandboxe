@@ -1123,15 +1123,40 @@ var sandboxe = {
      * Collection of functions and references to work with input form the system.
      */
     input : {
+
+
         /**
-         * Creates a new buttonListener object, which are used to call methods after certain inputs are detected.
-         * @param {Number|String} Input The input to detect. See {@link sandboxe} input flags.
-         * @returns {buttonListener}
+         * Creates a new inputListener object, which are used to call methods after certain inputs are detected. This is specifically for keyboard events.
+         * @returns {inputListener}
          * @function
          */
-        buttonListener : {
-            create : __input_button_listener_new
-        },
+        addKeyListener : __input_key_listener_new,
+
+        /**
+         * Creates a new inputListener object, which are used to call methods after certain inputs are detected. This is specifically for mouse/pointer events.
+         * @returns {inputListener}
+         * @function
+         */
+        addPointerListener : __input_pointer_listener_new,
+
+        /**
+         * Creates a new inputListener object, which are used to call methods after certain inputs are detected. This is specific to an auxiliary input pad.
+         * @param {Number} this refers to the pad index that should be listened to.
+         * @returns {inputListener}
+         * @function
+         */
+        addPadListener : __input_pad_listener_new,
+
+
+        /**
+         * Creates a new inputListener object, which are used to call methods after certain inputs are detected. This is specific to a mapped input string.
+         * @param {String} this should be a string to listen to.
+         * @returns {inputListener}
+         * @function
+         */
+        addMappedListener : __input_mapped_listener_new,
+
+
         
         /**
          * Creates a new unicodeListener object, which are used to call methods after characters are typed by the user keyboard.
@@ -1141,7 +1166,23 @@ var sandboxe = {
         unicodeListener : {
             create : __input_unicode_listener_new
         },
-        
+
+
+        /**
+         * Sets a deadzone for a pad. If a deadzone is set, any inputs below the deadzone value in magnitude will be ignored. Normally, gamepad axis work best with a deadzone active. Once a deadzone is set, inputs for that pad are renormalized becase on the deadzone so that that full input range is expressed. 
+         * @param {Number} The index of the pad 
+         * @param {Number} The input to have the deadzone applied to
+         * @param {Number} The deadzone value
+         * @function
+         */
+        setDeadzone : __input_set_deadzone,
+
+        /**
+         * Returns an array of valid pand indices. These refer to physically connected / accessible auxiliary input devices. This indices can be used to modify and query specific pads.
+         * @returns {Array} Array of pad IDs as integers.
+         * @funciton
+         */
+        queryPads : __input_query_pads,
 
         /**
          * Returns the X position of the pointer, if any.
@@ -1190,29 +1231,6 @@ var sandboxe = {
          */
         getState : __input_get_state,
 
-        /**
-         * Returns whether the input is currently pressed.
-         * @param {Number|String} Input The type of input to query. See {@link sandboxe} input enumerator.
-         * @returns {Boolean} 
-         * @function 
-         */
-        isPressed : __input_is_pressed,
-
-        /**
-         * Returns whether the input is currently held. That is, in a pressed state for more that one frame continuously..
-         * @param {Number|String} Input The type of input to query. See {@link sandboxe} input enumerator.
-         * @returns {Boolean} 
-         * @function 
-         */
-        isHeld : __input_is_held,
-
-        /**
-         * Returns whether the input was released. That is, transitioned form a pressed state to an unpressed state this frame.
-         * @param {Number|String} Input The type of input to query. See {@link sandboxe} input enumerator.
-         * @returns {Boolean} 
-         * @function 
-         */
-        isReleased : __input_is_released,
 
         /**
          * Maps an input value flag to a string, allowing for more convenient querying.
@@ -1529,441 +1547,368 @@ var sandboxe = {
     },
     
     /** 0 */
-    key_0 : -1, 
+    key_0 : 1, 
     
     /** 1 */
-    key_1 : 1, 
+    key_1 : 2, 
     
     /** 2 */
-    key_2 : 2, 
+    key_2 : 3, 
     
     /** 3 */
-    key_3 : 3, 
+    key_3 : 4, 
     
     /** 4 */
-    key_4 : 4, 
+    key_4 : 5, 
     
     /** 5 */
-    key_5 : 5,
+    key_5 : 6,
     
     /** 6  */
-    key_6 : 6, 
+    key_6 : 7, 
     
     /** 7 */
-    key_7 : 7, 
+    key_7 : 8, 
     
     /** 8 */
-    key_8 : 8, 
+    key_8 : 9, 
     
     /** 9 */
-    key_9 : 9, 
+    key_9 : 10, 
 
     /** a*/
-    key_a : 10, 
+    key_a : 11, 
     
     /** b*/
-    key_b : 11, 
+    key_b : 12, 
     
     /** c*/
-    key_c : 12, 
+    key_c : 13, 
     
     /** d*/
-    key_d : 13, 
+    key_d : 14, 
     
     /** e*/
-    key_e : 14, 
+    key_e : 15, 
     
     /** f*/
-    key_f : 15, 
+    key_f : 16, 
     
     /** g*/
-    key_g : 16, 
+    key_g : 17, 
     
     /** h*/
-    key_h : 17, 
+    key_h : 18, 
 
     /** i*/
-    key_i : 18, 
+    key_i : 19, 
     
     /** j*/
-    key_j : 19, 
+    key_j : 20, 
     
     /** k*/
-    key_k : 20,
+    key_k : 21,
     
     /** l*/ 
-    key_l : 21, 
+    key_l : 22, 
     
     /** m*/
-    key_m : 22, 
+    key_m : 23, 
     
     /** n*/
-    key_n : 23, 
+    key_n : 24, 
     
     /** o*/
-    key_o : 24, 
+    key_o : 25, 
     
     /** p*/
-    key_p : 25, 
+    key_p : 26, 
     
     /** q*/
-    key_q : 26, 
+    key_q : 27, 
     
     /** r*/
-    key_r : 27, 
+    key_r : 28, 
     
     /** s*/
-    key_s : 28,
+    key_s : 29,
     
     /** t*/ 
-    key_t : 29,
+    key_t : 30,
     
     /** u*/ 
-    key_u : 30,
+    key_u : 31,
     
     /** v*/ 
-    key_v : 31,
+    key_v : 32,
     
     /** w*/ 
-    key_w : 32,
+    key_w : 33,
     
     /** x*/ 
-    key_x : 33,
+    key_x : 34,
     
     /** y*/ 
-    key_y : 34,
+    key_y : 35,
     
     /** z*/ 
-    key_z : 35, 
+    key_z : 36, 
     
     /** Left shift key */
-    key_lshift : 36, 
+    key_lshift : 37, 
     
     /** Right shift key*/
-    key_rshift : 37, 
+    key_rshift : 38, 
     
     /** Left control key*/
-    key_lctrl : 38, 
+    key_lctrl : 39, 
     
     /** Right control key*/ 
-    key_rctrl : 39,  
+    key_rctrl : 40,  
     
     /** Left alt key*/
-    key_lalt : 40,   
+    key_lalt : 41,   
     
     /** Right alt key*/
-    key_ralt : 41,   
+    key_ralt : 42,   
     
     /** Tab*/
-    key_tab : 42,    
+    key_tab : 43,    
     
     /** F1*/
-    key_F1 : 43,     
+    key_F1 : 44,     
     
     /** F2*/
-    key_F2 : 44,     
+    key_F2 : 45,     
     
     /** F3*/
-    key_F3 : 45,     
+    key_F3 : 46,     
     
     /** F4*/
-    key_F4 : 46,     
+    key_F4 : 47,     
     
     /** F5*/
-    key_F5 : 47,     
+    key_F5 : 48,     
     
     /** F6*/
-    key_F6 : 48,    
+    key_F6 : 49,    
 
     /** F7*/ 
-    key_F7 : 49,     
+    key_F7 : 50,     
     
     /** F8*/
-    key_F8 : 50,     
+    key_F8 : 51,     
     
     /** F9*/
-    key_F9 : 51,     
+    key_F9 : 52,     
     
     /** F10*/
-    key_F10 : 52,    
+    key_F10 : 53,    
     
     /** F11*/
-    key_F11 : 53,    
+    key_F11 : 54,    
     
     /** F12*/
-    key_F12 : 54,    
+    key_F12 : 55,    
     
     /** Up arrow*/
-    key_up : 55,     
+    key_up : 56,     
     
     /** Down arrow*/
-    key_down : 56,   
+    key_down : 57,   
     
     /** Left arrow*/
-    key_left : 57,   
+    key_left : 58,   
     
     /** Right arrow*/
-    key_right : 58,  
+    key_right : 59,  
     
     /** -*/
-    key_minus : 59,  
+    key_minus : 60,  
     
     /** : */
-    key_equal : 60,  
+    key_equal : 61,  
     
     /** Backspace*/
-    key_backspace : 61,  
+    key_backspace : 62,  
     
     /** `*/
-    key_grave : 62,  
+    key_grave : 63,  
     
     /** Escape*/
-    key_esc : 63,    
+    key_esc : 64,    
     
     /** Home key*/
-    key_home : 64,   
+    key_home : 65,   
     
     /** Page up key*/
-    key_pageUp : 65, 
+    key_pageUp : 66, 
     
     /** Page down key*/
-    key_pageDown : 66,  
+    key_pageDown : 67,  
     
     /** End key*/
-    key_end : 67,    
+    key_end : 68,    
     
     /** ''*/
-    key_backslash : 68,
+    key_backslash : 69,
     
     /** [*/ 
-    key_lbracket : 69, 
+    key_lbracket : 70, 
     
     /** ]*/
-    key_rbracket : 70, 
+    key_rbracket : 71, 
     
     /** ;*/
-    key_semicolon : 71, 
+    key_semicolon : 72, 
     
     /** '*/
-    key_apostrophe : 72, 
+    key_apostrophe : 73, 
     
     /** /*/
-    key_frontslash : 73, 
+    key_frontslash : 74, 
     
     /** Enter*/
-    key_enter : 74, 
+    key_enter : 75, 
     
     /** Delete*/
-    key_delete : 75, 
+    key_delete : 76, 
     
     /** Numpad 0*/
-    key_numpad0 : 76, 
+    key_numpad0 : 77, 
     
     /** Numpad 1*/
-    key_numpad1 : 77, 
+    key_numpad1 : 78, 
     
     /** Numpad 2*/
-    key_numpad2 : 78, 
+    key_numpad2 : 79, 
     
     /** Numpad 3*/
-    key_numpad3 : 79, 
+    key_numpad3 : 80, 
     
     /** Numpad 4*/
-    key_numpad4 : 80, 
+    key_numpad4 : 81, 
     
     /** Numpad 5*/
-    key_numpad5 : 81, 
+    key_numpad5 : 82, 
     
     /** Numpad 6*/
-    key_numpad6 : 82, 
+    key_numpad6 : 83, 
     
     /** Numpad 7*/
-    key_numpad7 : 83, 
+    key_numpad7 : 84, 
     
     /** Numpad 8*/
-    key_numpad8 : 84, 
+    key_numpad8 : 85, 
     
     /** Numpad 9*/
-    key_numpad9 : 85, 
+    key_numpad9 : 86, 
     
     /** Print screen button*/
-    key_prtscr : 86, 
+    key_prtscr : 87, 
     
     /** Left Super key (Windows key)*/
-    key_lsuper : 87, 
+    key_lsuper : 88, 
     
     /** Right Super key (Windows key)*/
-    key_rsuper : 88, 
+    key_rsuper : 89, 
     
     /** Space*/
-    key_space : 89, 
+    key_space : 90, 
     
      /** Insert key*/ 
-    key_insert : 90,
+    key_insert : 91,
     
     /** ,*/
-    key_comma : 91, 
+    key_comma : 92, 
     
     /** .*/
-    key_period : 92, 
+    key_period : 93, 
 
 
     /** Mouse left button*/
-    mouse_left : 93,
+    mouse_left : 94,
 
     /** Mouse right button*/
-    mouse_right : 94,
+    mouse_right : 95,
 
     /** Mouse middle button*/
-    mouse_middle : 95,
+    mouse_middle : 96,
 
 
     /** Mouse movement X axis*/
-    mouseAxis_x : 96,
+    mouseAxis_x : 97,
 
     /** Mouse movement Y axis*/
-    mouseAxis_y : 97,
+    mouseAxis_y : 98,
 
     /** Mouse wheel axis*/
-    mouseAxis_wheel : 98,
+    mouseAxis_wheel : 99,
 
 
-    /** Button 0*/
-    pad_b0 : 100, 
-    
-    /** Button 1*/
-    pad_b1 : 101, 
-    
-    /** Button 2*/
-    pad_b2 : 102, 
-    
-    /** Button 3*/
-    pad_b3 : 103,
-    
-    /** Button 4*/ 
-    pad_b4 : 104,
-    
-    /** Button 5*/
-    pad_b5 : 105,
-    
-    /** Button 6*/
-    pad_b6 : 106,
-    
-    /** Button 7*/
-    pad_b7 : 107,
-    
-    /** Button 8*/
-    pad_b8 : 108,
+    Pad_a : 100,
+    Pad_b : 101,
+    Pad_c : 102,
+    Pad_x : 103,
+    Pad_y :  104,
+    Pad_r :  105,
+    Pad_l :   106,
+    Pad_r2 :   107,
+    Pad_l2 :   108,
+    Pad_r3 :  109,
+    Pad_l3 :   110,
+    Pad_start :  111,
+    Pad_select : 112,
+    Pad_b13 : 113,
+    Pad_b14 : 114,
+    Pad_b15 : 115,
+    Pad_b16 : 116,
+    Pad_b17 : 117,
+    Pad_b18 : 118,
+    Pad_b19 : 119,
+    Pad_b20 : 120,
+    Pad_b21 : 121,
+    Pad_b22 : 122,
+    Pad_b23 : 123,
+    Pad_b24 : 124,
+    Pad_b25 : 125,
+    Pad_b26 : 126,
+    Pad_b27 : 127,
+    Pad_b28 : 128,
+    Pad_b29 : 129,
+    Pad_b30 : 130,
+    Pad_b31 : 131,
+    Pad_b32 : 132,
 
-    /** Button 9*/
-    pad_b9 : 109,
-    
-    /** Button 10*/
-    pad_b10 : 110,
-    
-    /** Button 11*/
-    pad_b11 : 111,
-    
-    /** Button 12*/    
-    pad_b12 : 112,
-    
-    /** Button 13*/
-    pad_b13 : 113,
-    
-    /** Button 14*/
-    pad_b14 : 114,
-    
-    /** Button 15*/
-    pad_b15 : 115,
-    
-    /** Button 16*/
-    pad_b16 : 116,
-    
-    /** Button 17*/
-    pad_b17 : 117,
-    
-    /** Button 18*/
-    pad_b18 : 118,
-    
-    /** Button 19*/
-    pad_b19 : 119,
-    
-    /** Button 20*/
-    pad_b20 : 120,
-    
-    /** Button 21*/
-    pad_b21 : 121,
-    
-    /** Button 22*/
-    pad_b22 : 122,
-    
-    /** Button 23*/
-    pad_b23 : 123,
-    
-    /** Button 24*/
-    pad_b24 : 124,
-    
-    /** Button 25*/
-    pad_b25 : 125,
-    
-    /** Button 26*/
-    pad_b26 : 126,
-    
-    /** Button 27*/
-    pad_b27 : 127,
-    
-    /** Button 28*/
-    pad_b28 : 128,
-    
-    /** Button 29*/
-    pad_b29 : 129,
-    
-    /** Button 30*/
-    pad_b30 : 130,
-    
-    /** Button 31*/
-    pad_b31 : 131,
+    Pad_axisX :  133,
+    Pad_axisY :  134,
+    Pad_axisZ :  135,
+    Pad_axisX2 : 136,
+    Pad_axisY2 : 137,
+    Pad_axisZ2 : 138,
+    Pad_axisX3 : 139,
+    Pad_axisY3 : 140,
+    Pad_axisZ3 : 141,
+    Pad_axisX4 : 142,
+    Pad_axisY4 : 143,
+    Pad_axisZ4 : 144,
+    Pad_axisX5 : 145,
+    Pad_axisY5 : 146,
+    Pad_axisZ5 : 147,
+    Pad_axisX6 : 148,
+    Pad_axisY6 : 149,
+    Pad_axisZ6 : 150,
 
-    /** Button 32*/
-    pad_b32 : 132,
+    Pad_axisR :  151,   
+    Pad_axisL :  152,   
+    Pad_axisR2 : 153,    
+    Pad_axisL2 : 154,    
+    Pad_axisR3 : 155,    
+    Pad_axisL3 : 156,    
+    Pad_axisR4 : 157,    
+    Pad_axisL4 : 158,    
 
-
-    /** X button*/
-    pad_x : 133, 
-    
-    /** Y button*/
-    pad_y : 134, 
-    
-     /** Z button*/
-    pad_z : 135, 
-    
-    /** X2 button */
-    pad_x2 : 136,
-    
-    /** Y2 button*/
-    pad_y2 : 137,
-    
-    /** Z2 button*/
-    pad_z2 : 138,
-    
-    /** X3 button*/
-    pad_x3 : 139,
-    
-    /** Y3 button*/
-    pad_y3 : 140,
-    
-    /** Z3 button*/
-    pad_z3 : 141,
-    
-    /** X4 button*/
-    pad_x4 : 142,
-
-    /** Y4 button*/
-    pad_y4 : 143,
-    
-    /** Z4 button*/
-    pad_z4 : 144, 
-
+    Pad_options : 159, 
 
     /** 
      * @function 
