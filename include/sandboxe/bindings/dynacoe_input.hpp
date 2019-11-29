@@ -101,12 +101,12 @@ SANDBOXE_NATIVE_DEF(__input_query_pads) {
 
 
 SANDBOXE_NATIVE_DEF(__input_map_input) {
-    SANDBOXE_ASSERT__ARG_COUNT(2);
-    if (arguments[0].hint == Sandboxe::Script::Runtime::Primitive::TypeHint::StringT) return;
 
     if (arguments.size() > 2) {
+        if (arguments[0].hint != Sandboxe::Script::Runtime::Primitive::TypeHint::StringT) return;
         Dynacoe::Input::MapInput(arguments[0], arguments[1], arguments[2]);
-    } else {
+    } else if (arguments.size() == 2) {
+        if (arguments[0].hint != Sandboxe::Script::Runtime::Primitive::TypeHint::StringT) return;
         Dynacoe::Input::MapInput(arguments[0], arguments[1]);
     }
 

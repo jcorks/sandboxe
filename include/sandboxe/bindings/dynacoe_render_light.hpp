@@ -132,11 +132,13 @@ void dynacoe_render_light(std::vector<std::pair<std::string, Sandboxe::Script::R
             {"info", {__component_get_info, __component_set_info}},
             {"isStepping", {__component_get_step, __component_set_step}},
             {"isDrawing", {__component_get_draw, __component_set_draw}},
-            {"host", {__component_get_host, __component_set_host}}
+            {"host", {__component_get_host, __component_set_host}},
+            {"onStep", {__component_get_on_step, __component_set_on_step}},
+            {"onDraw", {__component_get_on_draw, __component_set_on_draw}},
             
             ////////////////////////////////////////////////////////
             //////////////////// imported from component ///////////
-            ,
+
             {"type", {__render_light_get_type, __render_light_set_type}},
             {"enabled", {__render_light_get_enabled, __render_light_set_enabled}},
             {"position", {__render_light_get_position, __render_light_set_position}},

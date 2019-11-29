@@ -29,10 +29,16 @@ class Object2DObject : public Dynacoe::Object2D, public Sandboxe::ComponentAdapt
         
     }
     
+    
     void OnStep() {
         Object2D::OnStep();
+        Native_OnStep();
     }
-    
+
+    void OnDraw() {
+        Object2D::OnDraw();
+        Native_OnDraw();
+    }
     const char * GetObjectName() const {
         return "Object2D";
     }

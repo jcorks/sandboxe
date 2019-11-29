@@ -37,6 +37,15 @@ class StateControlObject : public Dynacoe::StateControl, public Sandboxe::Compon
         return "StateControl";
     }
 
+    void OnStep() {
+        Dynacoe::StateControl::OnStep();
+        Native_OnStep();
+    }
+    
+    void OnDraw() {
+        Dynacoe::StateControl::OnDraw();
+        Native_OnDraw();
+    }
 
     
     

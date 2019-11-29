@@ -127,11 +127,13 @@ void dynacoe_clock(std::vector<std::pair<std::string, Sandboxe::Script::Runtime:
             {"info", {__component_get_info, __component_set_info}},
             {"isStepping", {__component_get_step, __component_set_step}},
             {"isDrawing", {__component_get_draw, __component_set_draw}},
-            {"host", {__component_get_host, __component_set_host}}
-            
+            {"host", {__component_get_host, __component_set_host}},
+            {"onStep", {__component_get_on_step, __component_set_on_step}},
+            {"onDraw", {__component_get_on_draw, __component_set_on_draw}},
+
             ////////////////////////////////////////////////////////
             //////////////////// imported from component ///////////
-            ,
+            
             {"timeSince", {__clock_get_time_since, SANDBOXE_NATIVE_EMPTY}},
             {"timeLeft", {__clock_get_time_left, SANDBOXE_NATIVE_EMPTY}},
             {"duration", {__clock_get_duration, SANDBOXE_NATIVE_EMPTY}},

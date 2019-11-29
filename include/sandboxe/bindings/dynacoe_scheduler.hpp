@@ -127,11 +127,12 @@ void dynacoe_scheduler(std::vector<std::pair<std::string, Sandboxe::Script::Runt
             {"info", {__component_get_info, __component_set_info}},
             {"isStepping", {__component_get_step, __component_set_step}},
             {"isDrawing", {__component_get_draw, __component_set_draw}},
-            {"host", {__component_get_host, __component_set_host}}
+            {"host", {__component_get_host, __component_set_host}},
+            {"onStep", {__component_get_on_step, __component_set_on_step}},
+            {"onDraw", {__component_get_on_draw, __component_set_on_draw}},
             
             ////////////////////////////////////////////////////////
             //////////////////// imported from component ///////////
-            ,
             {"tasks", {__scheduler_get_tasks, SANDBOXE_NATIVE_EMPTY}}
 
 

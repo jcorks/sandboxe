@@ -128,6 +128,20 @@ SANDBOXE_NATIVE_DEF(__camera_get_auto_refresh) {
     context.SetReturnValue(cam->Self()->autoRefresh);
 }
 
+SANDBOXE_NATIVE_DEF(__camera_get_filtered_hint) {    
+    auto cam = ((CameraEntityID*)source)->id.IdentifyAs<Sandboxe::Camera>();
+    if (!cam) return;
+    context.SetReturnValue(cam->Self()->GetFramebuffer()->GetFilteredHint());
+}
+
+SANDBOXE_NATIVE_DEF(__camera_set_filtered_hint) {    
+    SANDBOXE_ASSERT__ARG_COUNT(1);
+    auto cam = ((CameraEntityID*)source)->id.IdentifyAs<Sandboxe::Camera>();
+    if (!cam) return;
+    cam->Self()->GetFramebuffer()->SetFilteredHint(arguments[0]);
+}
+
+
 SANDBOXE_NATIVE_DEF(__camera_set_auto_refresh) {    
     auto cam = ((CameraEntityID*)source)->id.IdentifyAs<Sandboxe::Camera>();
     if (!cam) return;
@@ -220,6 +234,7 @@ void dynacoe_camera(std::vector<std::pair<std::string, Sandboxe::Script::Runtime
             {"type", {SANDBOXE_NATIVE_EMPTY, __camera_set_type}},
             {"autoRefresh", {__camera_get_auto_refresh, __camera_set_auto_refresh}},
             {"onStep",    {__camera_get_on_step,     __camera_set_on_step}},
+            {"filteredHint", {__camera_get_filtered_hint, __camera_set_filtered_hint}},
 
 
             //////// inherited from entity

@@ -147,11 +147,6 @@ function component() {
      */
     this.onDraw = {};
     
-    /**
-     * Function called when the component is attached to a host.
-     * @type {Function}
-     */
-    this.onAttach = {};
 
 
     /**

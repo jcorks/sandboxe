@@ -30,10 +30,14 @@ class ComponentAdaptor : public Sandboxe::Script::Runtime::Object {
     // Generic event handler that calls non-native script object functions
     static DynacoeEvent(NativeHandler);
     ComponentAdaptor(int type) :
-        Sandboxe::Script::Runtime::Object(type)
+        Sandboxe::Script::Runtime::Object(type),
+        onStepObject(nullptr),
+        onDrawObject(nullptr)
         {}
-        
-        
+    Sandboxe::Script::Runtime::Object * onStepObject;
+    Sandboxe::Script::Runtime::Object * onDrawObject;
+
+         
     virtual void Native_Draw(){}
     virtual void Native_Step(){}
 
@@ -55,7 +59,21 @@ class ComponentAdaptor : public Sandboxe::Script::Runtime::Object {
     virtual bool Native_GetDraw(){return false;}
     virtual void Native_SetStep(bool b){}
     virtual bool Native_GetStep(){return false;}
-    
+
+
+    void Native_OnStep() {
+        if (onStepObject) {
+            onStepObject->CallMethod();
+        }
+    }
+
+    void Native_OnDraw() {
+        if (onDrawObject) {
+            onDrawObject->CallMethod();
+        }
+    }
+
+
     virtual Dynacoe::Entity::ID Native_GetHostID() {return Dynacoe::Entity::ID();}
     virtual void * Native_GetParentPtr() {
         return nullptr;
@@ -81,7 +99,17 @@ class Component : public Dynacoe::Component, public Sandboxe::ComponentAdaptor {
     {
       SetTag("Component");
     }
-      
+
+    void OnStep() {
+        Native_OnStep();
+    }
+
+    void OnDraw() {
+        Native_OnDraw();
+    }
+
+
+
     std::string info;
     std::string GetInfo() {
         return info;

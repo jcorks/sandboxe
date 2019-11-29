@@ -22,10 +22,17 @@ class GUIObject : public Dynacoe::GUI, public Sandboxe::ComponentAdaptor {
     
     int width;
     int height;
-    void OnDraw() {
-        Dynacoe::GUI::OnDraw();
+
+    void OnStep() {
+        Dynacoe::GUI::OnStep();
+        Native_OnStep();
     }
-    
+
+    void OnDraw() {
+        Native_OnDraw();
+    }
+
+
     void OnGarbageCollection() {
         
     }

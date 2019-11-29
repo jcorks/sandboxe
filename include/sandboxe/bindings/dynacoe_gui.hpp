@@ -172,6 +172,8 @@ void dynacoe_gui(std::vector<std::pair<std::string, Sandboxe::Script::Runtime::F
             {"isStepping", {__component_get_step, __component_set_step}},
             {"isDrawing", {__component_get_draw, __component_set_draw}},
             {"host", {__component_get_host, __component_set_host}},
+            {"onStep", {__component_get_on_step, __component_set_on_step}},
+            {"onDraw", {__component_get_on_draw, __component_set_on_draw}},
             
             ////////////////////////////////////////////////////////
             //////////////////// imported from component ///////////

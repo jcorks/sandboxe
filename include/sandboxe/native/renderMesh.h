@@ -24,11 +24,16 @@ class RenderMeshObject : public Dynacoe::RenderMesh, public Sandboxe::ComponentA
     std::vector<Sandboxe::MeshObject*> localObjects;
 
     
-    void OnDraw() {        
-        Material() = localMaterial->mat;        
-        Dynacoe::RenderMesh::OnDraw();
+    void OnStep() {
+        Native_OnStep();
     }
     
+    void OnDraw() {
+        Material() = localMaterial->mat;        
+        Dynacoe::RenderMesh::OnDraw();
+        Native_OnDraw();
+    }
+
     void OnGarbageCollection() {
         
     }

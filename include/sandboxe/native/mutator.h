@@ -21,7 +21,15 @@ class MutatorObject : public Dynacoe::Mutator, public Sandboxe::ComponentAdaptor
         
     }
     
-    
+    void OnStep() {
+        Dynacoe::Mutator::OnStep();
+        Native_OnStep();
+    }
+
+    void OnDraw() {
+        Dynacoe::Mutator::OnDraw();
+        Native_OnDraw();
+    }
     const char * GetObjectName() const {
         return "Mutator";
     }

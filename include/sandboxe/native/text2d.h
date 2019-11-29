@@ -38,10 +38,15 @@ class Text2DObject : public Dynacoe::Text2D, public Sandboxe::ComponentAdaptor {
     Sandboxe::ColorObject * localColor;
 
 
-    void OnDraw() {
-        Dynacoe::Text2D::OnDraw();
+    void OnStep() {
+        Native_OnStep();
     }
     
+    void OnDraw() {
+        Dynacoe::Text2D::OnDraw();
+        Native_OnDraw();
+    }
+
     void OnGarbageCollection() {
         // delete local objects?? maybe??
     }

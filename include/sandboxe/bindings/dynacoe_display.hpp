@@ -140,6 +140,7 @@ SANDBOXE_NATIVE_DEF(__display_get_height) {
 }
 
 
+
 SANDBOXE_NATIVE_DEF(__view_manager_get_clipboard) {
     context.SetReturnValue(Dynacoe::ViewManager::GetCurrentClipboardAsString());
 }

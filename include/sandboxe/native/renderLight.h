@@ -16,11 +16,15 @@ class RenderLightObject : public Sandboxe::ComponentAdaptor, public Dynacoe::Ren
     void OnStep() {
         state.position = *localPosition->vector;
         state.color = localColor->color;
+        Native_OnStep();
     }
     
     void OnDraw() {
         Dynacoe::RenderLight::OnDraw();
+        Native_OnDraw();
     }
+
+
     
     void OnGarbageCollection(){}
     

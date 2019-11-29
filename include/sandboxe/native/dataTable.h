@@ -19,7 +19,14 @@ class DataTableObject : public Dynacoe::DataTable, public Sandboxe::ComponentAda
         
     }
     
-    
+    void OnStep() {
+        Native_OnStep();
+    }
+
+    void OnDraw() {
+        Native_OnDraw();
+    }
+
     const char * GetObjectName() const {
         return "DataTable";
     }

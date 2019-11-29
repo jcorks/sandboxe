@@ -22,7 +22,14 @@ class SchedulerObject : public Dynacoe::Scheduler, public Sandboxe::ComponentAda
         
     }
     
+    void OnStep() {
+        Dynacoe::Scheduler::OnStep();
+        Native_OnStep();
+    }
     
+    void OnDraw() {
+        Native_OnDraw();
+    }
     const char * GetObjectName() const {
         return "Scheduler";
     }

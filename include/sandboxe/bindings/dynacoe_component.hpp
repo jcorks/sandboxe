@@ -205,6 +205,41 @@ SANDBOXE_NATIVE_DEF(__component_get_host) {
 }
 
 
+SANDBOXE_NATIVE_DEF(__component_set_on_step) {
+    SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceNonNativeT);
+
+    auto component = dynamic_cast<Sandboxe::ComponentAdaptor *>(source);
+    Sandboxe::Script::Runtime::Object * object = arguments[0];    
+    if (object && !object->IsCallable()) {
+        return;
+    }
+
+    ((EntityObjectID*)source)->AddNonNativeReference(object);    
+    component->onStepObject = object;
+}
+
+SANDBOXE_NATIVE_DEF(__component_set_on_draw) {
+    SANDBOXE_ASSERT__ARG_TYPE(0, ObjectReferenceNonNativeT);
+
+    auto component = dynamic_cast<Sandboxe::ComponentAdaptor *>(source);
+    Sandboxe::Script::Runtime::Object * object = arguments[0];    
+    if (object && !object->IsCallable()) {
+        return;
+    }
+
+    ((EntityObjectID*)source)->AddNonNativeReference(object);    
+    component->onDrawObject = object;
+}
+
+SANDBOXE_NATIVE_DEF(__component_get_on_step) {
+    auto component = dynamic_cast<Sandboxe::ComponentAdaptor *>(source);
+    context.SetReturnValue(component->onStepObject);
+}
+
+SANDBOXE_NATIVE_DEF(__component_get_on_draw) {
+    auto component = dynamic_cast<Sandboxe::ComponentAdaptor *>(source);
+    context.SetReturnValue(component->onDrawObject);
+}
 
 
 
@@ -242,7 +277,10 @@ void dynacoe_component(std::vector<std::pair<std::string, Sandboxe::Script::Runt
             {"info", {__component_get_info, __component_set_info}},
             {"isStepping", {__component_get_step, __component_set_step}},
             {"isDrawing", {__component_get_draw, __component_set_draw}},
-            {"host", {__component_get_host, __component_set_host}}
+            {"host", {__component_get_host, __component_set_host}},
+            {"onStep", {__component_get_on_step, __component_set_on_step}},
+            {"onDraw", {__component_get_on_draw, __component_set_on_draw}},
+
         }
     );
 

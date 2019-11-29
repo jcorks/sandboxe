@@ -21,7 +21,17 @@ class ClockObject : public Dynacoe::Clock, public Sandboxe::ComponentAdaptor {
     void OnGarbageCollection() {
         
     }
-    
+
+    void OnStep() {
+        Dynacoe::Clock::OnStep();
+        Native_OnStep();
+    }
+
+    void OnDraw() {
+        Dynacoe::Clock::OnDraw();
+        Native_OnDraw();
+    }
+
     
     const char * GetObjectName() const {
         return "Clock";

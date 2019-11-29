@@ -89,17 +89,6 @@ Dynacoe::Entity::ID Native_GetHostID() {
     return GetHostID();
 }
 
-void OnStep() {
-    CallMethod("onStep");
-}
-
-void OnDraw() {
-    CallMethod("onDraw");
-}
-
-void OnAttach() {
-    CallMethod("onAttach");
-}
 
 void * Native_GetParentPtr() {
     return (void*)this;
