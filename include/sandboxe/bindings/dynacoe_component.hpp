@@ -214,7 +214,7 @@ SANDBOXE_NATIVE_DEF(__component_set_on_step) {
         return;
     }
 
-    ((EntityObjectID*)source)->AddNonNativeReference(object);    
+    ((ComponentAdaptor*)source)->AddNonNativeReference(object);    
     component->onStepObject = object;
 }
 
@@ -227,7 +227,7 @@ SANDBOXE_NATIVE_DEF(__component_set_on_draw) {
         return;
     }
 
-    ((EntityObjectID*)source)->AddNonNativeReference(object);    
+    ((ComponentAdaptor*)source)->AddNonNativeReference(object);    
     component->onDrawObject = object;
 }
 
