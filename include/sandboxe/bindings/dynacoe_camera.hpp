@@ -138,7 +138,7 @@ SANDBOXE_NATIVE_DEF(__camera_set_filtered_hint) {
     SANDBOXE_ASSERT__ARG_COUNT(1);
     auto cam = ((CameraEntityID*)source)->id.IdentifyAs<Sandboxe::Camera>();
     if (!cam) return;
-    cam->Self()->GetFramebuffer()->SetFilteredHint(arguments[0]);
+    cam->Self()->SetFilteredHint(arguments[0]);
 }
 
 
